@@ -1,0 +1,7 @@
+node_modules/
+dist/
+private/
+*.pdf
+__pycache__/
+.DS_Store
+.vite/
