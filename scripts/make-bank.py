@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from booklet_art import add_art
+from math_solutions import MATH_STEPS
 
 LETTERS = "אבגד"
 CONTROLS = re.compile(r"[\u200b-\u200f\u202a-\u202e]")
@@ -18,6 +19,8 @@ TESTS = [
     [(29,30,31,'גאדבדגדג'), (32,32,34,'אדדגאבב'), (0,35,36,'גאבאג'), (0,36,36,'דאגא'), (0,37,37,'בדבבבג')],
     [(38,39,40,'גבדדאדג'), (41,42,43,'בבדדאבגג'), (44,44,45,'דבאאג'), (0,46,47,'דגדבדגדאבד')],
 ]
+
+
 
 
 def clean(text):
@@ -109,7 +112,7 @@ def build(pdf):
                     consumed.add((page_number, offset))
                     if (test_number, section) == (4, 5) or (test_number, section) == (5, 4) and number <= 5:
                         solution_number, answer = number, key[number - 1]
-                        explanation = prompt.replace('__', choices[LETTERS.index(answer)])
+                        explanation = ""
                     else:
                         solution_number, answer, explanation = solutions[solution_index]
                         solution_index += 1
@@ -119,8 +122,9 @@ def build(pdf):
                         _, answer, explanation = solutions[solution_index]
                     elif (test_number, section, number) == (5, 1, 5):
                         _, answer, explanation = solutions[solution_index - 2]
-                    if (test_number, section, number) == (5, 4, 7):
-                        explanation = explanation.replace('22 ✕ 5 = 27', '22 + 5 = 27')
+                    steps = MATH_STEPS.get((test_number, section))
+                    if steps:
+                        explanation = steps[number - 1]
                     if answer != key[number - 1]:
                         print(f'Answer table differs from worked solution at test {test_number}, section {section}, question {number}: {key[number - 1]} vs {answer}')
                     if (test_number, section, number) == (2, 1, 2):

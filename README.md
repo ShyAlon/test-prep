@@ -19,7 +19,7 @@ python3 scripts/make-bank.py "/absolute/path/to/booklet.pdf"
 
 Open the app and create a 4–8 digit PIN. The tests are ready as soon as you unlock the app. The app asks for the PIN again on reload.
 
-The importer preserves the printed typography and formulas as cropped images, includes the associated reading passages and price lists, and imports the worked explanations. It matches the five test sections to the answer tables and worked solutions. For the exercise that asks which expression equals 100, it uses the worked solution (`100 ÷ 1`). It matches the two transposed Mary Anning explanations to their questions. For the eleven arithmetic exercises without worked explanations, it shows the completed equation.
+The importer preserves the printed typography and formulas as cropped images, includes the associated reading passages and price lists, and includes trainer walkthroughs for the math questions and the booklet’s worked explanations for reading comprehension. It matches the five test sections to the answer tables and worked solutions. For the exercise that asks which expression equals 100, it uses the worked solution (`100 ÷ 1`). It matches the two transposed Mary Anning explanations to their questions.
 
 ## GitHub Pages
 

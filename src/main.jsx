@@ -5,6 +5,7 @@ import bankUrl from './question-bank.json?url';
 import './style.css';
 
 const letters = ['א', 'ב', 'ג', 'ד'];
+const priceListPages = new Set(['20', '44']);
 const title = testId => testId === 'mixed' ? 'אימון מעורב' : `מבחן ${testId}`;
 const countCorrect = attempt => attempt.answers.filter(answer => answer.correct).length;
 const formatDate = timestamp => new Intl.DateTimeFormat('he-IL', {
@@ -132,26 +133,63 @@ function BookletArt({ art, text }) {
     : <span dir="auto">{text}</span>;
 }
 
-function Reference({ question, bank }) {
+function Reference({ question, bank, answered = false }) {
   if (!question.passage) return null;
-  const isPriceList = ['20', '44'].includes(question.passage);
-  return <details className="passage" open={isPriceList ? true : undefined}>
+  const isPriceList = priceListPages.has(question.passage);
+  return <details className="passage" open={isPriceList && !answered ? true : undefined}>
     <summary>{isPriceList ? 'המחירון' : 'קטע הקריאה'}</summary>
     <div><BookletArt art={bank.referenceArt?.[question.passage]} text={bank.passages[question.passage]} /></div>
   </details>;
 }
 
-function Quiz({ attempt, question, bank, choice, setChoice, submit, next, pause }) {
+function TrainerExplanation({ question }) {
+  const isReading = question.passage && !priceListPages.has(question.passage);
+  return <details className="trainer-explanation">
+    <summary>
+      <span className="show-explanation">הצגת דרך הפתרון</span>
+      <span className="hide-explanation">הסתרת דרך הפתרון</span>
+    </summary>
+    <div className="trainer-note">
+      <span className="trainer-avatar" aria-hidden="true">🧢</span>
+      <div>
+        <strong>מאמנת הפוקימון</strong>
+        <p>בואו נפתור את זה יחד!</p>
+        {isReading && <p className="trainer-approach">נזהה מה השאלה מבקשת, נחזור למשפט המתאים בקטע ונבדוק איזו תשובה מתאימה למה שקראנו.</p>}
+        <p className="trainer-steps">{question.explanation}</p>
+      </div>
+    </div>
+  </details>;
+}
+
+function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit, next, pause }) {
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
   const last = attempt.index === attempt.rounds.length - 1;
   const heading = useRef(null);
+  const answers = useRef(null);
+  const [hint, setHint] = useState(null);
+  const highlighted = !answer && hint?.roundId === round.id ? hint.choices : null;
+
+  useEffect(() => {
+    if (!hint) return;
+    const timeout = setTimeout(() => setHint(null), 2000);
+    return () => clearTimeout(timeout);
+  }, [hint]);
+
+  function showHint() {
+    if (answer || highlighted) return;
+    const distractor = requestHint();
+    setHint({ roundId: round.id, choices: [question.correct, distractor].sort((a, b) => a - b) });
+    answers.current?.scrollIntoView({ block: 'nearest' });
+  }
+
   useEffect(() => { heading.current?.focus(); }, [round.id]);
   return <>
     <section className="stats panel" aria-label="מדדי אימון">
       <div><span>זמן כולל</span><b dir="ltr">{duration(attempt.totalMs)}</b></div>
       <div><span>זמן לשאלה</span><b dir="ltr">{duration(attempt.questionMs)}</b></div>
       <div><span>תשובות נכונות</span><b dir="ltr">{countCorrect(attempt)} / {attempt.answers.length}</b></div>
+      <div><span>רמזים</span><b data-hint-count>{attempt.hintCount ?? 0}</b></div>
     </section>
     <section className="question panel">
       <div className="question-meta"><span>{title(attempt.testId)} · שאלה {attempt.index + 1} מתוך {attempt.rounds.length}</span>
@@ -162,15 +200,22 @@ function Quiz({ attempt, question, bank, choice, setChoice, submit, next, pause 
           {question.instruction && <span className="instruction">{question.instruction}</span>}
           <BookletArt art={question.promptArt} text={question.prompt} />
         </h1>
-        <Pokemon key={round.pokemon} id={round.pokemon} className="round-pokemon" />
+        <button className="round-pokemon hint-button" type="button" onClick={showHint} disabled={Boolean(answer)}
+          aria-disabled={Boolean(highlighted)} aria-label="בקשו רמז מהפוקימון">
+          <Pokemon key={round.pokemon} id={round.pokemon} />
+          <span>רמז ✦</span>
+        </button>
       </div>
-      <Reference key={round.id} question={question} bank={bank} />
-      <fieldset disabled={Boolean(answer)} className="answers" key={round.id}>
+      <Reference key={`${round.id}-${Boolean(answer)}`} question={question} bank={bank} answered={Boolean(answer)} />
+      <div className="visually-hidden" aria-live="polite">
+        {highlighted && `רמז: אחת מהתשובות ${highlighted.map(index => letters[index]).join(' או ')} נכונה.`}
+      </div>
+      <fieldset ref={answers} disabled={Boolean(answer)} className="answers" key={round.id}>
         <legend className="visually-hidden">בחירת תשובה</legend>
         {question.choices.map((option, index) => {
           const style = answer && index === question.correct ? 'correct'
             : answer && index === answer.choice ? 'incorrect' : choice === index ? 'selected' : '';
-          return <label key={index} className={`answer ${style}`}>
+          return <label key={index} className={`answer ${style}${highlighted?.includes(index) ? ' hinted' : ''}`}>
             <input type="radio" name="answer" checked={(answer?.choice ?? choice) === index}
               onChange={() => setChoice(index)} />
             <span className="answer-letter" aria-hidden="true">{letters[index]}</span><BookletArt art={question.choiceArt?.[index]} text={option} />
@@ -183,6 +228,7 @@ function Quiz({ attempt, question, bank, choice, setChoice, submit, next, pause 
           {!answer.correct && <p>התשובה הנכונה היא {letters[question.correct]}.</p>}</div>
         {answer.correct && <span className="burst" aria-hidden="true">✧ ✦ ✧</span>}
       </div>}
+      {answer && question.explanation && <TrainerExplanation question={question} />}
       <div className="question-actions">
         {answer ? <button className="primary" onClick={next}>{last ? 'לתוצאות האימון' : 'לשאלה הבאה'} <span aria-hidden="true">←</span></button>
           : <button className="primary" disabled={choice === null} onClick={submit}>בדיקת תשובה <span aria-hidden="true">✓</span></button>}
@@ -296,6 +342,20 @@ function App({ bank, questions }) {
     go('home');
   }
 
+  function requestHint() {
+    const attempt = current.current.active;
+    const round = attempt.rounds[attempt.index];
+    const question = questions.get(round.id);
+    const distractors = question.choices.map((_, index) => index).filter(index => index !== question.correct);
+    const distractor = attempt.hintDistractors?.[round.id] ?? distractors[Math.floor(Math.random() * distractors.length)];
+    update({ active: {
+      ...attempt,
+      hintCount: (attempt.hintCount ?? 0) + 1,
+      hintDistractors: { ...attempt.hintDistractors, [round.id]: distractor },
+    } });
+    return distractor;
+  }
+
   function submit() {
     checkpoint.current?.();
     const attempt = current.current.active;
@@ -339,7 +399,7 @@ function App({ bank, questions }) {
       {!unlocked ? <PinGate pin={game.pin} unlock={pin => { if (!game.pin) update({ pin }); setUnlocked(true); }} />
         : view === 'quiz' && question ? <Quiz attempt={active} question={question} bank={bank}
           choice={active.choice ?? null} setChoice={choice => update({ active: { ...current.current.active, choice } })}
-          submit={submit} next={next} pause={pause} />
+          requestHint={requestHint} submit={submit} next={next} pause={pause} />
         : view === 'results' && result ? <Results attempt={result} questions={questions} bank={bank} home={pause} />
         : <Home game={game} bank={bank} start={start} resume={() => go('quiz')} showResults={id => { setResultId(id); go('results'); }} />}
     </main>
