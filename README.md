@@ -27,6 +27,6 @@ The importer preserves the printed typography and formulas as cropped images, in
 2. In the repository, open **Settings → Pages** and select **GitHub Actions** as the source.
 3. Run **Deploy to GitHub Pages** in **Actions**. Open the deployment URL and set a PIN for that browser.
 
-GitHub Pages requires an eligible plan for private repositories. Private site access is a separate GitHub Enterprise Cloud setting. The Pages build contains the extracted questions, illustrations, and answers. Anyone who can access the deployed site can retrieve that data from the browser bundle. The PIN locks the interface on that browser.
+If Configure Pages returns 404, confirm that **Settings → Pages → Build and deployment → Source** is set to **GitHub Actions**, then start a new workflow run. GitHub Pages requires an eligible plan for private repositories. Private site access is a separate GitHub Enterprise Cloud setting. The Pages build contains the extracted questions, illustrations, and answers. Anyone who can access the deployed site can retrieve that data from the browser bundle. The PIN locks the interface on that browser.
 
 Pokémon illustrations are loaded from the [PokéAPI Sprites repository](https://github.com/PokeAPI/sprites).
