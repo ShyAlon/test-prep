@@ -69,26 +69,30 @@ def questions_on_page(page):
 
 def build(pdf):
     raw = subprocess.check_output(['pdftotext', '-layout', str(pdf), '-'], text=True)
-    pages = [None] + [body(page) for page in raw.split('\f')]
+    raw_pages = [None] + raw.split('\f')
+    pages = [None] + [body(page) for page in raw_pages[1:]]
     if len(pages) != 71:
         raise ValueError('Expected the 69-page Stage A booklet.')
     parsed = {n: list(questions_on_page(pages[n])) for n in range(3, 48)}
     solutions = []
-    for page in pages[51:70]:
-        lines = page.splitlines()
+    for page_number in range(51, 70):
+        lines = [line.strip() for line in raw_pages[page_number].splitlines()]
+        anchor_index = 0
         for index, line in enumerate(lines):
             marker = MARK.search(line)
             if not marker:
                 continue
+            anchor_index += 1
             answer = re.search(r"\s+([אבגד])\.", clean(line))
             if not answer:
                 continue
             explanation = []
             for detail in lines[index + 1:]:
-                if MARK.search(detail) or not explanation and not re.search(r"הֶ ?סְ", detail):
+                if not detail or MARK.search(detail) or not explanation and not re.search(r"הֶ ?סְ", detail):
                     break
                 explanation.append(detail)
-            solutions.append((int(marker[1]), answer[1], clean("\n".join(explanation))))
+            source = (page_number, anchor_index - 1, len(explanation))
+            solutions.append((int(marker[1]), answer[1], clean("\n".join(explanation)), source))
 
     tests = []
     passages = {}
@@ -113,15 +117,16 @@ def build(pdf):
                     if (test_number, section) == (4, 5) or (test_number, section) == (5, 4) and number <= 5:
                         solution_number, answer = number, key[number - 1]
                         explanation = ""
+                        source = None
                     else:
-                        solution_number, answer, explanation = solutions[solution_index]
+                        solution_number, answer, explanation, source = solutions[solution_index]
                         solution_index += 1
                     if solution_number != number:
                         raise ValueError(f'Answer mismatch at test {test_number}, section {section}, question {number}: {(solution_number, answer)}')
                     if (test_number, section, number) == (5, 1, 4):
-                        _, answer, explanation = solutions[solution_index]
+                        _, answer, explanation, source = solutions[solution_index]
                     elif (test_number, section, number) == (5, 1, 5):
-                        _, answer, explanation = solutions[solution_index - 2]
+                        _, answer, explanation, source = solutions[solution_index - 2]
                     steps = MATH_STEPS.get((test_number, section))
                     if steps:
                         explanation = steps[number - 1]
@@ -132,6 +137,7 @@ def build(pdf):
                     found.append(dict(id=f'{test_number}-{section}-{number}', prompt=prompt, choices=choices,
                                       correct=LETTERS.index(answer), explanation=explanation, page=page_number,
                                       passage=str(passage) if passage else None,
+                                      explanationSource=None if steps else source,
                                       instruction=('מהו המספר הבא בסדרה?' if (test_number, section) in {(1, 4), (4, 4)}
                                                    else 'השלימו את המספר החסר.' if (test_number, section) == (2, 1) and number <= 5
                                                    else 'פתרו את התרגיל.' if (test_number, section) == (4, 5)

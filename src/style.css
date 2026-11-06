@@ -225,3 +225,7 @@ footer { text-align: center; color: #466071; padding: 12px 16px 22px; font-size:
 .rarity-legendary .rarity-badge { background: #704607; }
 .rarity-mythical { border-color: #cd76b6; box-shadow: 0 0 0 1px #ffe2f6, 0 3px 0 #73633829; }
 .rarity-mythical .rarity-badge { background: #7b2864; }
+
+.trainer-note > div { min-width: 0; }
+.explanation-art { overflow-x: auto; }
+.explanation-art .booklet-art { max-width: 100%; min-width: min(440px, var(--art-width)); }

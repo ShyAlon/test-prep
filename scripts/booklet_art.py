@@ -62,9 +62,14 @@ def add_art(pdf, bank):
     bbox = subprocess.check_output(['pdftotext', '-bbox-layout', str(pdf), '-'])
     layout = ET.fromstring(bbox).findall('.//{*}page')
     by_page = {}
+    explanations = {}
     for test in bank['tests']:
         for question in test['questions']:
             by_page.setdefault(question['page'], []).append(question)
+            source = question.pop('explanationSource')
+            if source:
+                page, index, count = source
+                explanations.setdefault(page, []).append((question, index, count))
 
     references = {}
     for page in sorted(set(by_page) | set(map(int, bank['passages']))):
@@ -112,3 +117,24 @@ def add_art(pdf, bank):
             question['promptArt'] = raster.crop(union(words))
             question['choiceArt'] = [raster.crop(options[letter][0]) for letter in LETTERS]
     bank['referenceArt'] = references
+
+
+    for page, entries in explanations.items():
+        lines = sorted(layout[page - 1].findall('.//{*}line'), key=lambda line: coordinate(line, 'yMin'))
+        anchors = [coordinate(line, 'yMin') for line in lines
+                   if any('\u200b' in word.text for word in line.findall('{*}word'))]
+        raster = RasterPage(pdf, page)
+        for question, index, count in entries:
+            start = anchors[index]
+            end = anchors[index + 1] if index + 1 < len(anchors) else 755
+            rows = []
+            for line in lines:
+                y = coordinate(line, 'yMin')
+                if not start + 4 < y < end - 4:
+                    continue
+                if not rows or y - coordinate(rows[-1][0], 'yMin') > 4:
+                    rows.append([])
+                rows[-1].append(line)
+            if not 0 < count <= len(rows):
+                raise ValueError(f'Could not match the printed explanation for {question["id"]}: {count=}, rows={len(rows)}')
+            question['explanationArt'] = raster.crop(union([line for row in rows[:count] for line in row]))

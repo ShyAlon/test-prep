@@ -182,6 +182,14 @@ function Reference({ question, bank, answered = false }) {
   </details>;
 }
 
+function ExplanationContent({ question, className }) {
+  const art = question.explanationArt;
+  if (!art) return <p className={className}>{question.explanation}</p>;
+  return <div className={`${className} explanation-art`} style={{ '--art-width': `${art.width}px` }}>
+    <BookletArt art={art} text={question.explanation} />
+  </div>;
+}
+
 function TrainerExplanation({ question }) {
   const isReading = question.passage && !priceListPages.has(question.passage);
   return <details className="trainer-explanation">
@@ -195,7 +203,7 @@ function TrainerExplanation({ question }) {
         <strong>מאמנת הפוקימון</strong>
         <p>בואו נפתור את זה יחד!</p>
         {isReading && <p className="trainer-approach">נזהה מה השאלה מבקשת, נחזור למשפט המתאים בקטע ונבדוק איזו תשובה מתאימה למה שקראנו.</p>}
-        <p className="trainer-steps">{question.explanation}</p>
+        <ExplanationContent question={question} className="trainer-steps" />
       </div>
     </div>
   </details>;
@@ -305,7 +313,7 @@ function Results({ attempt, questions, bank, home }) {
               <Reference question={question} bank={bank} />
               <p className="review-answer"><b>התשובה שלך</b> <BookletArt art={question.choiceArt?.[answer.choice]} text={question.choices[answer.choice]} /></p>
               <p className="review-answer"><b>התשובה הנכונה</b> <BookletArt art={question.choiceArt?.[question.correct]} text={question.choices[question.correct]} /></p>
-              {question.explanation && <p className="explanation">{question.explanation}</p>}</>}
+              {question.explanation && <ExplanationContent question={question} className="explanation" />}</>}
           </div>
         </details>;
       })}</div>
