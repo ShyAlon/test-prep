@@ -1,3 +1,5 @@
+import { chooseEncounter } from './pokemon.js';
+
 const storageKey = 'poke-training.v1';
 
 export function readGame() {
@@ -29,8 +31,6 @@ function timestampRandom(timestamp) {
   };
 }
 
-const pokemon = [1, 4, 7, 10, 16, 25, 37, 39, 52, 54, 58, 63, 79, 94, 104, 133, 143, 147, 152, 155, 158, 172, 175, 183, 194, 196, 197, 209, 252, 255, 258, 280, 300, 304, 393, 403, 447, 479, 585, 700];
-
 export function createAttempt(bank, testId, limit, timestamp) {
   const questions = testId === 'mixed'
     ? bank.tests.flatMap(test => test.questions)
@@ -41,13 +41,12 @@ export function createAttempt(bank, testId, limit, timestamp) {
     const swap = Math.floor(random() * (index + 1));
     [order[index], order[swap]] = [order[swap], order[index]];
   }
-  const rounds = order.slice(0, testId === 'mixed' ? limit : undefined)
-    .map(id => ({ id, pokemon: pokemon[Math.floor(random() * pokemon.length)] }));
-  for (let index = 1; index < rounds.length; index++) {
-    if (rounds[index].pokemon === rounds[index - 1].pokemon) {
-      rounds[index].pokemon = pokemon[(pokemon.indexOf(rounds[index].pokemon) + 1) % pokemon.length];
-    }
-  }
+  let previousPokemon;
+  const rounds = order.slice(0, testId === 'mixed' ? limit : undefined).map(id => {
+    const pokemon = chooseEncounter(random, previousPokemon);
+    previousPokemon = pokemon;
+    return { id, pokemon };
+  });
   return { id: timestamp, testId, rounds, index: 0, answers: [], totalMs: 0, questionMs: 0 };
 }
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createAttempt, duration, hashPin, playFeedback, readGame, saveGame } from './model.js';
+import { pokemonCard } from './pokemon.js';
 import bankUrl from './question-bank.json?url';
 import './style.css';
 
 const letters = ['א', 'ב', 'ג', 'ד'];
+const rarityLabels = { epic: 'אפי', legendary: 'אגדי', mythical: 'מיתי' };
 const priceListPages = new Set(['20', '44']);
 const title = testId => testId === 'mixed' ? 'אימון מעורב' : `מבחן ${testId}`;
 const countCorrect = attempt => attempt.answers.filter(answer => answer.correct).length;
@@ -16,7 +18,7 @@ function Ball({ className = '' }) {
   return <span aria-hidden="true" className={`ball ${className}`}><i /></span>;
 }
 
-function Pokemon({ id, className = '' }) {
+function Pokemon({ id, className = '', animated = true }) {
   const [status, setStatus] = useState('loading');
   const [useStill, setUseStill] = useState(false);
   const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other';
@@ -33,11 +35,49 @@ function Pokemon({ id, className = '' }) {
   return <div className={`pokemon ${className}`} aria-hidden="true">
     {status !== 'ready' && <Ball />}
     {status !== 'failed' && <picture>
-      {!useStill && <source media="(prefers-reduced-motion: no-preference)" srcSet={`${base}/showdown/${id}.gif`} />}
+      {animated && !useStill && <source media="(prefers-reduced-motion: no-preference)" srcSet={`${base}/showdown/${id}.gif`} />}
       <img alt="" draggable="false" className={status === 'ready' ? '' : 'loading'}
         onLoad={() => setStatus('ready')} onError={onImageError} src={`${base}/official-artwork/${id}.png`} />
     </picture>}
   </div>;
+}
+
+function Backpack({ collection, close }) {
+  const dialog = useRef(null);
+  const catches = Object.entries(collection);
+
+  useEffect(() => { dialog.current.showModal(); }, []);
+
+  return <dialog ref={dialog} className="backpack" onClose={close} aria-labelledby="backpack-title">
+    <header className="backpack-header">
+      <div>
+        <p className="eyebrow">אוסף הפוקימונים שלי</p>
+        <h2 id="backpack-title">תיק הפוקימונים</h2>
+        <p>{catches.length} סוגי פוקימונים באוסף</p>
+      </div>
+      <button className="text-button" onClick={() => dialog.current.close()}>סגירה</button>
+    </header>
+    {catches.length === 0
+      ? <p className="backpack-empty">התיק עדיין ריק. ענו נכון כדי לתפוס את הפוקימון שמופיע ליד השאלה!</p>
+      : <ul className="pokemon-cards">
+        {catches.map(([id, count]) => {
+          const card = pokemonCard(Number(id), count);
+          return <li key={id} className={`pokemon-card card-${card.color} rarity-${card.rarity}`}>
+            <div className="card-header"><strong dir="ltr">{card.name}</strong><Ball /></div>
+            <div className="card-art">
+              {rarityLabels[card.rarity] && <span className="rarity-badge">✦ {rarityLabels[card.rarity]}</span>}
+              <Pokemon id={card.id} animated={false} />
+            </div>
+            <div className="card-caption">
+              <span dir="ltr">#{String(card.id).padStart(3, '0')}</span>
+              <span>{count} תפיסות</span>
+            </div>
+            <p>{card.evolved ? <>✦ התפתח מ־<bdi>{card.baseName}</bdi></> :
+              card.canEvolve ? 'עוד תפיסה אחת להתפתחות!' : 'ללא התפתחות'}</p>
+          </li>;
+        })}
+      </ul>}
+  </dialog>;
 }
 
 function PinGate({ pin, unlock }) {
@@ -165,6 +205,8 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
   const last = attempt.index === attempt.rounds.length - 1;
+  const reward = answer?.catchCount ? pokemonCard(round.pokemon, answer.catchCount) : null;
+  const justEvolved = reward?.evolved && answer.catchCount === 2;
   const heading = useRef(null);
   const answers = useRef(null);
   const [hint, setHint] = useState(null);
@@ -223,8 +265,11 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
         })}
       </fieldset>
       {answer && <div role="status" className={`feedback ${answer.correct ? 'win' : 'try'}`}>
-        <Pokemon key={answer.correct ? 25 : 133} id={answer.correct ? 25 : 133} />
+        <Pokemon key={reward?.id ?? (answer.correct ? 25 : 133)} id={reward?.id ?? (answer.correct ? 25 : 133)} />
         <div><strong>{answer.correct ? 'פוקימון נתפס! תשובה נכונה!' : 'איווי איתך! ממשיכים להתאמן.'}</strong>
+          {reward && <p>תפסתם את <bdi>{reward.baseName}</bdi>!
+            {justEvolved && <> ✦ הוא התפתח ל־<bdi>{reward.name}</bdi>!</>}
+          </p>}
           {!answer.correct && <p>התשובה הנכונה היא {letters[question.correct]}.</p>}</div>
         {answer.correct && <span className="burst" aria-hidden="true">✧ ✦ ✧</span>}
       </div>}
@@ -274,6 +319,7 @@ function App({ bank, questions }) {
   const [unlocked, setUnlocked] = useState(false);
   const [view, setView] = useState('home');
   const [resultId, setResultId] = useState(null);
+  const [backpackOpen, setBackpackOpen] = useState(false);
   const [storageError, setStorageError] = useState(false);
   const checkpoint = useRef(null);
   const active = game.active;
@@ -293,7 +339,7 @@ function App({ bank, questions }) {
   }
 
   useEffect(() => {
-    if (!unlocked || view !== 'quiz' || !activeId) return;
+    if (!unlocked || view !== 'quiz' || !activeId || backpackOpen) return;
     let since = document.hidden ? null : performance.now();
     function recordTime() {
       if (since === null) return;
@@ -324,7 +370,7 @@ function App({ bank, questions }) {
       window.removeEventListener('pagehide', recordTime);
       checkpoint.current = null;
     };
-  }, [unlocked, view, activeId, activeIndex]);
+  }, [unlocked, view, activeId, activeIndex, backpackOpen]);
 
   function go(nextView) {
     setView(nextView);
@@ -360,10 +406,16 @@ function App({ bank, questions }) {
     checkpoint.current?.();
     const attempt = current.current.active;
     if (attempt.choice == null || attempt.answers[attempt.index]) return;
-    const question = questions.get(attempt.rounds[attempt.index].id);
+    const round = attempt.rounds[attempt.index];
+    const question = questions.get(round.id);
     const correct = attempt.choice === question.correct;
     const recorded = { choice: attempt.choice, correct, ms: attempt.questionMs };
-    update({ active: { ...attempt, answers: [...attempt.answers, recorded] } });
+    const collection = current.current.collection ?? {};
+    if (correct) recorded.catchCount = (collection[round.pokemon] ?? 0) + 1;
+    update({
+      active: { ...attempt, answers: [...attempt.answers, recorded] },
+      ...(correct ? { collection: { ...collection, [round.pokemon]: recorded.catchCount } } : {}),
+    });
     if (current.current.sound) playFeedback(correct);
   }
 
@@ -388,6 +440,10 @@ function App({ bank, questions }) {
     <header className="topbar"><div className="topbar-inner">
       <button className="brand" onClick={pause}><Ball /><span>פוקימון <small>מחנה האימונים</small></span></button>
       {unlocked && <div className="utilities">
+        <button className="utility backpack-button" type="button" aria-haspopup="dialog" onClick={() => {
+          checkpoint.current?.();
+          setBackpackOpen(true);
+        }}><span aria-hidden="true">🎒</span> תיק</button>
         <button className="utility" type="button" aria-pressed={game.sound}
           onClick={() => update({ sound: !game.sound })}><span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל</button>
         <button className="utility" type="button" onClick={() => { pause(); setUnlocked(false); }}>
@@ -403,6 +459,7 @@ function App({ bank, questions }) {
         : view === 'results' && result ? <Results attempt={result} questions={questions} bank={bank} home={pause} />
         : <Home game={game} bank={bank} start={start} resume={() => go('quiz')} showResults={id => { setResultId(id); go('results'); }} />}
     </main>
+    {backpackOpen && <Backpack collection={game.collection ?? {}} close={() => setBackpackOpen(false)} />}
     <footer>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a></footer>
   </>;
 }

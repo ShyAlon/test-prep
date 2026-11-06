@@ -2,6 +2,8 @@
 
 A Hebrew, right-to-left React app for personal Stage A gifted-test practice. It supports the five booklet tests and a mixed session with 10, 20, 30, or all questions. Each attempt uses its start timestamp to shuffle questions. The app shows one question at a time, with count-up timers and a live correct/submitted score. The question timer stops when an answer is submitted. The total timer runs while the quiz is visible, including feedback. Attempts, results, and the PIN verifier stay in browser local storage.
 
+Correct answers catch the Pokémon shown beside the question. Open the backpack to see the collection as cards. On the second catch, the card changes to the species’ next evolution if it has one. Epic, legendary, and mythical encounters are less frequent and have rarity badges in the backpack. The backpack is saved in browser local storage.
+
 ## Run locally
 
 Install Node.js 22.12 or newer, then run:
