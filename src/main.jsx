@@ -47,6 +47,23 @@ function Pokemon({ id, className = '', animated = true }) {
   </div>;
 }
 
+function HelpDialog({ close }) {
+  const dialog = useRef(null);
+  useEffect(() => { dialog.current.showModal(); }, []);
+  return <dialog ref={dialog} className="help-dialog" onClose={close} aria-labelledby="help-title">
+    <header className="help-header">
+      <div><p className="eyebrow">כל מאמן מתחיל בצעד קטן</p><h2 id="help-title">איך מתאמנים?</h2></div>
+      <button className="text-button" type="button" autoFocus onClick={() => dialog.current.close()} aria-label="סגירת ההדרכה">סגירה ✕</button>
+    </header>
+    <ol className="help-steps">
+      <li><h3>בוחרים אימון</h3><p>במסך הבית בוחרים מבחן, או בוחרים את מספר השאלות ולוחצים על ״לאימון״. ״אימון מתחדש״ כולל מספרים משתנים וסיפורים חדשים; ״אימון מעורב״ משלב שאלות מהמבחנים.</p></li>
+      <li><h3>עונים ומתקדמים</h3><p>קוראים את השאלה ואת קטע הקריאה, אם יש, ובוחרים תשובה. לוחצים על ״בדיקת תשובה״ בסרגל התחתון כדי לראות את התוצאה. אחר כך לוחצים על ״לשאלה הבאה״. בשאלה האחרונה עוברים לתוצאות האימון.</p></li>
+      <li><h3>חוזרים ובודקים</h3><p>״לשאלה הקודמת״ מחזיר לשאלות שכבר ראיתם. תשובות שנבדקו נשמרות ואי אפשר לשנות אותן. כשמופיע כפתור הסבר, אפשר לפתוח אותו כדי להבין את הפתרון. בסיום, בוחרים אימון מתוך ״האימונים שלי״ במסך הבית כדי לעיין בתשובות ובהסברים.</p></li>
+    </ol>
+    <aside className="help-tip"><strong>אפשר להתאמן בקצב שלכם</strong><p>לחצו על הפוקימון שליד השאלה כדי לקבל רמז, או על ״הגדלה״ בסרגל העליון כדי להגדיל את הטקסט. ״שמירה והפסקה״ מחזירה למסך הבית; כדי להמשיך בוחרים ״ממשיכים את…״ באותו חשבון ובאותו דפדפן.</p></aside>
+  </dialog>;
+}
+
 function Backpack({ collection, close }) {
   const dialog = useRef(null);
   const catches = Object.entries(collection);
@@ -184,10 +201,9 @@ function TrainerExplanation({ question }) {
   </details>;
 }
 
-function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit, next, previous, pause }) {
+function Quiz({ attempt, question, bank, choice, setChoice, requestHint, pause }) {
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
-  const last = attempt.index === attempt.rounds.length - 1;
   const reward = answer?.catchCount ? pokemonCard(round.pokemon, answer.catchCount) : null;
   const justEvolved = reward?.evolved && answer.catchCount === 2;
   const heading = useRef(null);
@@ -257,13 +273,6 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
         {answer.correct && <span className="burst" aria-hidden="true">✧ ✦ ✧</span>}
       </div>}
       {answer && question.explanation && <TrainerExplanation question={question} />}
-      <div className="question-actions">
-        <button className="text-button" onClick={previous} disabled={attempt.index === 0}>
-          <span aria-hidden="true">→</span> לשאלה הקודמת
-        </button>
-        {answer ? <button className="primary" onClick={next}>{last ? 'לתוצאות האימון' : 'לשאלה הבאה'} <span aria-hidden="true">←</span></button>
-          : <button className="primary" disabled={choice === null} onClick={submit}>בדיקת תשובה <span aria-hidden="true">✓</span></button>}
-      </div>
     </section>
   </>;
 }
@@ -300,6 +309,25 @@ function Results({ attempt, questions, bank, home }) {
 }
 
 function App({ bank, questions, user, auth }) {
+  const topbar = useRef(null);
+  const bottomBar = useRef(null);
+  useEffect(() => {
+    const header = topbar.current;
+    const root = document.documentElement;
+    const measure = () => {
+      root.style.setProperty('--topbar-height', `${header.getBoundingClientRect().height}px`);
+      root.style.setProperty('--bottom-bar-height', `${bottomBar.current.getBoundingClientRect().height}px`);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    observer.observe(bottomBar.current);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--topbar-height');
+      root.style.removeProperty('--bottom-bar-height');
+    };
+  }, []);
   const [game, setGame] = useState(() => readGame(user.uid));
   const [legacyAvailable, setLegacyAvailable] = useState(() => canImportLegacyGame(user.uid));
   const [accountError, setAccountError] = useState('');
@@ -308,6 +336,7 @@ function App({ bank, questions, user, auth }) {
   const [view, setView] = useState('home');
   const [resultId, setResultId] = useState(null);
   const [backpackOpen, setBackpackOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [magnifierOpen, setMagnifierOpen] = useState(false);
   const magnifierToggle = useRef(null);
   const [storageError, setStorageError] = useState(false);
@@ -316,7 +345,7 @@ function App({ bank, questions, user, auth }) {
   const activeId = active?.id;
   const activeIndex = active?.index;
   const behavior = useBehaviorTracking(user, auth, {
-    view: backpackOpen ? 'backpack' : view,
+    view: helpOpen ? 'help' : backpackOpen ? 'backpack' : view,
     ...(view === 'quiz' && active ? { testId: active.testId, attemptId: String(active.id),
       questionId: active.rounds[active.index].id, questionIndex: active.index,
       answered: Boolean(active.answers[active.index]) } : {}),
@@ -478,10 +507,12 @@ function App({ bank, questions, user, auth }) {
   const question = active && (active.rounds[active.index].question ?? questions.get(active.rounds[active.index].id));
   const result = game.history.find(attempt => attempt.id === resultId);
   return <>
-    <header className="topbar"><div className="topbar-inner">
+    <header ref={topbar} className="topbar"><div className="topbar-inner">
       <button className="brand" onClick={pause}><Ball /><span>פוקימון <small>מחנה האימונים</small></span></button>
       <div className="utilities">
         <span className="account-name" title={user.email ?? user.displayName ?? ''}>{user.displayName || user.email || 'מאמן'}</span>
+        <button className="utility" type="button" aria-haspopup="dialog" aria-expanded={helpOpen}
+          onClick={() => { checkpoint.current?.(); setHelpOpen(true); }}><span aria-hidden="true">?</span> הדרכה</button>
         <button ref={magnifierToggle} className="utility magnifier-toggle" type="button"
           aria-pressed={magnifierOpen} aria-label="זכוכית מגדלת"
           onClick={() => { behavior.track('magnifier_toggle', { enabled: !magnifierOpen }); setMagnifierOpen(open => !open); }}>
@@ -511,17 +542,28 @@ function App({ bank, questions, user, auth }) {
       {accountError && <p className="error panel" role="alert">{accountError}</p>}
       {view === 'quiz' && question ? <Quiz attempt={active} question={question} bank={bank}
           choice={active.choice ?? null} setChoice={choice => { behavior.track('answer_select', { choice }); update({ active: { ...current.current.active, choice } }); }}
-          requestHint={requestHint} submit={submit} next={next} previous={previous} pause={pause} />
+          requestHint={requestHint} pause={pause} />
         : view === 'results' && result ? <Results attempt={result} questions={questions} bank={bank} home={pause} />
         : <Home legacyAvailable={legacyAvailable && !game.active && !game.history.length && !Object.keys(game.collection ?? {}).length} importLegacy={importLegacy} game={game} bank={bank} start={start} resume={() => { behavior.track('test_resume'); go('quiz'); }} showResults={id => { behavior.track('results_open', { attemptId: String(id) }); setResultId(id); go('results'); }} />}
     </main>
-    {magnifierOpen && !backpackOpen && <Magnifier onClose={() => {
+    {helpOpen && <HelpDialog close={() => setHelpOpen(false)} />}
+    {magnifierOpen && !backpackOpen && !helpOpen && <Magnifier onClose={() => {
       behavior.track('magnifier_toggle', { enabled: false });
       setMagnifierOpen(false);
       magnifierToggle.current?.focus();
     }} />}
     {backpackOpen && <Backpack collection={game.collection ?? {}} close={() => { behavior.track('backpack_close'); setBackpackOpen(false); }} />}
-    <footer>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a></footer>
+    <footer ref={bottomBar} className="bottom-bar">
+      {view === 'quiz' && question && <nav className="question-actions" aria-label="ניווט בין שאלות">
+        <button className="primary" onClick={previous} disabled={active.index === 0}>
+          <span aria-hidden="true">→</span> לשאלה הקודמת
+        </button>
+        {active.answers[active.index]
+          ? <button className="primary" onClick={next}>{active.index === active.rounds.length - 1 ? 'לתוצאות האימון' : 'לשאלה הבאה'} <span aria-hidden="true">←</span></button>
+          : <button className="primary" disabled={active.choice == null} onClick={submit}>בדיקת תשובה <span aria-hidden="true">✓</span></button>}
+      </nav>}
+      <p>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a></p>
+    </footer>
   </>;
 }
 
@@ -542,3 +584,11 @@ async function loadApp() {
 }
 
 loadApp();
+
+// Keep development un-cached; deploy under the current GitHub Pages subdirectory.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, { updateViaCache: 'none' })
+      .catch(error => console.warn('Offline support could not be enabled.', error.name));
+  });
+}
