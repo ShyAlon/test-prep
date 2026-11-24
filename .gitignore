@@ -5,3 +5,9 @@ private/
 __pycache__/
 .DS_Store
 .vite/
+.env
+.env.*
+!.env.example
+firebase-debug.log*
+.firebase/
+firestore-debug.log*

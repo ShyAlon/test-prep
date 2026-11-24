@@ -7,6 +7,11 @@ from pathlib import Path
 
 from booklet_art import add_art
 from math_solutions import MATH_STEPS
+import importlib.util
+
+_spec = importlib.util.spec_from_file_location("extract_crops", Path(__file__).with_name("extract-crops.py"))
+_ocr = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_ocr)
 
 LETTERS = "אבגד"
 CONTROLS = re.compile(r"[\u200b-\u200f\u202a-\u202e]")
@@ -154,10 +159,12 @@ def build(pdf):
 if __name__ == '__main__':
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('pdf', type=Path)
+    cli.add_argument('--tessdata', help='Directory containing heb.traineddata')
     cli.add_argument('output', type=Path, nargs='?', default=Path('src/question-bank.json'))
     args = cli.parse_args()
     bank = build(args.pdf)
     add_art(args.pdf, bank)
+    bank = _ocr.extract_bank(bank, args.tessdata)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(bank, ensure_ascii=False), encoding="utf-8")
     print(f"Wrote {sum(len(test['questions']) for test in bank['tests'])} questions to {args.output}")

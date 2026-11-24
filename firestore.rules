@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /behaviorBatches/{batchId} {
+      // Audit data is visible only through owner/admin tools, never to app clients.
+      allow read, update, delete: if false;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'sessionId', 'schemaVersion', 'createdAt', 'expiresAt', 'receivedAt', 'events'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.sessionId is string && request.resource.data.sessionId.size() <= 80
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.events is list
+        && request.resource.data.events.size() > 0 && request.resource.data.events.size() <= 25
+        && request.resource.data.receivedAt == request.time
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.createdAt >= request.time - duration.value(7, 'd')
+        && request.resource.data.createdAt <= request.time + duration.value(5, 'm')
+        && request.resource.data.expiresAt == request.resource.data.createdAt + duration.value(85, 'd');
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -6,13 +6,19 @@
   "scripts": {
     "dev": "vite --configLoader runner",
     "build": "vite build --configLoader runner",
-    "preview": "vite preview --configLoader runner"
+    "preview": "vite preview --configLoader runner",
+    "test": "node --test scripts/*.test.js"
   },
   "dependencies": {
+    "firebase": "13.4.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "vite": "7.3.6"
+    "vite": "7.3.8"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.13.6",
+    "source-map-js": "1.2.2"
   }
 }

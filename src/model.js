@@ -1,27 +1,5 @@
+import { generatePractice } from './question-generator.js';
 import { chooseEncounter } from './pokemon.js';
-
-const storageKey = 'poke-training.v1';
-
-export function readGame() {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey)) ?? { history: [], sound: true };
-  } catch {
-    return { history: [], sound: true };
-  }
-}
-
-export function saveGame(game) {
-  localStorage.setItem(storageKey, JSON.stringify(game));
-}
-
-export async function hashPin(pin, salt) {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', encoder.encode(pin), 'PBKDF2', false, ['deriveBits']);
-  const hash = await crypto.subtle.deriveBits({
-    name: 'PBKDF2', hash: 'SHA-256', salt: encoder.encode(salt), iterations: 150000,
-  }, key, 256);
-  return Array.from(new Uint8Array(hash)).join('.');
-}
 
 function timestampRandom(timestamp) {
   let seed = (timestamp ^ Math.floor(timestamp / 4294967296)) >>> 0;
@@ -32,10 +10,20 @@ function timestampRandom(timestamp) {
 }
 
 export function createAttempt(bank, testId, limit, timestamp) {
+  const random = timestampRandom(timestamp);
+  if (testId === 'practice') {
+    const generated = generatePractice(random, limit);
+    let previousPokemon;
+    const rounds = generated.map(question => {
+      const pokemon = chooseEncounter(random, previousPokemon);
+      previousPokemon = pokemon;
+      return { id: question.id, question, pokemon };
+    });
+    return { id: timestamp, testId, rounds, index: 0, answers: [], totalMs: 0, questionMs: 0 };
+  }
   const questions = testId === 'mixed'
     ? bank.tests.flatMap(test => test.questions)
     : bank.tests.find(test => test.id === testId).questions;
-  const random = timestampRandom(timestamp);
   const order = questions.map(question => question.id);
   for (let index = order.length - 1; index > 0; index--) {
     const swap = Math.floor(random() * (index + 1));
@@ -79,4 +67,17 @@ export function playFeedback(correct) {
   } catch {
     // Keep visual feedback available on browsers without Web Audio.
   }
+}
+
+// Submitted answers stay immutable. Only the current unanswered question has a
+// draft; carry it with us while the user reviews previously submitted rounds.
+export function moveQuestion(attempt, index) {
+  const furthest = Math.min(attempt.answers.length, attempt.rounds.length - 1);
+  if (!Number.isInteger(index) || index < 0 || index > furthest || index === attempt.index) return attempt;
+  const pending = attempt.answers[attempt.index] ? attempt.pendingQuestion
+    : { index: attempt.index, choice: attempt.choice ?? null, ms: attempt.questionMs };
+  const answer = attempt.answers[index];
+  return { ...attempt, index, pendingQuestion: pending ?? null,
+    choice: answer?.choice ?? (pending?.index === index ? pending.choice : null),
+    questionMs: answer?.ms ?? (pending?.index === index ? pending.ms : 0) };
 }

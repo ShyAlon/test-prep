@@ -229,3 +229,51 @@ footer { text-align: center; color: #466071; padding: 12px 16px 22px; font-size:
 .trainer-note > div { min-width: 0; }
 .explanation-art { overflow-x: auto; }
 .explanation-art .booklet-art { max-width: 100%; min-width: min(440px, var(--art-width)); }
+
+.question-text { white-space: pre-wrap; unicode-bidi: plaintext; }
+.question-text[dir="ltr"] { display: inline-block; unicode-bidi: isolate; }
+.mixed + .mixed { margin-top: 16px; }
+
+.question-actions { justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.question-actions .text-button:disabled { opacity: .45; cursor: default; }
+
+/* Leave room above and below Hebrew glyphs for vowel points. */
+.answer .question-text { line-height: 1.85; }
+
+.magnifier-toggle[aria-pressed="true"] { color: #173350; background: #aee9df; border-color: #d0fff1; box-shadow: inset 0 1px 0 #ffffffb0; }
+.magnifier { position: fixed; z-index: 100; border-radius: 50%; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; filter: drop-shadow(0 12px 15px #153e4a38); }
+.magnifier[data-dragging] { cursor: grabbing; }
+.magnifier:focus-visible { outline: 3px solid #267ac7; outline-offset: 7px; }
+.magnifier-viewport { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; background: #edf6ef; }
+.magnifier-canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; pointer-events: none; }
+.magnifier-canvas *, .magnifier-canvas *::before, .magnifier-canvas *::after { animation: none !important; transition: none !important; caret-color: transparent !important; }
+.magnifier-rim { position: absolute; inset: 0; border: 6px solid #397d7b; border-radius: inherit; pointer-events: none; box-shadow: inset 0 0 0 2px #ecfff3d9, inset 0 0 17px #143f5140, 0 0 0 1px #153c50, 0 2px 0 2px #b9ddd2; background: radial-gradient(circle at 68% 24%, transparent 62%, #acdfe421 90%); }
+.magnifier-reflection { position: absolute; top: 13px; right: 16px; width: 43%; height: 27%; border-radius: 15% 85% 30% 70%; transform: rotate(24deg); pointer-events: none; background: linear-gradient(165deg, #ffffffdf 0%, #ffffff80 19%, #ffffff08 48%, transparent 65%); box-shadow: 0 -2px 0 #ffffffb0; }
+.magnifier-reflection::after { content: ''; position: absolute; width: 35%; height: 20%; top: 5px; right: 15px; border-radius: 50%; background: #fff; opacity: .8; filter: blur(2px); }
+.magnifier-handle { position: absolute; z-index: -1; width: 25px; height: 78px; left: 11px; bottom: -49px; border: 2px solid #1c4558; border-radius: 8px 8px 13px 13px; transform: rotate(39deg); transform-origin: 50% 0; background: linear-gradient(90deg, #174b55, #3a8a82 35%, #205b63 72%); box-shadow: inset 3px 0 0 #b5ead655, 0 3px 0 #12364755; pointer-events: none; }
+.magnifier-badge { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); border: 1px solid #c5efe5; border-radius: 12px; padding: 1px 7px; background: #174b55; color: #fff; font-size: 11px; font-weight: 800; direction: ltr; pointer-events: none; }
+@media (max-width: 620px) {
+  .topbar-inner { flex-wrap: wrap; padding-block: 8px; gap: 6px; }
+  .utilities { flex-wrap: wrap; }
+}
+
+.auth-brand .gate-ball { --ball-size: 30px; margin: 0; animation: none; }
+.auth-gate { max-width: 500px; }
+.auth-gate input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #a9c1bc; border-radius: 9px; padding: 9px 12px; background: #fbfefd; color: var(--ink); }
+.google-signin { width: 100%; min-height: 46px; display: flex; justify-content: center; align-items: center; gap: 12px; border: 1px solid #b5c6d0; border-radius: 12px; background: white; color: var(--ink); font-weight: 700; }
+.google-signin:hover:not(:disabled) { background: #f0f6fb; }
+.auth-divider { display: flex; align-items: center; gap: 12px; color: #57727c; font-size: .86rem; margin-block: 20px; }
+.auth-divider::before, .auth-divider::after { content: ''; height: 1px; background: var(--line); flex: 1; }
+.auth-modes { display: flex; padding: 4px; background: #edf6f2; border-radius: 12px; margin-bottom: 18px; gap: 4px; }
+.auth-modes button { flex: 1; border: 0; padding: 9px; border-radius: 9px; background: transparent; color: #3e6460; }
+.auth-modes button[aria-pressed="true"] { background: white; color: #135548; font-weight: 700; box-shadow: 0 1px 4px #183f4920; }
+.auth-guidance { color: #52726e; line-height: 1.6; }
+.auth-notice { background: #e8f7e7; color: #235b31; border-radius: 9px; padding: 12px; }
+.auth-reset { margin-top: 16px; }
+.account-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; align-self: center; font-size: .8rem; color: #e0efee; }
+.legacy-import { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 16px 20px; margin-bottom: 18px; background: #fff8da; }
+.legacy-import p { margin-top: 5px; color: #4e655f; }
+@media (max-width: 620px) {
+  .account-name { flex-basis: 100%; max-width: 100%; }
+  .legacy-import { align-items: flex-start; flex-direction: column; }
+}

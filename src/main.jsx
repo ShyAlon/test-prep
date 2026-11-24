@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createAttempt, duration, hashPin, playFeedback, readGame, saveGame } from './model.js';
+import { createAttempt, duration, moveQuestion, playFeedback } from './model.js';
+import { Magnifier } from './Magnifier.jsx';
+import { useBehaviorTracking } from './useBehaviorTracking.js';
+import { AuthBoundary } from './Auth.jsx';
+import { signOut } from 'firebase/auth';
+import { canImportLegacyGame, importLegacyGame, readGame, saveGame } from './profile-storage.js';
 import { pokemonCard } from './pokemon.js';
 import bankUrl from './question-bank.json?url';
 import './style.css';
@@ -8,7 +13,7 @@ import './style.css';
 const letters = ['א', 'ב', 'ג', 'ד'];
 const rarityLabels = { epic: 'אפי', legendary: 'אגדי', mythical: 'מיתי' };
 const priceListPages = new Set(['20', '44']);
-const title = testId => testId === 'mixed' ? 'אימון מעורב' : `מבחן ${testId}`;
+const title = testId => testId === 'practice' ? 'אימון מתחדש' : testId === 'mixed' ? 'אימון מעורב' : `מבחן ${testId}`;
 const countCorrect = attempt => attempt.answers.filter(answer => answer.correct).length;
 const formatDate = timestamp => new Intl.DateTimeFormat('he-IL', {
   dateStyle: 'medium', timeStyle: 'short',
@@ -80,50 +85,15 @@ function Backpack({ collection, close }) {
   </dialog>;
 }
 
-function PinGate({ pin, unlock }) {
-  const [value, setValue] = useState('');
-  const [confirmation, setConfirmation] = useState('');
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
-  async function submit(event) {
-    event.preventDefault();
-    if (!/^\d{4,8}$/.test(value)) return setError('הקוד צריך להכיל 4 עד 8 ספרות.');
-    if (!pin && confirmation !== value) return setError('הקודים שונים. נסו שוב.');
-    setError('');
-    setBusy(true);
-    try {
-      const salt = pin?.salt ?? crypto.randomUUID();
-      const hash = await hashPin(value, salt);
-      if (pin && pin.hash !== hash) return setError('הקוד שגוי. נסו שוב.');
-      unlock({ salt, hash });
-    } catch {
-      setError('אי אפשר לפתוח את המחנה כרגע. נסו לפתוח את האתר שוב.');
-    } finally {
-      setBusy(false);
-    }
-  }
-  return <section className="gate panel">
-    <Ball className="gate-ball" />
-    <p className="eyebrow">שער הכניסה</p>
-    <h1>{pin ? 'ברוכים השבים, מאמנים!' : 'פותחים את מחנה האימונים'}</h1>
-    <p>{pin ? 'הקלידו את הקוד כדי להיכנס למחנה.' : 'בחרו קוד אישי לפתיחת המחנה בדפדפן הזה.'}</p>
-    <form onSubmit={submit}>
-      <label htmlFor="pin">קוד כניסה</label>
-      <input id="pin" type="password" inputMode="numeric" autoComplete={pin ? 'current-password' : 'new-password'}
-        maxLength={8} value={value} onChange={event => setValue(event.target.value)} required dir="ltr" />
-      {!pin && <><label htmlFor="confirm">הקלידו את הקוד שוב</label>
-        <input id="confirm" type="password" inputMode="numeric" autoComplete="new-password"
-          maxLength={8} value={confirmation} onChange={event => setConfirmation(event.target.value)} required dir="ltr" /></>}
-      {error && <p className="error" role="alert">{error}</p>}
-      <button className="primary" disabled={busy}>{pin ? 'כניסה למחנה' : 'שמירת הקוד וכניסה'} <span aria-hidden="true">←</span></button>
-    </form>
-  </section>;
-}
-
-function Home({ game, bank, start, resume, showResults }) {
+function Home({ game, bank, start, resume, showResults, legacyAvailable, importLegacy }) {
   const questionCount = bank.tests.reduce((total, test) => total + test.questions.length, 0);
+  const [practiceLimit, setPracticeLimit] = useState(20);
   const [limit, setLimit] = useState(Math.min(20, questionCount));
   return <>
+    {legacyAvailable && <section className="legacy-import panel">
+      <div><strong>ממשיכים מהאימונים הקודמים</strong><p>נמצאה התקדמות מהגרסה הישנה בדפדפן הזה. אפשר להעביר אותה לחשבון הנוכחי.</p></div>
+      <button className="text-button" onClick={importLegacy}>העברת ההתקדמות לחשבון הזה</button>
+    </section>}
     <section className="hero panel">
       <div className="hero-text">
         <p className="eyebrow"><span /> מועדון המאמנים</p>
@@ -139,6 +109,14 @@ function Home({ game, bank, start, resume, showResults }) {
     <section className="section">
       <p className="eyebrow">מפת האימונים</p>
       <h2>בוחרים את האתגר הבא</h2>
+      <div className="mixed panel">
+        <div className="tile-icon" aria-hidden="true">✨</div>
+        <div><h3>אימון מתחדש</h3><p>מספרים משתנים, תשובות מחושבות וקטעי קריאה חדשים. השאלות נשמרות להמשך ולחזרה.</p></div>
+        <label>מספר שאלות<select id="practice-count" defaultValue="20" onChange={event => setPracticeLimit(Number(event.target.value))}>
+          {[10, 20, 30, 50, 100].map(value => <option key={value}>{value}</option>)}
+        </select></label>
+        <button className="primary" onClick={() => start('practice', practiceLimit)}>לאימון <span aria-hidden="true">←</span></button>
+      </div>
       <div className="mixed panel">
         <div className="tile-icon" aria-hidden="true">⚡</div>
         <div><h3>אימון מעורב</h3><p>שאלות מכל המבחנים, בסדר חדש בכל אימון.</p></div>
@@ -168,9 +146,10 @@ function Home({ game, bank, start, resume, showResults }) {
   </>;
 }
 
-function BookletArt({ art, text }) {
-  return art ? <img className="booklet-art" src={art.src} width={art.width} height={art.height} alt={text} />
-    : <span dir="auto">{text}</span>;
+function QuestionText({ text, direction = 'auto' }) {
+  const parts = text?.split(/([A0-9][A0-9,.]*(?:\s*[+×✕÷:−=*-]\s*(?:[A0-9][A0-9,.]*|__))+)/g);
+  return <span className="question-text" dir={direction}>{parts?.map((part, index) =>
+    index % 2 ? <bdi dir="ltr" key={index}>{part}</bdi> : part)}</span>;
 }
 
 function Reference({ question, bank, answered = false }) {
@@ -178,16 +157,12 @@ function Reference({ question, bank, answered = false }) {
   const isPriceList = priceListPages.has(question.passage);
   return <details className="passage" open={isPriceList && !answered ? true : undefined}>
     <summary>{isPriceList ? 'המחירון' : 'קטע הקריאה'}</summary>
-    <div><BookletArt art={bank.referenceArt?.[question.passage]} text={bank.passages[question.passage]} /></div>
+    <div><QuestionText text={question.passageText ?? bank.passages[question.passage]} /></div>
   </details>;
 }
 
 function ExplanationContent({ question, className }) {
-  const art = question.explanationArt;
-  if (!art) return <p className={className}>{question.explanation}</p>;
-  return <div className={`${className} explanation-art`} style={{ '--art-width': `${art.width}px` }}>
-    <BookletArt art={art} text={question.explanation} />
-  </div>;
+  return <p className={className}><QuestionText text={question.explanation} /></p>;
 }
 
 function TrainerExplanation({ question }) {
@@ -209,7 +184,7 @@ function TrainerExplanation({ question }) {
   </details>;
 }
 
-function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit, next, pause }) {
+function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit, next, previous, pause }) {
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
   const last = attempt.index === attempt.rounds.length - 1;
@@ -237,7 +212,7 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
   return <>
     <section className="stats panel" aria-label="מדדי אימון">
       <div><span>זמן כולל</span><b dir="ltr">{duration(attempt.totalMs)}</b></div>
-      <div><span>זמן לשאלה</span><b dir="ltr">{duration(attempt.questionMs)}</b></div>
+      <div><span>זמן לשאלה</span><b dir="ltr">{duration(answer?.ms ?? attempt.questionMs)}</b></div>
       <div><span>תשובות נכונות</span><b dir="ltr">{countCorrect(attempt)} / {attempt.answers.length}</b></div>
       <div><span>רמזים</span><b data-hint-count>{attempt.hintCount ?? 0}</b></div>
     </section>
@@ -248,7 +223,7 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
       <div className="question-title">
         <h1 ref={heading} tabIndex={-1}>
           {question.instruction && <span className="instruction">{question.instruction}</span>}
-          <BookletArt art={question.promptArt} text={question.prompt} />
+          <QuestionText text={question.prompt} direction={question.direction} />
         </h1>
         <button className="round-pokemon hint-button" type="button" onClick={showHint} disabled={Boolean(answer)}
           aria-disabled={Boolean(highlighted)} aria-label="בקשו רמז מהפוקימון">
@@ -268,7 +243,7 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
           return <label key={index} className={`answer ${style}${highlighted?.includes(index) ? ' hinted' : ''}`}>
             <input type="radio" name="answer" checked={(answer?.choice ?? choice) === index}
               onChange={() => setChoice(index)} />
-            <span className="answer-letter" aria-hidden="true">{letters[index]}</span><BookletArt art={question.choiceArt?.[index]} text={option} />
+            <span className="answer-letter" aria-hidden="true">{letters[index]}</span><QuestionText text={option} />
           </label>;
         })}
       </fieldset>
@@ -283,6 +258,9 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, submit,
       </div>}
       {answer && question.explanation && <TrainerExplanation question={question} />}
       <div className="question-actions">
+        <button className="text-button" onClick={previous} disabled={attempt.index === 0}>
+          <span aria-hidden="true">→</span> לשאלה הקודמת
+        </button>
         {answer ? <button className="primary" onClick={next}>{last ? 'לתוצאות האימון' : 'לשאלה הבאה'} <span aria-hidden="true">←</span></button>
           : <button className="primary" disabled={choice === null} onClick={submit}>בדיקת תשובה <span aria-hidden="true">✓</span></button>}
       </div>
@@ -302,17 +280,17 @@ function Results({ attempt, questions, bank, home }) {
     </section>
     <section className="section"><p className="eyebrow">יומן המאמן</p><h2>עוברים על התשובות</h2>
       <div className="review-list">{attempt.rounds.map((round, index) => {
-        const question = questions.get(round.id);
+        const question = round.question ?? questions.get(round.id);
         const answer = attempt.answers[index];
         return <details key={round.id} className="panel review">
           <summary><span className={answer.correct ? 'check' : 'miss'} aria-hidden="true">{answer.correct ? '✓' : '↻'}</span>
             <strong>שאלה {index + 1}</strong><span dir="ltr">{duration(answer.ms)}</span>
             <span className="visually-hidden">{answer.correct ? 'נכון' : 'ניסיון נוסף'}</span></summary>
           <div className="review-body">
-            {question && <><p className="review-prompt"><BookletArt art={question.promptArt} text={question.prompt} /></p>
+            {question && <><p className="review-prompt"><QuestionText text={question.prompt} direction={question.direction} /></p>
               <Reference question={question} bank={bank} />
-              <p className="review-answer"><b>התשובה שלך</b> <BookletArt art={question.choiceArt?.[answer.choice]} text={question.choices[answer.choice]} /></p>
-              <p className="review-answer"><b>התשובה הנכונה</b> <BookletArt art={question.choiceArt?.[question.correct]} text={question.choices[question.correct]} /></p>
+              <p className="review-answer"><b>התשובה שלך</b> <QuestionText text={question.choices[answer.choice]} /></p>
+              <p className="review-answer"><b>התשובה הנכונה</b> <QuestionText text={question.choices[question.correct]} /></p>
               {question.explanation && <ExplanationContent question={question} className="explanation" />}</>}
           </div>
         </details>;
@@ -321,23 +299,34 @@ function Results({ attempt, questions, bank, home }) {
   </>;
 }
 
-function App({ bank, questions }) {
-  const [game, setGame] = useState(readGame);
+function App({ bank, questions, user, auth }) {
+  const [game, setGame] = useState(() => readGame(user.uid));
+  const [legacyAvailable, setLegacyAvailable] = useState(() => canImportLegacyGame(user.uid));
+  const [accountError, setAccountError] = useState('');
+  const [signingOut, setSigningOut] = useState(false);
   const current = useRef(game);
-  const [unlocked, setUnlocked] = useState(false);
   const [view, setView] = useState('home');
   const [resultId, setResultId] = useState(null);
   const [backpackOpen, setBackpackOpen] = useState(false);
+  const [magnifierOpen, setMagnifierOpen] = useState(false);
+  const magnifierToggle = useRef(null);
   const [storageError, setStorageError] = useState(false);
   const checkpoint = useRef(null);
   const active = game.active;
   const activeId = active?.id;
   const activeIndex = active?.index;
+  const behavior = useBehaviorTracking(user, auth, {
+    view: backpackOpen ? 'backpack' : view,
+    ...(view === 'quiz' && active ? { testId: active.testId, attemptId: String(active.id),
+      questionId: active.rounds[active.index].id, questionIndex: active.index,
+      answered: Boolean(active.answers[active.index]) } : {}),
+    ...(view === 'results' && resultId ? { attemptId: String(resultId) } : {}),
+  });
 
   function update(patch) {
     const updated = { ...current.current, ...patch };
     try {
-      saveGame(updated);
+      saveGame(updated, user.uid);
       setStorageError(false);
     } catch {
       setStorageError(true);
@@ -347,7 +336,7 @@ function App({ bank, questions }) {
   }
 
   useEffect(() => {
-    if (!unlocked || view !== 'quiz' || !activeId || backpackOpen) return;
+    if (view !== 'quiz' || !activeId || backpackOpen) return;
     let since = document.hidden ? null : performance.now();
     function recordTime() {
       if (since === null) return;
@@ -378,7 +367,7 @@ function App({ bank, questions }) {
       window.removeEventListener('pagehide', recordTime);
       checkpoint.current = null;
     };
-  }, [unlocked, view, activeId, activeIndex, backpackOpen]);
+  }, [view, activeId, activeIndex, backpackOpen]);
 
   function go(nextView) {
     setView(nextView);
@@ -387,7 +376,9 @@ function App({ bank, questions }) {
 
   function start(testId, limit) {
     if (active && !window.confirm('יש אימון פתוח. להתחיל אימון חדש במקומו?')) return;
-    update({ active: createAttempt(bank, testId, limit, Date.now()) });
+    const attempt = createAttempt(bank, testId, limit, Date.now());
+    behavior.track('test_start', { testId, attemptId: String(attempt.id), count: attempt.rounds.length });
+    update({ active: attempt });
     go('quiz');
   }
 
@@ -396,11 +387,42 @@ function App({ bank, questions }) {
     go('home');
   }
 
+  async function logout() {
+    if (signingOut) return;
+    behavior.track('logout');
+    behavior.flush();
+    pause();
+    setMagnifierOpen(false);
+    setBackpackOpen(false);
+    setAccountError('');
+    setSigningOut(true);
+    try {
+      await signOut(auth);
+    } catch {
+      setAccountError('לא הצלחנו לצאת מהחשבון. נסו שוב.');
+      setSigningOut(false);
+    }
+  }
+
+  function importLegacy() {
+    try {
+      const imported = importLegacyGame(user.uid);
+      current.current = imported;
+      setGame(imported);
+      setLegacyAvailable(false);
+      behavior.track('legacy_import');
+      setAccountError('');
+    } catch {
+      setAccountError('לא הצלחנו להעביר את ההתקדמות. הנתונים הקודמים נשארו בדפדפן.');
+    }
+  }
+
   function requestHint() {
     const attempt = current.current.active;
     const round = attempt.rounds[attempt.index];
-    const question = questions.get(round.id);
+    const question = round.question ?? questions.get(round.id);
     const distractors = question.choices.map((_, index) => index).filter(index => index !== question.correct);
+    behavior.track('hint');
     const distractor = attempt.hintDistractors?.[round.id] ?? distractors[Math.floor(Math.random() * distractors.length)];
     update({ active: {
       ...attempt,
@@ -413,61 +435,92 @@ function App({ bank, questions }) {
   function submit() {
     checkpoint.current?.();
     const attempt = current.current.active;
-    if (attempt.choice == null || attempt.answers[attempt.index]) return;
+    if (attempt.choice == null || attempt.answers[attempt.index] || attempt.index !== attempt.answers.length) return;
     const round = attempt.rounds[attempt.index];
-    const question = questions.get(round.id);
+    const question = round.question ?? questions.get(round.id);
     const correct = attempt.choice === question.correct;
+    behavior.track('answer_submit', { choice: attempt.choice, correct });
     const recorded = { choice: attempt.choice, correct, ms: attempt.questionMs };
     const collection = current.current.collection ?? {};
     if (correct) recorded.catchCount = (collection[round.pokemon] ?? 0) + 1;
     update({
-      active: { ...attempt, answers: [...attempt.answers, recorded] },
+      active: { ...attempt, answers: [...attempt.answers, recorded], pendingQuestion: null },
       ...(correct ? { collection: { ...collection, [round.pokemon]: recorded.catchCount } } : {}),
     });
     if (current.current.sound) playFeedback(correct);
+  }
+
+  function previous() {
+    checkpoint.current?.();
+    const attempt = current.current.active;
+    behavior.track('previous');
+    update({ active: moveQuestion(attempt, attempt.index - 1) });
+    window.scrollTo(0, 0);
   }
 
   function next() {
     checkpoint.current?.();
     const attempt = current.current.active;
     if (!attempt?.answers[attempt.index]) return;
+    behavior.track('next');
     if (attempt.index + 1 < attempt.rounds.length) {
-      update({ active: { ...attempt, index: attempt.index + 1, questionMs: 0, choice: null } });
+      update({ active: moveQuestion(attempt, attempt.index + 1) });
       window.scrollTo(0, 0);
     } else {
       const completed = { ...attempt, finishedAt: Date.now() };
+      behavior.track('attempt_complete', { count: countCorrect(completed) });
       update({ active: null, history: [completed, ...current.current.history] });
       setResultId(completed.id);
       go('results');
     }
   }
 
-  const question = active && questions.get(active.rounds[active.index].id);
+  const question = active && (active.rounds[active.index].question ?? questions.get(active.rounds[active.index].id));
   const result = game.history.find(attempt => attempt.id === resultId);
   return <>
     <header className="topbar"><div className="topbar-inner">
       <button className="brand" onClick={pause}><Ball /><span>פוקימון <small>מחנה האימונים</small></span></button>
-      {unlocked && <div className="utilities">
+      <div className="utilities">
+        <span className="account-name" title={user.email ?? user.displayName ?? ''}>{user.displayName || user.email || 'מאמן'}</span>
+        <button ref={magnifierToggle} className="utility magnifier-toggle" type="button"
+          aria-pressed={magnifierOpen} aria-label="זכוכית מגדלת"
+          onClick={() => { behavior.track('magnifier_toggle', { enabled: !magnifierOpen }); setMagnifierOpen(open => !open); }}>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <circle cx="10" cy="10" r="6.5" /><path d="m15 15 6 6" /><path d="M7 8a3 3 0 0 1 3-2" opacity=".6" />
+          </svg><span>הגדלה</span>
+        </button>
         <button className="utility backpack-button" type="button" aria-haspopup="dialog" onClick={() => {
           checkpoint.current?.();
+          behavior.track('backpack_open');
           setBackpackOpen(true);
         }}><span aria-hidden="true">🎒</span> תיק</button>
         <button className="utility" type="button" aria-pressed={game.sound}
-          onClick={() => update({ sound: !game.sound })}><span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל</button>
-        <button className="utility" type="button" onClick={() => { pause(); setUnlocked(false); }}>
-          <span aria-hidden="true">◈</span> נעילה</button>
-      </div>}
+          onClick={() => { behavior.track('sound_toggle', { enabled: !game.sound }); update({ sound: !game.sound }); }}><span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל</button>
+        <button className="utility" type="button" disabled={signingOut} onClick={logout}>
+          <span aria-hidden="true">↪</span> {signingOut ? 'יוצאים…' : 'יציאה'}
+        </button>
+      </div>
     </div></header>
-    <main className="container">
+    <main className="container" onToggleCapture={event => {
+      const details = event.target;
+      if (!(details instanceof HTMLDetailsElement)) return;
+      const type = details.classList.contains('passage') ? 'passage' : details.classList.contains('trainer-explanation') ? 'explanation' : null;
+      if (type) behavior.track(`${type}_${details.open ? 'open' : 'close'}`);
+    }}>
       {storageError && <p className="error panel" role="alert">הדפדפן לא הצליח לשמור את הנתונים. האימון זמין עד סגירת הדף.</p>}
-      {!unlocked ? <PinGate pin={game.pin} unlock={pin => { if (!game.pin) update({ pin }); setUnlocked(true); }} />
-        : view === 'quiz' && question ? <Quiz attempt={active} question={question} bank={bank}
-          choice={active.choice ?? null} setChoice={choice => update({ active: { ...current.current.active, choice } })}
-          requestHint={requestHint} submit={submit} next={next} pause={pause} />
+      {accountError && <p className="error panel" role="alert">{accountError}</p>}
+      {view === 'quiz' && question ? <Quiz attempt={active} question={question} bank={bank}
+          choice={active.choice ?? null} setChoice={choice => { behavior.track('answer_select', { choice }); update({ active: { ...current.current.active, choice } }); }}
+          requestHint={requestHint} submit={submit} next={next} previous={previous} pause={pause} />
         : view === 'results' && result ? <Results attempt={result} questions={questions} bank={bank} home={pause} />
-        : <Home game={game} bank={bank} start={start} resume={() => go('quiz')} showResults={id => { setResultId(id); go('results'); }} />}
+        : <Home legacyAvailable={legacyAvailable && !game.active && !game.history.length && !Object.keys(game.collection ?? {}).length} importLegacy={importLegacy} game={game} bank={bank} start={start} resume={() => { behavior.track('test_resume'); go('quiz'); }} showResults={id => { behavior.track('results_open', { attemptId: String(id) }); setResultId(id); go('results'); }} />}
     </main>
-    {backpackOpen && <Backpack collection={game.collection ?? {}} close={() => setBackpackOpen(false)} />}
+    {magnifierOpen && !backpackOpen && <Magnifier onClose={() => {
+      behavior.track('magnifier_toggle', { enabled: false });
+      setMagnifierOpen(false);
+      magnifierToggle.current?.focus();
+    }} />}
+    {backpackOpen && <Backpack collection={game.collection ?? {}} close={() => { behavior.track('backpack_close'); setBackpackOpen(false); }} />}
     <footer>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a></footer>
   </>;
 }
@@ -480,7 +533,7 @@ async function loadApp() {
     if (!response.ok) throw new Error('Could not load question bank');
     const bank = await response.json();
     const questions = new Map(bank.tests.flatMap(test => test.questions).map(question => [question.id, question]));
-    root.render(<App bank={bank} questions={questions} />);
+    root.render(<AuthBoundary>{(user, auth) => <App key={user.uid} user={user} auth={auth} bank={bank} questions={questions} />}</AuthBoundary>);
   } catch {
     root.render(<main className="container">
       <p className="panel error" role="alert">לא הצלחנו לטעון את השאלות. נסו לרענן את הדף.</p>

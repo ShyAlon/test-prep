@@ -1,0 +1,37 @@
+name: Delete expired behavior data
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: behavior-retention
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/504435154931/locations/global/workloadIdentityPools/gifted-github/providers/github
+          service_account: behavior-cleanup@gifted-test-prep-2026.iam.gserviceaccount.com
+          token_format: access_token
+          create_credentials_file: false
+          access_token_lifetime: 900s
+      - name: Delete expired activity batches
+        env:
+          GOOGLE_CLOUD_PROJECT: gifted-test-prep-2026
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        run: node scripts/cleanup-behavior.mjs --apply
