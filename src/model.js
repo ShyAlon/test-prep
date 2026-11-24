@@ -10,6 +10,7 @@ function timestampRandom(timestamp) {
 }
 
 export function createAttempt(bank, testId, limit, timestamp) {
+  if (testId !== 'practice') throw new RangeError('Only generated practice is supported');
   const random = timestampRandom(timestamp);
   if (testId === 'practice') {
     const generated = generatePractice(random, limit);
@@ -21,21 +22,15 @@ export function createAttempt(bank, testId, limit, timestamp) {
     });
     return { id: timestamp, testId, rounds, index: 0, answers: [], totalMs: 0, questionMs: 0 };
   }
-  const questions = testId === 'mixed'
-    ? bank.tests.flatMap(test => test.questions)
-    : bank.tests.find(test => test.id === testId).questions;
-  const order = questions.map(question => question.id);
-  for (let index = order.length - 1; index > 0; index--) {
-    const swap = Math.floor(random() * (index + 1));
-    [order[index], order[swap]] = [order[swap], order[index]];
-  }
-  let previousPokemon;
-  const rounds = order.slice(0, testId === 'mixed' ? limit : undefined).map(id => {
-    const pokemon = chooseEncounter(random, previousPokemon);
-    previousPokemon = pokemon;
-    return { id, pokemon };
-  });
-  return { id: timestamp, testId, rounds, index: 0, answers: [], totalMs: 0, questionMs: 0 };
+}
+
+// Booklet rounds cannot be resumed or reviewed after removing their source.
+// Keep the user's generated snapshots, collection and preferences intact.
+export function generatedOnlyGame(game) {
+  const supported = attempt => attempt?.testId === 'practice' && attempt.rounds?.length > 0
+    && attempt.rounds.every(round => round.question && ['generated', 'authored'].includes(round.question.origin));
+  return { ...game, ...(game.active ? { active: supported(game.active) ? game.active : null } : {}),
+    history: (game.history ?? []).filter(supported) };
 }
 
 export function duration(ms) {

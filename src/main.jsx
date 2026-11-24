@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createAttempt, duration, moveQuestion, playFeedback } from './model.js';
+import { createAttempt, duration, moveQuestion, playFeedback, generatedOnlyGame } from './model.js';
 import { Magnifier } from './Magnifier.jsx';
 import { useBehaviorTracking } from './useBehaviorTracking.js';
 import { AuthBoundary } from './Auth.jsx';
 import { signOut } from 'firebase/auth';
 import { canImportLegacyGame, importLegacyGame, readGame, saveGame } from './profile-storage.js';
 import { pokemonCard } from './pokemon.js';
-import bankUrl from './question-bank.json?url';
 import './style.css';
 
 const letters = ['א', 'ב', 'ג', 'ד'];
 const rarityLabels = { epic: 'אפי', legendary: 'אגדי', mythical: 'מיתי' };
-const priceListPages = new Set(['20', '44']);
-const title = testId => testId === 'practice' ? 'אימון מתחדש' : testId === 'mixed' ? 'אימון מעורב' : `מבחן ${testId}`;
+const priceListPages = new Set();
+const title = () => 'אימון מתחדש';
 const countCorrect = attempt => attempt.answers.filter(answer => answer.correct).length;
 const formatDate = timestamp => new Intl.DateTimeFormat('he-IL', {
   dateStyle: 'medium', timeStyle: 'short',
@@ -47,6 +46,27 @@ function Pokemon({ id, className = '', animated = true }) {
   </div>;
 }
 
+function TermsDialog({ close }) {
+  const dialog = useRef(null);
+  useEffect(() => { dialog.current.showModal(); }, []);
+  return <dialog ref={dialog} className="help-dialog" onClose={close} aria-labelledby="terms-title">
+    <header className="help-header">
+      <div><p className="eyebrow">שימוש אחראי וכיבוד זכויות יוצרים</p><h2 id="terms-title">תנאי שימוש והפצה</h2></div>
+      <button className="text-button" type="button" autoFocus onClick={() => dialog.current.close()}>סגירה ✕</button>
+    </header>
+    <div className="terms-content">
+      <p className="terms-notice">תנאים אלה אינם אישור מבעלי הזכויות ואינם מבטיחים שהשימוש בתכנים מותר. ייחוס, שימוש לימודי או שימוש ללא תשלום אינם כשלעצמם רישיון.</p>
+      <section><h3>מטרת האפליקציה</h3><p>האפליקציה נועדה לתרגול אישי. היא אינה מבחן רשמי ואינה קשורה לגוף בוחן, להוצאה לאור או לבעלי הזכויות של Pokémon, ואינה מאושרת או ממומנת על ידם. אין התחייבות לדיוק השאלות, הפתרונות או התוצאות.</p></section>
+      <section><h3>דמויות, איורים וסימנים מסחריים</h3><p>הזכויות בדמויות, בשמות, בעיצובים ובאיורי Pokémon, לרבות דמות פיקאצ׳ו בסמל האפליקציה, שייכות לבעלי הזכויות הרלוונטיים. אספקת איורים דרך PokéAPI אינה מעבירה את הזכויות בהם ואינה מהווה אישור לשימוש. לא אומת במסגרת פרויקט זה רישיון לשימוש בנכסים אלה.</p><p><a href="https://support.pokemon.com/hc/en-us/articles/360000634094-Can-I-use-Pok%C3%A9mon-images-or-materials" target="_blank" rel="noreferrer">עמדת Pokémon לגבי שימוש בחומרים</a> · <a href="https://github.com/PokeAPI/sprites/blob/master/LICENCE.txt" target="_blank" rel="noreferrer">הודעת הזכויות של מקור האיורים</a></p></section>
+      <section><h3>שאלות וחומרי לימוד</h3><p>האימונים משתמשים בשאלות חשבון שנוצרות מתבניות ובסיפורים ושאלות הבנת הנקרא שנכתבו עבור האפליקציה. תכני החוברת אינם כלולים בגרסה זו. התכנים אינם שאלות מבחן רשמיות, ועשויות להיות בהם טעויות. יצירת תוכן חדש אינה כשלעצמה הבטחה להיעדר זכויות צד שלישי.</p></section>
+      <section><h3>העתקה והפצה</h3><p>אין בתנאים אלה הענקת רישיון להפצת האיורים, הסמל, הדמויות או יתר תכני צד שלישי. אין למכור, לפרסם מחדש, להפיץ עותקים או להציג מצג של חסות רשמית ללא הרשאה מתאימה או בסיס חוקי תקף. זמינות קוד המקור לציבור אינה כשלעצמה רישיון לקוד או לנכסים הנלווים. רישיונות של ספריות צד שלישי ממשיכים לחול עליהן.</p></section>
+      <section><h3>לפני פרסום או שימוש מסחרי</h3><p>יש לבדוק בנפרד את הרשאות השימוש בקוד, במאגר השאלות ובכל נכס חזותי. כאשר ההרשאה אינה ברורה, יש להשיג אישור או להחליף את התוכן בתוכן מקורי או מורשה. התקנת האפליקציה במסך הבית אינה משנה את מעמד הזכויות.</p></section>
+      <section><h3>דיווח על בעיה בזכויות</h3><p>ניתן לפנות למתחזקי הפרויקט באמצעות <a href="https://github.com/ShyAlon/test-prep/issues" target="_blank" rel="noreferrer">דיווח במאגר הפרויקט</a>, עם זיהוי התוכן והבעיה. הדיווח ציבורי — אין לצרף פרטים אישיים או מסמכים חסויים.</p></section>
+      <p className="terms-date">עודכן: 24 בנובמבר 2026. הנוסח הוא מידע כללי ואינו תחליף לבדיקת זכויות ולייעוץ משפטי מותאם. אין בו כדי לגרוע מזכויות שאינן ניתנות להתניה לפי דין.</p>
+    </div>
+  </dialog>;
+}
+
 function HelpDialog({ close }) {
   const dialog = useRef(null);
   useEffect(() => { dialog.current.showModal(); }, []);
@@ -56,7 +76,7 @@ function HelpDialog({ close }) {
       <button className="text-button" type="button" autoFocus onClick={() => dialog.current.close()} aria-label="סגירת ההדרכה">סגירה ✕</button>
     </header>
     <ol className="help-steps">
-      <li><h3>בוחרים אימון</h3><p>במסך הבית בוחרים מבחן, או בוחרים את מספר השאלות ולוחצים על ״לאימון״. ״אימון מתחדש״ כולל מספרים משתנים וסיפורים חדשים; ״אימון מעורב״ משלב שאלות מהמבחנים.</p></li>
+      <li><h3>בוחרים אימון</h3><p>במסך הבית בוחרים את מספר השאלות ב״אימון מתחדש״ ולוחצים על ״לאימון״. האימון משלב שאלות חשבון עם מספרים משתנים וסיפורים מקוריים עם שאלות הבנת הנקרא.</p></li>
       <li><h3>עונים ומתקדמים</h3><p>קוראים את השאלה ואת קטע הקריאה, אם יש, ובוחרים תשובה. לוחצים על ״בדיקת תשובה״ בסרגל התחתון כדי לראות את התוצאה. אחר כך לוחצים על ״לשאלה הבאה״. בשאלה האחרונה עוברים לתוצאות האימון.</p></li>
       <li><h3>חוזרים ובודקים</h3><p>״לשאלה הקודמת״ מחזיר לשאלות שכבר ראיתם. תשובות שנבדקו נשמרות ואי אפשר לשנות אותן. כשמופיע כפתור הסבר, אפשר לפתוח אותו כדי להבין את הפתרון. בסיום, בוחרים אימון מתוך ״האימונים שלי״ במסך הבית כדי לעיין בתשובות ובהסברים.</p></li>
     </ol>
@@ -103,9 +123,7 @@ function Backpack({ collection, close }) {
 }
 
 function Home({ game, bank, start, resume, showResults, legacyAvailable, importLegacy }) {
-  const questionCount = bank.tests.reduce((total, test) => total + test.questions.length, 0);
   const [practiceLimit, setPracticeLimit] = useState(20);
-  const [limit, setLimit] = useState(Math.min(20, questionCount));
   return <>
     {legacyAvailable && <section className="legacy-import panel">
       <div><strong>ממשיכים מהאימונים הקודמים</strong><p>נמצאה התקדמות מהגרסה הישנה בדפדפן הזה. אפשר להעביר אותה לחשבון הנוכחי.</p></div>
@@ -115,7 +133,7 @@ function Home({ game, bank, start, resume, showResults, legacyAvailable, importL
       <div className="hero-text">
         <p className="eyebrow"><span /> מועדון המאמנים</p>
         <h1>מחנה האימונים<br /><em>של פוקימון</em></h1>
-        <p>בוחרים מסלול, עונים על שאלות ופוגשים פוקימון חדש בכל סיבוב!</p>
+        <p>בוחרים את אורך האימון, עונים על שאלות ופוגשים פוקימון חדש בכל סיבוב!</p>
         {game.active && <button className="primary" onClick={resume}>ממשיכים את {title(game.active.testId)} <span aria-hidden="true">←</span></button>}
       </div>
       <div className="hero-art" aria-hidden="true"><div className="sun" /><Ball className="hero-ball" />
@@ -133,22 +151,6 @@ function Home({ game, bank, start, resume, showResults, legacyAvailable, importL
           {[10, 20, 30, 50, 100].map(value => <option key={value}>{value}</option>)}
         </select></label>
         <button className="primary" onClick={() => start('practice', practiceLimit)}>לאימון <span aria-hidden="true">←</span></button>
-      </div>
-      <div className="mixed panel">
-        <div className="tile-icon" aria-hidden="true">⚡</div>
-        <div><h3>אימון מעורב</h3><p>שאלות מכל המבחנים, בסדר חדש בכל אימון.</p></div>
-        <label>מספר שאלות
-          <select value={limit} onChange={event => setLimit(Number(event.target.value))}>
-            {[10, 20, 30].filter(value => value < questionCount).map(value => <option key={value}>{value}</option>)}
-            <option value={questionCount}>כל השאלות</option>
-          </select>
-        </label>
-        <button className="primary" onClick={() => start('mixed', limit)}>לאימון <span aria-hidden="true">←</span></button>
-      </div>
-      <div className="test-grid">
-        {bank.tests.map(test => <button key={test.id} className="test-card panel" onClick={() => start(test.id)}>
-          <Ball /><strong>{title(test.id)}</strong><small>{test.questions.length} שאלות</small>
-        </button>)}
       </div>
     </section>
     <section className="section history">
@@ -269,7 +271,10 @@ function Quiz({ attempt, question, bank, choice, setChoice, requestHint, pause }
           {reward && <p>תפסתם את <bdi>{reward.baseName}</bdi>!
             {justEvolved && <> ✦ הוא התפתח ל־<bdi>{reward.name}</bdi>!</>}
           </p>}
-          {!answer.correct && <p>התשובה הנכונה היא {letters[question.correct]}.</p>}</div>
+          {!answer.correct && <>
+            <p>התשובה שבחרתם: {letters[answer.choice]} — <QuestionText text={question.choices[answer.choice]} /> (לא נכונה).</p>
+            <p><strong>התשובה הנכונה: {letters[question.correct]} — <QuestionText text={question.choices[question.correct]} />.</strong></p>
+          </>}</div>
         {answer.correct && <span className="burst" aria-hidden="true">✧ ✦ ✧</span>}
       </div>}
       {answer && question.explanation && <TrainerExplanation question={question} />}
@@ -328,7 +333,7 @@ function App({ bank, questions, user, auth }) {
       root.style.removeProperty('--bottom-bar-height');
     };
   }, []);
-  const [game, setGame] = useState(() => readGame(user.uid));
+  const [game, setGame] = useState(() => generatedOnlyGame(readGame(user.uid)));
   const [legacyAvailable, setLegacyAvailable] = useState(() => canImportLegacyGame(user.uid));
   const [accountError, setAccountError] = useState('');
   const [signingOut, setSigningOut] = useState(false);
@@ -337,6 +342,7 @@ function App({ bank, questions, user, auth }) {
   const [resultId, setResultId] = useState(null);
   const [backpackOpen, setBackpackOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [magnifierOpen, setMagnifierOpen] = useState(false);
   const magnifierToggle = useRef(null);
   const [storageError, setStorageError] = useState(false);
@@ -345,7 +351,7 @@ function App({ bank, questions, user, auth }) {
   const activeId = active?.id;
   const activeIndex = active?.index;
   const behavior = useBehaviorTracking(user, auth, {
-    view: helpOpen ? 'help' : backpackOpen ? 'backpack' : view,
+    view: termsOpen ? 'terms' : helpOpen ? 'help' : backpackOpen ? 'backpack' : view,
     ...(view === 'quiz' && active ? { testId: active.testId, attemptId: String(active.id),
       questionId: active.rounds[active.index].id, questionIndex: active.index,
       answered: Boolean(active.answers[active.index]) } : {}),
@@ -435,7 +441,7 @@ function App({ bank, questions, user, auth }) {
 
   function importLegacy() {
     try {
-      const imported = importLegacyGame(user.uid);
+      const imported = generatedOnlyGame(importLegacyGame(user.uid));
       current.current = imported;
       setGame(imported);
       setLegacyAvailable(false);
@@ -547,7 +553,8 @@ function App({ bank, questions, user, auth }) {
         : <Home legacyAvailable={legacyAvailable && !game.active && !game.history.length && !Object.keys(game.collection ?? {}).length} importLegacy={importLegacy} game={game} bank={bank} start={start} resume={() => { behavior.track('test_resume'); go('quiz'); }} showResults={id => { behavior.track('results_open', { attemptId: String(id) }); setResultId(id); go('results'); }} />}
     </main>
     {helpOpen && <HelpDialog close={() => setHelpOpen(false)} />}
-    {magnifierOpen && !backpackOpen && !helpOpen && <Magnifier onClose={() => {
+    {termsOpen && <TermsDialog close={() => setTermsOpen(false)} />}
+    {magnifierOpen && !backpackOpen && !helpOpen && !termsOpen && <Magnifier onClose={() => {
       behavior.track('magnifier_toggle', { enabled: false });
       setMagnifierOpen(false);
       magnifierToggle.current?.focus();
@@ -562,7 +569,7 @@ function App({ bank, questions, user, auth }) {
           ? <button className="primary" onClick={next}>{active.index === active.rounds.length - 1 ? 'לתוצאות האימון' : 'לשאלה הבאה'} <span aria-hidden="true">←</span></button>
           : <button className="primary" disabled={active.choice == null} onClick={submit}>בדיקת תשובה <span aria-hidden="true">✓</span></button>}
       </nav>}
-      <p>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a></p>
+      <p>מחנה אימונים לשימוש אישי · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noreferrer">איורי פוקימון דרך PokéAPI</a> · <button className="terms-link" type="button" aria-haspopup="dialog" aria-expanded={termsOpen} onClick={() => { checkpoint.current?.(); setTermsOpen(true); }}>תנאי שימוש והפצה</button></p>
     </footer>
   </>;
 }
@@ -571,10 +578,8 @@ const root = createRoot(document.getElementById('root'));
 
 async function loadApp() {
   try {
-    const response = await fetch(bankUrl);
-    if (!response.ok) throw new Error('Could not load question bank');
-    const bank = await response.json();
-    const questions = new Map(bank.tests.flatMap(test => test.questions).map(question => [question.id, question]));
+    const bank = { tests: [], passages: {} };
+    const questions = new Map();
     root.render(<AuthBoundary>{(user, auth) => <App key={user.uid} user={user} auth={auth} bank={bank} questions={questions} />}</AuthBoundary>);
   } catch {
     root.render(<main className="container">

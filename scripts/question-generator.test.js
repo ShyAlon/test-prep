@@ -1,12 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { numericalTemplates, generateNumerical, generatePractice } from '../src/question-generator.js';
-import { createAttempt } from '../src/model.js';
-import bank from '../src/question-bank.json' with { type: 'json' };
+import { createAttempt, generatedOnlyGame } from '../src/model.js';
+const bank = {};
 
 function rng(seed) {
   return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 2 ** 32; };
 }
+
+test('notebooks costing 6 each, quantity 2, payment 19 have change 7 after answer shuffling and saving', () => {
+  const template = numericalTemplates.find(item => item.id === 'change');
+  for (let seed = 0; seed < 100; seed++) {
+    const samples = [0.7, 0, 0.7];
+    const random = rng(seed);
+    const question = JSON.parse(JSON.stringify(generateNumerical(template,
+      () => samples.length ? samples.shift() : random(), 'reported-change')));
+    assert.deepEqual(question.prompt.match(/\d+/g).map(Number), [6, 2, 19]);
+    assert.equal(question.choices[question.correct], '7');
+    assert.notEqual(question.choices[question.correct], '5');
+    assert.match(question.explanation, /19 − 12 = 7/);
+  }
+});
+
+test('change answer agrees with the quantities in the displayed wording across the entire supported range', () => {
+  const template = numericalTemplates.find(item => item.id === 'change');
+  for (let price = 3; price <= 7; price++) {
+    for (let count = 2; count <= 4; count++) {
+      for (let change = 1; change <= 9; change++) {
+        const question = generateNumerical({ ...template, sample: () => ({price, count, change}) }, rng(price * count * change), 'change');
+        const [unitCost, quantity, paid] = question.prompt.match(/\d+/g).map(Number);
+        assert.equal(Number(question.choices[question.correct]), paid - unitCost * quantity);
+      }
+    }
+  }
+});
 
 test('every numerical template has one calculated answer across its parameter range', () => {
   for (const template of numericalTemplates) {
@@ -38,24 +65,25 @@ test('practice is deterministic, varied, and includes complete reading reference
   assert.notDeepEqual(generatePractice(rng(42), 20), generatePractice(rng(43), 20));
 });
 
-test('generated questions survive serialization and booklet attempts remain compatible', () => {
+test('generated questions survive serialization and removed modes are rejected', () => {
   const attempt = createAttempt(bank, 'practice', 20, 123456);
   assert.deepEqual(JSON.parse(JSON.stringify(attempt)), attempt);
   for (const round of attempt.rounds) assert.ok(round.question && round.pokemon);
-  const booklet = createAttempt(bank, '1', undefined, 123456);
-  assert.equal(booklet.rounds.length, bank.tests[0].questions.length);
-  assert.ok(booklet.rounds.every(round => !round.question));
+  assert.throws(() => createAttempt(bank, '1', 20, 123456), /generated/);
+  assert.throws(() => createAttempt(bank, 'mixed', 20, 123456), /generated/);
 });
 
-test('booklet text is complete without image fields', () => {
-  for (const t of bank.tests) for (const q of t.questions) {
-    assert.ok(q.prompt.trim());
-    assert.equal(q.choices.length, 4);
-    assert.ok(q.choices.every(choice => choice.trim()));
-    assert.ok(!q.promptArt && !q.choiceArt && !q.explanationArt);
-    if (q.passage) assert.ok(bank.passages[q.passage]);
-  }
-  assert.ok(!bank.referenceArt);
+test('existing generated progress survives while removed content cannot resume or appear in history', () => {
+  const generated = createAttempt(bank, 'practice', 20, 123456);
+  const old = { id: 12, testId: '1', rounds: [{id: '1-1-1'}] };
+  const game = { active: old, history: [old, generated], collection: {25: 2}, sound: false };
+  const migrated = generatedOnlyGame(game);
+  assert.equal(migrated.active, null);
+  assert.deepEqual(migrated.history, [generated]);
+  assert.deepEqual(migrated.collection, {25: 2});
+  assert.equal(migrated.sound, false);
+  assert.deepEqual(generatedOnlyGame({...game, active: generated}).active, generated);
+  assert.equal(game.active, old);
 });
 
 test('known quantities produce expected answers and explanations', () => {
