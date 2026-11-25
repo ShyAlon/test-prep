@@ -88,10 +88,11 @@ jobs:
           echo "::error::Uploaded Pages artifact did not become available within 60 seconds."
           exit 1
       - name: Deploy site to GitHub Pages
-        uses: actions/deploy-pages@v5
         id: deployment
-        with:
-          artifact_name: github-pages
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/deploy-pages.mjs
       - name: Collect failure diagnostics
         if: failure()
         env:
