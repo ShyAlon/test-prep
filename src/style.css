@@ -338,3 +338,11 @@ footer { text-align: center; color: #466071; padding: 12px 16px 22px; font-size:
 .theme-format { margin-block: 16px; }
 .theme-format summary { cursor: pointer; font-weight: 700; }
 .theme-format pre { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid #c5ded4; border-radius: 12px; background: #eaf3ef; color: #24364b; text-align: left; font-size: .8rem; line-height: 1.6; }
+
+/* Keep both quiz actions on-screen; move footer links below them on narrow screens. */
+@media (max-width: 900px) {
+  .bottom-bar, .bottom-bar:has(.question-actions) { flex-direction: column; gap: 8px; padding-inline: max(12px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-right, 0px)); }
+  .bottom-bar .question-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; max-width: 640px; }
+  .bottom-bar .question-actions button { min-width: 0; width: 100%; min-height: 44px; white-space: normal; }
+  .bottom-bar p { margin: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+}
