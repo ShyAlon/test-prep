@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { createAttempt, moveQuestion, playFeedback, generatedOnlyGame } from './model.js';
-import { companionFor, validMode } from './creatures.js';
+import { companionFor, validMode, localTheme } from './creatures.js';
 import { countCorrect } from './practice-summary.js';
 import { canImportLegacyGame, importLegacyGame, readGame, saveGame } from './profile-storage.js';
 import { Magnifier } from './Magnifier.jsx';
@@ -121,11 +121,11 @@ export function App({ user, auth }) {
     window.scrollTo(0, 0);
   }
 
-  function start(limit) {
+  function start(limit, testId = 'practice') {
     if (active && !window.confirm('יש אימון פתוח. להתחיל אימון חדש במקומו?')) return;
-    const attempt = createAttempt(limit, Date.now(), creatureMode);
+    const attempt = createAttempt(limit, Date.now(), creatureMode, testId);
     behavior.track('test_start', {
-      testId: 'practice',
+      testId: attempt.testId,
       attemptId: String(attempt.id),
       count: attempt.rounds.length,
     });
@@ -249,14 +249,14 @@ export function App({ user, auth }) {
     <>
       <header ref={topbar} className="topbar">
         <div className="topbar-inner">
-          <Brand onClick={pause} />
+          <Brand onClick={pause} theme={creatureMode === localTheme?.mode ? localTheme : null} />
           <div className="utilities">
             <AvatarMenu
               user={user}
               mode={creatureMode}
               changeMode={(mode) => {
                 checkpoint.current?.();
-                behavior.track('mode_change', { mode });
+                if (!mode.startsWith('local-')) behavior.track('mode_change', { mode });
                 update({ creatureMode: mode });
               }}
             />

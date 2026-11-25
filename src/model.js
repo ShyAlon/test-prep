@@ -1,3 +1,4 @@
+import fixedTests from './fixed-tests.json' with { type: 'json' };
 import { generatePractice } from './question-generator.js';
 import { chooseEncounter, migrateCreatureGame } from './creatures.js';
 
@@ -9,9 +10,13 @@ function timestampRandom(timestamp) {
   };
 }
 
-export function createAttempt(limit, timestamp, mode = 'srd') {
-  const random = timestampRandom(timestamp);
-  const generated = generatePractice(random, limit);
+export { fixedTests };
+
+export function createAttempt(limit, timestamp, mode = 'srd', testId = 'practice') {
+  const fixed = fixedTests.find(test => test.id === testId);
+  const random = timestampRandom(fixed?.seed ?? timestamp);
+  limit = fixed?.count ?? limit;
+  const generated = fixed ? structuredClone(fixed.questions) : generatePractice(random, limit);
   let previousCreature;
   const rounds = generated.map((question) => {
     const creature = chooseEncounter(random, previousCreature, mode);
@@ -20,7 +25,7 @@ export function createAttempt(limit, timestamp, mode = 'srd') {
   });
   return {
     id: timestamp,
-    testId: 'practice',
+    testId,
     rounds,
     index: 0,
     answers: [],
@@ -33,7 +38,7 @@ export function createAttempt(limit, timestamp, mode = 'srd') {
 // Keep the user's generated snapshots, collection and preferences intact.
 export function generatedOnlyGame(game) {
   const supported = (attempt) =>
-    attempt?.testId === 'practice' &&
+    (attempt?.testId === 'practice' || fixedTests.some(test => test.id === attempt?.testId)) &&
     attempt.rounds?.length > 0 &&
     attempt.rounds.every(
       (round) => round.question && ['generated', 'authored'].includes(round.question.origin),

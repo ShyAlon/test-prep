@@ -37,7 +37,7 @@ export function ExplanationContent({ question, className }) {
   );
 }
 
-export function TrainerExplanation({ question }) {
+export function TrainerExplanation({ question, noun = 'יצור' }) {
   const isReading = Boolean(question.passageText);
   return (
     <details className="trainer-explanation">
@@ -50,7 +50,7 @@ export function TrainerExplanation({ question }) {
           🧢
         </span>
         <div>
-          <strong>מאמנת היצור</strong>
+          <strong>מאמנת ה{noun}</strong>
           <p>בואו נפתור את זה יחד!</p>
           {isReading && (
             <p className="trainer-approach">

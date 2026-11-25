@@ -1,0 +1,132 @@
+import { unzipSync } from 'fflate';
+
+export const THEME_KEY = 'gifted.local-theme.v1';
+export const MAX_THEME_BYTES = 3 * 1024 * 1024;
+const fail = () => { throw new Error('קובץ ערכת הנושא אינו תקין. נדרש ZIP עם theme.json ותמונות מקומיות בלבד (עד 3MB).'); };
+const safePath = path => typeof path === 'string' && /^[a-zA-Z0-9_./-]+$/.test(path) && !path.startsWith('/') && !path.split('/').some(part => part === '..' || part === '.');
+const text = value => typeof value === 'string' && value.length > 0 && value.length <= 160;
+const colors = ['grass', 'fire', 'water', 'air', 'electric', 'psychic', 'earth', 'fairy'];
+const rarities = ['standard', 'epic', 'legendary', 'mythical'];
+function validateManifest(m, assets) {
+  if (!m || m.version !== 1 || !/^[a-z0-9-]{1,40}$/.test(m.id) || !text(m.name) || !text(m.description) || !Array.isArray(m.creatures) || !m.creatures.length || m.creatures.length > 200) fail();
+  const ids = new Set();
+  const image = path => { if (!safePath(path) || !Object.hasOwn(assets, path)) fail(); };
+  for (const c of m.creatures) {
+    if (!/^[a-z0-9-]{1,50}$/.test(c.id) || ids.has(c.id) || !text(c.name) || !text(c.english) || !colors.includes(c.color) || !rarities.includes(c.rarity)) fail();
+    ids.add(c.id); image(c.image);
+    if (c.encounter !== undefined && typeof c.encounter !== 'boolean') fail();
+    if (c.number !== undefined && (!Number.isInteger(c.number) || c.number < 1 || c.number > 9999)) fail();
+    if (c.animation) image(c.animation);
+    if (c.evolution) {
+      if (!text(c.evolution.name) || !text(c.evolution.english)) fail();
+      image(c.evolution.image);
+      if (c.evolution.animation) image(c.evolution.animation);
+    }
+  }
+  if (!m.creatures.some(c => c.encounter !== false)) fail();
+  for (const field of ['singular', 'plural', 'mark', 'tagline']) if (m[field] !== undefined && !text(m[field])) fail();
+  if (m.mark !== undefined && m.mark !== 'ball') fail();
+  if (!ids.has(m.avatar) || !ids.has(m.companion)) fail();
+  if (m.icon) image(m.icon);
+  if (m.testImages !== undefined) {
+    if (!m.testImages || typeof m.testImages !== 'object') fail();
+    image(m.testImages.incomplete);
+    image(m.testImages.completed);
+  }
+  if (m.brand !== undefined && !text(m.brand)) fail();
+  if (m.hero !== undefined && !text(m.hero)) fail();
+  return { manifest: m, assets };
+}
+function mime(bytes) {
+  if (bytes[0] === 137 && bytes[1] === 80 && bytes[2] === 78 && bytes[3] === 71) return 'image/png';
+  if (String.fromCharCode(...bytes.subarray(0, 6)).match(/^GIF8[79]a$/)) return 'image/gif';
+  if (String.fromCharCode(...bytes.subarray(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.subarray(8, 12)) === 'WEBP') return 'image/webp';
+  if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return 'image/jpeg';
+  fail();
+}
+export function parseThemeZip(bytes) {
+  if (!(bytes instanceof Uint8Array) || bytes.length > MAX_THEME_BYTES || bytes[0] !== 80 || bytes[1] !== 75) fail();
+  let total = 0, count = 0;
+  const paths = new Set();
+  let files;
+  try {
+    files = unzipSync(bytes, { filter: entry => {
+      if (paths.has(entry.name)) fail();
+      paths.add(entry.name);
+      if (!safePath(entry.name) || ++count > 450 || entry.originalSize > MAX_THEME_BYTES || (total += entry.originalSize) > MAX_THEME_BYTES) fail();
+      return true;
+    }});
+  } catch { fail(); }
+  let manifest;
+  try { manifest = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(files['theme.json'])); } catch { fail(); }
+  const assets = Object.create(null);
+  for (const [path, data] of Object.entries(files)) {
+    if (path === 'theme.json' || path.endsWith('/') || path === 'README.txt') continue;
+    const type = mime(data);
+    let binary = '';
+    for (let i = 0; i < data.length; i += 8192) binary += String.fromCharCode(...data.subarray(i, i + 8192));
+    assets[path] = `data:${type};base64,${btoa(binary)}`;
+  }
+  return validateManifest(manifest, assets);
+}
+// Only sizes/counts go to the console, never stored values, account keys or image data.
+// UTF-16 sizes are estimates; browser quota accounting can differ.
+export function themeStorageDiagnostics(serialized, storage) {
+  const result = {
+    payloadCharacters: serialized.length,
+    payloadUtf16Bytes: serialized.length * 2,
+    existingThemeUtf16Bytes: 0,
+    otherStorageUtf16Bytes: 0,
+    storageEntries: 0,
+  };
+  try {
+    for (let index = 0; index < storage.length; index++) {
+      const key = storage.key(index);
+      if (key === null) continue;
+      const value = storage.getItem(key) ?? '';
+      const bytes = (key.length + value.length) * 2;
+      result.storageEntries++;
+      if (key === THEME_KEY) result.existingThemeUtf16Bytes += bytes;
+      else result.otherStorageUtf16Bytes += bytes;
+    }
+    result.estimatedAfterSaveUtf16Bytes = result.otherStorageUtf16Bytes + (THEME_KEY.length + serialized.length) * 2;
+  } catch (error) {
+    result.inspectionError = error.name;
+  }
+  return result;
+}
+export function persistTheme(theme, storage = globalThis.localStorage) {
+  validateManifest(theme.manifest, theme.assets);
+  const serialized = JSON.stringify(theme);
+  const diagnostics = themeStorageDiagnostics(serialized, storage);
+  console.info('[Theme upload] Saving to localStorage', diagnostics);
+  try {
+    storage.setItem(THEME_KEY, serialized);
+    console.info('[Theme upload] localStorage save succeeded');
+  } catch (error) {
+    console.error('[Theme upload] localStorage save failed', {
+      ...diagnostics, errorName: error.name, errorMessage: error.message,
+    }, error);
+    throw error;
+  }
+}
+export function readTheme(storage = globalThis.localStorage) {
+  try {
+    const raw = storage?.getItem(THEME_KEY);
+    if (!raw || raw.length > MAX_THEME_BYTES * 1.4) return null;
+    const theme = JSON.parse(raw);
+    if (!theme.assets || Object.values(theme.assets).some(value => typeof value !== 'string' || !/^data:image\/(png|gif|webp|jpeg);base64,[A-Za-z0-9+/=]+$/.test(value))) return null;
+    return validateManifest(theme.manifest, theme.assets);
+  } catch { return null; }
+}
+
+// Decode before saving, so a file with a forged image header cannot become an installed pack.
+export async function validateThemeImages(theme) {
+  for (const source of Object.values(theme.assets)) {
+    const image = new Image();
+    image.src = source;
+    try { await image.decode(); } catch { fail(); }
+    if (!image.naturalWidth || !image.naturalHeight || image.naturalWidth > 2048 || image.naturalHeight > 2048) fail();
+  }
+  return theme;
+}

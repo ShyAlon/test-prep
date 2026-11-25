@@ -8,7 +8,7 @@ test('every creature has local public-domain art, documented provenance, and mat
   const sources = JSON.parse(read('public/licenses/artwork-sources.json'));
   const attribution = read('public/licenses/ATTRIBUTION.txt').toString();
   assert.equal(creaturesForMode('srd').length,32);
-  assert.equal(creaturesForMode('mythology').length,8);
+  assert.equal(creaturesForMode('mythology').length,23);
   assert.equal(creaturesForMode('animals').length,25);
   const roster=JSON.parse(read('public/licenses/creature-roster.json'));
   const artwork=JSON.parse(read('src/creature-art.json'));
@@ -16,7 +16,7 @@ test('every creature has local public-domain art, documented provenance, and mat
   assert.equal(new Set(creatures.map(creature => creature.id)).size, creatures.length);
   for (const source of sources.sources) {
     assert.ok(['CC0-1.0','LicenseRef-Public-Domain'].includes(source.license));
-    assert.match(source.url, /^https:\/\/[^/]+\.itch\.io\//);
+    assert.match(source.url, /^https:\/\/(?:[^/]+\.itch\.io|openclipart\.org)\//);
   }
   for (const creature of creatures) {
     const card = creatureCard(creature.id, 2);
@@ -76,4 +76,36 @@ test('legacy reward migration preserves learning snapshots, scores and total rew
   assert.ok(!('pokemon' in result.active.rounds[0]));
   assert.deepEqual(migrateCreatureGame(result),result);
   assert.equal(game.active.rounds[0].pokemon,25);
+});
+
+test('every mythical creature has native artwork of at least 32x32 and the roster has expanded', () => {
+  const mythology = creaturesForMode('mythology');
+  const artwork = JSON.parse(read('src/creature-art.json'));
+  assert.ok(mythology.length >= 16, 'mythology should offer at least 16 companions');
+  for (const creature of mythology) {
+    const metadata = artwork[creature.asset];
+    assert.ok(metadata, `${creature.id} needs documented source dimensions`);
+    assert.ok(metadata.nativeSize.every(size => size >= 32), `${creature.id} uses sub-32px source artwork`);
+    const png = read(`public/${creatureCard(creature.id).image}`);
+    assert.ok(png.readUInt32BE(16) >= 32 && png.readUInt32BE(20) >= 32, `${creature.id} is too small after cropping`);
+  }
+});
+
+
+test('voxel world has 20 animated CC0 companions and survives saved-game migration', () => {
+  const roster = creaturesForMode('voxel');
+  const artwork = JSON.parse(read('src/creature-art.json'));
+  assert.equal(roster.length,20);
+  for (const creature of roster) {
+    const card = creatureCard(creature.id);
+    assert.ok(card.animation);
+    assert.ok(card.frames >= 3);
+    assert.ok(artwork[creature.asset].nativeSize.every(size => size >= 32));
+    assert.match(artwork[creature.asset].source, /^cole-voxel-/);
+  }
+  const game = {creatureMode:'voxel',history:[],collection:{'voxel-golem':2,'myth-dragon':1,bat:3}};
+  const migrated = migrateCreatureGame(game);
+  assert.equal(migrated.creatureMode,'voxel');
+  assert.deepEqual(migrated.collection,game.collection);
+  assert.equal(companionFor({id:'q',creature:'voxel-golem'},'voxel',123),'voxel-golem');
 });

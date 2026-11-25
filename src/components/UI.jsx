@@ -12,21 +12,22 @@ export function Button({ variant = 'primary', className = '', type = 'button', .
   );
 }
 
-export function AppMark({ className = '' }) {
+export function AppMark({ className = '', theme = null }) {
+  if (theme?.manifest.mark === 'ball') return <span aria-hidden="true" className={`theme-ball ${className}`}><i /></span>;
   return (
     <span aria-hidden="true" className={`app-mark ${className}`}>
-      <img alt="" src="./icons/camp-bat-192.png" />
+      <img alt="" src={theme?.assets[theme.manifest.icon] ?? './icons/camp-bat-192.png'} />
     </span>
   );
 }
 
-export function Brand({ onClick }) {
+export function Brand({ onClick, theme = null }) {
   const Tag = onClick ? Button : 'span';
   return (
     <Tag className="brand" {...(onClick ? { variant: 'plain', onClick } : {})}>
-      <AppMark />
+      <AppMark theme={theme} />
       <span>
-        מחנה היצורים <small>לומדים ויוצאים להרפתקה</small>
+        {theme?.manifest.brand ?? 'מחנה היצורים'} <small>{theme?.manifest.tagline ?? 'לומדים ויוצאים להרפתקה'}</small>
       </span>
     </Tag>
   );

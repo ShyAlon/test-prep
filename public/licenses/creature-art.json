@@ -465,67 +465,72 @@
   "unicorn": {
     "frames": 0,
     "nativeSize": [
-      16,
-      16
+      795,
+      671
     ],
-    "displaySize": 16,
-    "source": "clint-tiny",
+    "displaySize": 512,
+    "source": "openclipart",
     "files": [
-      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0052.png"
+      "300741/unicorn.png"
     ],
-    "pixelated": true
+    "pixelated": false,
+    "sourceUrl": "https://openclipart.org/detail/300741/unicorn-2"
   },
   "pegasus": {
     "frames": 0,
     "nativeSize": [
-      16,
-      16
+      800,
+      384
     ],
-    "displaySize": 16,
-    "source": "clint-tiny",
+    "displaySize": 512,
+    "source": "openclipart",
     "files": [
-      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0053.png"
+      "189852/pegasus.png"
     ],
-    "pixelated": true
+    "pixelated": false,
+    "sourceUrl": "https://openclipart.org/detail/189852/pegasus"
   },
   "nightmare": {
     "frames": 0,
     "nativeSize": [
-      16,
-      16
+      800,
+      717
     ],
-    "displaySize": 16,
-    "source": "clint-tiny",
+    "displaySize": 512,
+    "source": "openclipart",
     "files": [
-      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0055.png"
+      "354046/nightmare.png"
     ],
-    "pixelated": true
+    "pixelated": false,
+    "sourceUrl": "https://openclipart.org/detail/354046/fire-horse"
   },
   "griffon": {
     "frames": 0,
     "nativeSize": [
-      16,
-      16
+      686,
+      800
     ],
-    "displaySize": 16,
-    "source": "clint-tiny",
+    "displaySize": 512,
+    "source": "openclipart",
     "files": [
-      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0105.png"
+      "288982/griffon.png"
     ],
-    "pixelated": true
+    "pixelated": false,
+    "sourceUrl": "https://openclipart.org/detail/288982/griffin"
   },
   "angel": {
     "frames": 0,
     "nativeSize": [
-      16,
-      16
+      274,
+      800
     ],
-    "displaySize": 16,
-    "source": "clint-tiny",
+    "displaySize": 512,
+    "source": "openclipart",
     "files": [
-      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0038.png"
+      "340198/angel-vintage.png"
     ],
-    "pixelated": true
+    "pixelated": false,
+    "sourceUrl": "https://openclipart.org/detail/340198/angel"
   },
   "cockatrice": {
     "frames": 0,
@@ -630,5 +635,578 @@
       "gifted-gordy1/TheLich.png"
     ],
     "pixelated": false
+  },
+  "kraken": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_001.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "cerberus": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_007.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "phoenix": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_008.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "hydra": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_012.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "genie": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_014.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "gargoyle": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_015.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "cyclops": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_016.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "minotaur": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_024.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "treant": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_039.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "giant": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_052.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "merfolk": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_063.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "winged-serpent": {
+    "frames": 0,
+    "nativeSize": [
+      32,
+      32
+    ],
+    "displaySize": 32,
+    "source": "hexany-menagerie",
+    "files": [
+      "Tiles/Transparent/creature_003.png"
+    ],
+    "pixelated": true,
+    "monochrome": true
+  },
+  "basilisk-large": {
+    "frames": 0,
+    "nativeSize": [
+      4678,
+      6615
+    ],
+    "displaySize": 512,
+    "source": "gordy4",
+    "files": [
+      "Basilisk_BW.png"
+    ],
+    "pixelated": false
+  },
+  "manticore-large": {
+    "frames": 0,
+    "nativeSize": [
+      4678,
+      6615
+    ],
+    "displaySize": 512,
+    "source": "gordy4",
+    "files": [
+      "Manticore_BW.png"
+    ],
+    "pixelated": false
+  },
+  "wyvern-large": {
+    "frames": 0,
+    "nativeSize": [
+      4678,
+      6615
+    ],
+    "displaySize": 512,
+    "source": "gordy4",
+    "files": [
+      "Wyvern_BW.png"
+    ],
+    "pixelated": false
+  },
+  "voxel-knight": {
+    "frames": 8,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 60,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/knight/down_idle_0.png",
+      "creatures/frames/knight/down_idle_1.png",
+      "creatures/frames/knight/down_idle_2.png",
+      "creatures/frames/knight/down_idle_3.png",
+      "creatures/frames/knight/down_idle_4.png",
+      "creatures/frames/knight/down_idle_5.png",
+      "creatures/frames/knight/down_idle_6.png",
+      "creatures/frames/knight/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-skeleton": {
+    "frames": 8,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 52,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/skeleton/down_idle_0.png",
+      "creatures/frames/skeleton/down_idle_1.png",
+      "creatures/frames/skeleton/down_idle_2.png",
+      "creatures/frames/skeleton/down_idle_3.png",
+      "creatures/frames/skeleton/down_idle_4.png",
+      "creatures/frames/skeleton/down_idle_5.png",
+      "creatures/frames/skeleton/down_idle_6.png",
+      "creatures/frames/skeleton/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-goblin": {
+    "frames": 8,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 44,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/goblin/down_idle_0.png",
+      "creatures/frames/goblin/down_idle_1.png",
+      "creatures/frames/goblin/down_idle_2.png",
+      "creatures/frames/goblin/down_idle_3.png",
+      "creatures/frames/goblin/down_idle_4.png",
+      "creatures/frames/goblin/down_idle_5.png",
+      "creatures/frames/goblin/down_idle_6.png",
+      "creatures/frames/goblin/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-orc": {
+    "frames": 6,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 58,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/orc/down_idle_0.png",
+      "creatures/frames/orc/down_idle_1.png",
+      "creatures/frames/orc/down_idle_2.png",
+      "creatures/frames/orc/down_idle_3.png",
+      "creatures/frames/orc/down_idle_4.png",
+      "creatures/frames/orc/down_idle_5.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-mage": {
+    "frames": 6,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 56,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/mage/down_idle_0.png",
+      "creatures/frames/mage/down_idle_1.png",
+      "creatures/frames/mage/down_idle_2.png",
+      "creatures/frames/mage/down_idle_3.png",
+      "creatures/frames/mage/down_idle_4.png",
+      "creatures/frames/mage/down_idle_5.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-ghost": {
+    "frames": 8,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 46,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/ghost/down_idle_0.png",
+      "creatures/frames/ghost/down_idle_1.png",
+      "creatures/frames/ghost/down_idle_2.png",
+      "creatures/frames/ghost/down_idle_3.png",
+      "creatures/frames/ghost/down_idle_4.png",
+      "creatures/frames/ghost/down_idle_5.png",
+      "creatures/frames/ghost/down_idle_6.png",
+      "creatures/frames/ghost/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-eye": {
+    "frames": 8,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 34,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/eye/down_idle_0.png",
+      "creatures/frames/eye/down_idle_1.png",
+      "creatures/frames/eye/down_idle_2.png",
+      "creatures/frames/eye/down_idle_3.png",
+      "creatures/frames/eye/down_idle_4.png",
+      "creatures/frames/eye/down_idle_5.png",
+      "creatures/frames/eye/down_idle_6.png",
+      "creatures/frames/eye/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-spider": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 44,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/spider/down_idle_0.png",
+      "creatures/frames/spider/down_idle_1.png",
+      "creatures/frames/spider/down_idle_2.png",
+      "creatures/frames/spider/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-scorpion": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 56,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/scorpion/down_idle_0.png",
+      "creatures/frames/scorpion/down_idle_1.png",
+      "creatures/frames/scorpion/down_idle_2.png",
+      "creatures/frames/scorpion/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-mimic": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 50,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/mimic/down_idle_0.png",
+      "creatures/frames/mimic/down_idle_1.png",
+      "creatures/frames/mimic/down_idle_2.png",
+      "creatures/frames/mimic/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-slime-green": {
+    "frames": 8,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 36,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/slime_green/down_idle_0.png",
+      "creatures/frames/slime_green/down_idle_1.png",
+      "creatures/frames/slime_green/down_idle_2.png",
+      "creatures/frames/slime_green/down_idle_3.png",
+      "creatures/frames/slime_green/down_idle_4.png",
+      "creatures/frames/slime_green/down_idle_5.png",
+      "creatures/frames/slime_green/down_idle_6.png",
+      "creatures/frames/slime_green/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-mushroom-red": {
+    "frames": 8,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 38,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/mushroom_red/down_idle_0.png",
+      "creatures/frames/mushroom_red/down_idle_1.png",
+      "creatures/frames/mushroom_red/down_idle_2.png",
+      "creatures/frames/mushroom_red/down_idle_3.png",
+      "creatures/frames/mushroom_red/down_idle_4.png",
+      "creatures/frames/mushroom_red/down_idle_5.png",
+      "creatures/frames/mushroom_red/down_idle_6.png",
+      "creatures/frames/mushroom_red/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-trex": {
+    "frames": 8,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 62,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/trex/down_idle_0.png",
+      "creatures/frames/trex/down_idle_1.png",
+      "creatures/frames/trex/down_idle_2.png",
+      "creatures/frames/trex/down_idle_3.png",
+      "creatures/frames/trex/down_idle_4.png",
+      "creatures/frames/trex/down_idle_5.png",
+      "creatures/frames/trex/down_idle_6.png",
+      "creatures/frames/trex/down_idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-golem": {
+    "frames": 6,
+    "nativeSize": [
+      144,
+      144
+    ],
+    "displaySize": 100,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/golem/down_idle_0.png",
+      "creatures/frames/golem/down_idle_1.png",
+      "creatures/frames/golem/down_idle_2.png",
+      "creatures/frames/golem/down_idle_3.png",
+      "creatures/frames/golem/down_idle_4.png",
+      "creatures/frames/golem/down_idle_5.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-bat": {
+    "frames": 8,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 36,
+    "source": "cole-voxel-dungeon",
+    "files": [
+      "creatures/frames/bat/down_fly_0.png",
+      "creatures/frames/bat/down_fly_1.png",
+      "creatures/frames/bat/down_fly_2.png",
+      "creatures/frames/bat/down_fly_3.png",
+      "creatures/frames/bat/down_fly_4.png",
+      "creatures/frames/bat/down_fly_5.png",
+      "creatures/frames/bat/down_fly_6.png",
+      "creatures/frames/bat/down_fly_7.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-oak-treant": {
+    "frames": 4,
+    "nativeSize": [
+      84,
+      84
+    ],
+    "displaySize": 64,
+    "source": "cole-voxel-forest",
+    "files": [
+      "creatures/frames/oak_treant/down_idle_0.png",
+      "creatures/frames/oak_treant/down_idle_1.png",
+      "creatures/frames/oak_treant/down_idle_2.png",
+      "creatures/frames/oak_treant/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-grove-stag": {
+    "frames": 4,
+    "nativeSize": [
+      82,
+      82
+    ],
+    "displaySize": 52,
+    "source": "cole-voxel-forest",
+    "files": [
+      "creatures/frames/grove_stag/down_idle_0.png",
+      "creatures/frames/grove_stag/down_idle_1.png",
+      "creatures/frames/grove_stag/down_idle_2.png",
+      "creatures/frames/grove_stag/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-stag-beetle": {
+    "frames": 4,
+    "nativeSize": [
+      80,
+      80
+    ],
+    "displaySize": 46,
+    "source": "cole-voxel-forest",
+    "files": [
+      "creatures/frames/stag_beetle/down_idle_0.png",
+      "creatures/frames/stag_beetle/down_idle_1.png",
+      "creatures/frames/stag_beetle/down_idle_2.png",
+      "creatures/frames/stag_beetle/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-ivy-sentinel": {
+    "frames": 4,
+    "nativeSize": [
+      80,
+      80
+    ],
+    "displaySize": 60,
+    "source": "cole-voxel-forest",
+    "files": [
+      "creatures/frames/ivy_sentinel/down_idle_0.png",
+      "creatures/frames/ivy_sentinel/down_idle_1.png",
+      "creatures/frames/ivy_sentinel/down_idle_2.png",
+      "creatures/frames/ivy_sentinel/down_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "voxel-grove-watcher": {
+    "frames": 8,
+    "nativeSize": [
+      66,
+      66
+    ],
+    "displaySize": 34,
+    "source": "cole-voxel-forest",
+    "files": [
+      "creatures/frames/grove_watcher/down_idle_0.png",
+      "creatures/frames/grove_watcher/down_idle_1.png",
+      "creatures/frames/grove_watcher/down_idle_2.png",
+      "creatures/frames/grove_watcher/down_idle_3.png",
+      "creatures/frames/grove_watcher/down_idle_4.png",
+      "creatures/frames/grove_watcher/down_idle_5.png",
+      "creatures/frames/grove_watcher/down_idle_6.png",
+      "creatures/frames/grove_watcher/down_idle_7.png"
+    ],
+    "pixelated": true
   }
 }

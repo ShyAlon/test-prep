@@ -79,3 +79,31 @@ Source files and original/output dimensions are listed in creature-art.json.
 The file creature-roster.json lists all SRD names and source pages used, plus the
 separate folklore/animal labels. The exact SRD attribution above still applies.
 The existing independent CC0 notices remain applicable to retained earlier art.
+
+Hexany Ives — Hexany's Monster Menagerie 0.3.0
+https://hexany-ives.itch.io/hexanys-monster-menagerie
+CC0 1.0 Universal. Native 32×32 sprites, downloaded free. Displayed with a dark CSS tint for contrast.
+See hexany-menagerie-CC0.txt and artwork-sources.json.
+
+Gordy Higgins — Public Domain Fantasy Art Pack 4
+https://gordyh.itch.io/public-domain-fantasy-art-pack-4
+Creator explicitly dedicates the free illustrations to the public domain; no attribution required.
+Selected basilisk, manticore and wyvern illustrations are cropped and downsampled to 512×512.
+
+Openclipart mythology replacements — free CC0 downloads
+License policy: https://openclipart.org/share
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Original vector artwork rendered by Openclipart as high-resolution PNG; locally cropped and downsampled to 512×512.
+oksmith / katy-sandvoss — https://openclipart.org/detail/300741/unicorn-2
+Dux Phoenix — https://openclipart.org/detail/189852/pegasus
+Firkin — https://openclipart.org/detail/288982/griffin
+j4p4n — https://openclipart.org/detail/354046/fire-horse
+ELIO — https://openclipart.org/detail/340198/angel
+Fire Horse is tagged ai_art by its uploader. Angel derives from Mother’s Nursery Tales (1918); Griffin remixes a public-domain Wikimedia drawing; Unicorn (#2) credits a CC0 Pixabay work by katy-sandvoss.
+
+Cole Foster — Voxel Dungeon Sprites & Tiles; Voxel Forest Ruins Sprites & Tiles
+https://colefoster.itch.io/voxel-dungeon-pack
+https://colefoster.itch.io/voxel-forest-ruins-pack
+Free CC0 1.0 Universal downloads. Selected original idle/flying frames cropped and assembled into local strips.
+The voxel world uses these independent assets; it is not affiliated with Mojang or Microsoft and contains no Minecraft game artwork.
+See cole-voxel-dungeon-CC0.txt and cole-voxel-forest-CC0.txt.

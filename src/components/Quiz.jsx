@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { creatureCard } from '../creatures.js';
+import { creatureCard, localTheme } from '../creatures.js';
 import { duration } from '../model.js';
-import { PRACTICE_TITLE, countCorrect } from '../practice-summary.js';
+import { attemptTitle, countCorrect } from '../practice-summary.js';
 import { Creature } from './Creature.jsx';
 import { Button } from './UI.jsx';
 import { QuestionText, ReadingPassage, TrainerExplanation } from './QuestionContent.jsx';
@@ -9,6 +9,8 @@ import { QuestionText, ReadingPassage, TrainerExplanation } from './QuestionCont
 const letters = ['א', 'ב', 'ג', 'ד'];
 
 export function Quiz({ attempt, question, choice, setChoice, requestHint, pause, companionId }) {
+  const themed = creatureCard(companionId).mode === localTheme?.mode;
+  const noun = themed ? localTheme.manifest.singular ?? 'יצור' : 'יצור';
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
   const reward = answer?.catchCount ? creatureCard(companionId, answer.catchCount) : null;
@@ -59,7 +61,7 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
       <section className="question panel">
         <div className="question-meta">
           <span>
-            {PRACTICE_TITLE} · שאלה {attempt.index + 1} מתוך {attempt.rounds.length}
+            {attemptTitle(attempt)} · שאלה {attempt.index + 1} מתוך {attempt.rounds.length}
           </span>
           <Button variant="text" onClick={pause}>
             שמירה והפסקה
@@ -82,7 +84,7 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
             onClick={showHint}
             disabled={Boolean(answer)}
             aria-disabled={Boolean(highlighted)}
-            aria-label="בקשו רמז מהיצור"
+            aria-label={`בקשו רמז מה${noun}`}
           >
             <Creature key={companionId} id={companionId} />
             <span>רמז ✦</span>
@@ -130,11 +132,11 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
         </fieldset>
         {answer && (
           <div role="status" className={`feedback ${answer.correct ? 'win' : 'try'}`}>
-            <Creature key={companionId} id={companionId} />
+            <Creature key={companionId} id={companionId} count={answer.catchCount ?? 0} />
             <div>
               <strong>
                 {answer.correct
-                  ? 'יצור נתפס! תשובה נכונה!'
+                  ? `${noun} נתפס! תשובה נכונה!`
                   : `${creatureCard(companionId).name} איתך! ממשיכים להתאמן.`}
               </strong>
               {reward && (
@@ -143,7 +145,7 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
                   {justAdvanced && (
                     <>
                       {' '}
-                      ✦ דרגת חברות חדשה עם <bdi>{reward.name}</bdi>!
+                      ✦ {reward.evolved ? 'התפתח ל־' : 'דרגת חברות חדשה עם '}<bdi>{reward.name}</bdi>!
                     </>
                   )}
                 </p>
@@ -170,7 +172,7 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
             )}
           </div>
         )}
-        {answer && question.explanation && <TrainerExplanation question={question} />}
+        {answer && question.explanation && <TrainerExplanation question={question} noun={noun} />}
       </section>
     </>
   );

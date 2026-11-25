@@ -64,3 +64,12 @@ test('visual world selection and world collections persist per account', () => {
   assert.deepEqual(saved.collection,{'animal-lion':2,'myth-dragon':3,bat:1});
   assert.equal(readGame('bob',local).creatureMode,undefined);
 });
+
+
+test('voxel selection and earned companions persist under the signed-in account', () => {
+  const local=storage();
+  saveGame({history:[],creatureMode:'voxel',collection:{'voxel-knight':2}},'voxel-user',local);
+  const saved=readGame('voxel-user',local);
+  assert.equal(saved.creatureMode,'voxel');
+  assert.deepEqual(saved.collection,{'voxel-knight':2});
+});

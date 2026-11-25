@@ -1,3 +1,4 @@
+import { readTheme } from './theme-storage.js';
 import artwork from './creature-art.json' with { type: 'json' };
 // Creature names from SRD 5.2.1 (CC BY 4.0); Hebrew labels are our translations.
 // Artwork has independent CC0/public-domain notices in public/licenses/ATTRIBUTION.txt.
@@ -85,7 +86,7 @@ const additionalSrd = [
   ['griffon', 'גריפון', 'Griffon', 295, 'griffon', 'air', 'epic'],
   ['nightmare', 'סוס בלהות', 'Nightmare', 312, 'nightmare', 'fire', 'legendary'],
   ['cockatrice', 'קוקטריס', 'Cockatrice', 275, 'cockatrice', 'grass', 'standard'],
-  ['manticore', 'מנטיקור', 'Manticore', 306, 'manticore', 'earth', 'epic'],
+  ['manticore', 'מנטיקור', 'Manticore', 306, 'manticore-large', 'earth', 'epic'],
   ['lion', 'אריה', 'Lion', 356, 'lion', 'earth', 'standard'],
   ['brown-bear', 'דוב חום', 'Brown Bear', 346, 'bear', 'earth', 'standard'],
   ['wolf', 'זאב', 'Wolf', 364, 'wolf', 'air', 'standard'],
@@ -152,6 +153,21 @@ const mythology = [
   ['golem', 'גולם', 'Golem', 'stone-golem', 'earth', 'epic'],
   ['nightmare', 'סוס בלהות', 'Nightmare', 'nightmare', 'fire', 'legendary'],
   ['angel', 'מלאך', 'Angel', 'angel', 'fairy', 'mythical'],
+  ['basilisk', 'בזיליסק', 'Basilisk', 'basilisk-large', 'grass', 'epic'],
+  ['manticore', 'מנטיקור', 'Manticore', 'manticore-large', 'earth', 'epic'],
+  ['wyvern', 'ויוורן', 'Wyvern', 'wyvern-large', 'air', 'legendary'],
+  ['kraken', 'קראקן', 'Kraken', 'kraken', 'water', 'epic'],
+  ['cerberus', 'קרברוס', 'Cerberus', 'cerberus', 'fire', 'epic'],
+  ['phoenix', 'עוף החול', 'Phoenix', 'phoenix', 'fire', 'mythical'],
+  ['hydra', 'הידרה', 'Hydra', 'hydra', 'water', 'legendary'],
+  ['genie', 'ג׳יני', 'Genie', 'genie', 'air', 'epic'],
+  ['gargoyle', 'גרגויל', 'Gargoyle', 'gargoyle', 'earth', 'standard'],
+  ['cyclops', 'קיקלופ', 'Cyclops', 'cyclops', 'earth', 'standard'],
+  ['minotaur', 'מינוטאור', 'Minotaur', 'minotaur', 'earth', 'standard'],
+  ['treant', 'איש עץ', 'Treant', 'treant', 'grass', 'standard'],
+  ['giant', 'ענק', 'Giant', 'giant', 'earth', 'standard'],
+  ['merfolk', 'בן ים', 'Merfolk', 'merfolk', 'water', 'standard'],
+  ['winged-serpent', 'נחש מכונף', 'Winged serpent', 'winged-serpent', 'air', 'epic'],
 ].map(([id, name, english, asset, color, rarity]) => ({
   id: `myth-${id}`,
   name,
@@ -160,6 +176,33 @@ const mythology = [
   color,
   rarity,
   mode: 'mythology',
+}));
+const voxels = [
+  ['knight', 'אביר', 'Knight', 'earth', 'standard'],
+  ['skeleton', 'שלד', 'Skeleton', 'earth', 'standard'],
+  ['goblin', 'גובלין', 'Goblin', 'grass', 'standard'],
+  ['orc', 'אורק', 'Orc', 'earth', 'standard'],
+  ['mage', 'קוסם', 'Mage', 'psychic', 'epic'],
+  ['ghost', 'רוח רפאים', 'Ghost', 'air', 'epic'],
+  ['eye', 'עין מעופפת', 'Flying eye', 'psychic', 'epic'],
+  ['spider', 'עכביש', 'Spider', 'earth', 'standard'],
+  ['scorpion', 'עקרב', 'Scorpion', 'earth', 'standard'],
+  ['mimic', 'תיבת הפתעות', 'Mimic', 'earth', 'epic'],
+  ['slime-green', 'רפש ירוק', 'Green slime', 'grass', 'standard'],
+  ['mushroom-red', 'פטרייה חיה', 'Living mushroom', 'grass', 'standard'],
+  ['trex', 'טירנוזאור', 'Tyrannosaurus', 'earth', 'legendary'],
+  ['golem', 'גולם אבן', 'Stone golem', 'earth', 'mythical'],
+  ['bat', 'עטלף', 'Bat', 'air', 'standard'],
+  ['oak-treant', 'שומר האלון', 'Oak treant', 'grass', 'epic'],
+  ['grove-stag', 'אייל החורשה', 'Grove stag', 'grass', 'standard'],
+  ['stag-beetle', 'חיפושית קרניים', 'Stag beetle', 'earth', 'standard'],
+  ['ivy-sentinel', 'זקיף הקיסוס', 'Ivy sentinel', 'grass', 'epic'],
+  ['grove-watcher', 'צופה החורשה', 'Grove watcher', 'psychic', 'legendary'],
+].map(([asset, name, english, color, rarity]) => ({
+  id: `voxel-${asset}`,
+  asset: `voxel-${asset}`,
+  name, english, color, rarity,
+  mode: 'voxel',
 }));
 const upgraded = {
   bat: 'bat-large',
@@ -176,6 +219,7 @@ export const creatures = [
   ...additionalSrd,
   ...mythology,
   ...animals,
+  ...voxels,
 ];
 export const creatureModes = {
   srd: {
@@ -196,6 +240,12 @@ export const creatureModes = {
     avatar: 'animal-lion',
     companion: 'animal-bear',
   },
+  voxel: {
+    name: 'עולם הקוביות',
+    description: 'חברים והרפתקאות בסגנון קוביות',
+    avatar: 'voxel-knight',
+    companion: 'voxel-golem',
+  },
 };
 const creaturesById = new Map(creatures.map((creature) => [creature.id, creature]));
 const rosters = new Map(
@@ -209,13 +259,21 @@ export const validMode = (mode) => (Object.hasOwn(creatureModes, mode) ? mode : 
 export const creaturesForMode = (mode) => rosters.get(validMode(mode));
 
 export function creatureId(value) {
-  if (creaturesById.has(value)) return value;
+  if (creaturesById.has(value) || (typeof value === 'string' && /^local-[a-z0-9-]+:[a-z0-9-]+$/.test(value))) return value;
   const number = Number(value);
   return legacyIds[Number.isFinite(number) ? Math.abs(Math.trunc(number)) % legacyIds.length : 0];
 }
 
 export function creatureCard(id, count = 0) {
   const creature = creaturesById.get(creatureId(id));
+  if (!creature) return { id, name: 'ערכת נושא חסרה', english: 'Theme unavailable', mode: id.split(':')[0], color: 'air', rarity: 'standard', image: './icons/camp-bat-192.png', frames: 0, pixelated: false };
+  if (creature.image) {
+    const evolved = count >= 2 && Boolean(creature.evolution);
+    return { ...creature, ...(evolved ? creature.evolution : {}),
+      id: creature.id, evolved, canEvolve: Boolean(creature.evolution), baseName: creature.name,
+      experienced: count >= 2, pixelated: false, frames: 0,
+    };
+  }
   const asset = creature.asset;
   const metadata = artwork[asset];
   const frames = metadata?.frames ?? 0;
@@ -223,6 +281,7 @@ export function creatureCard(id, count = 0) {
     ...creature,
     frames,
     pixelated: metadata?.pixelated !== false,
+    monochrome: metadata?.monochrome === true,
     experienced: count >= 2,
     image: `./creatures/${asset}.png`,
     animation: frames ? `./creatures/${asset}-idle.png` : null,
@@ -232,7 +291,7 @@ export function creatureCard(id, count = 0) {
 export function chooseEncounter(random, previousId, mode = 'srd') {
   const roll = random();
   const rarities = roll < 0.04 ? ['legendary', 'mythical'] : roll < 0.2 ? ['epic'] : ['standard'];
-  const pool = creaturesForMode(mode);
+  const pool = creaturesForMode(mode).filter(creature => creature.encounter !== false);
   const tier = pool.filter((creature) => rarities.includes(creature.rarity));
   const candidates = (tier.length ? tier : pool).filter((creature) => creature.id !== previousId);
   const choices = candidates.length
@@ -286,3 +345,26 @@ export function migrateCreatureGame(game) {
     ...(game.collection ? { collection } : {}),
   };
 }
+
+// Uploaded packs live only in browser storage; assets never use remote URLs.
+export let localTheme = null;
+export function installTheme(theme) {
+  const { manifest, assets } = theme;
+  if (localTheme && localTheme.mode !== `local-${manifest.id}`) {
+    delete creatureModes[localTheme.mode];
+    rosters.delete(localTheme.mode);
+  }
+  const mode = `local-${manifest.id}`;
+  const prefix = `${mode}:`;
+  const roster = manifest.creatures.map(item => ({ ...item, id: prefix + item.id, mode,
+    image: assets[item.image], animation: assets[item.animation] ?? null,
+    evolution: item.evolution ? { ...item.evolution, image: assets[item.evolution.image], animation: assets[item.evolution.animation] ?? null } : null,
+  }));
+  creatureModes[mode] = { name: manifest.name, description: manifest.description, avatar: prefix + manifest.avatar, companion: prefix + manifest.companion };
+  for (const creature of roster) creaturesById.set(creature.id, creature);
+  rosters.set(mode, roster);
+  localTheme = { ...theme, mode };
+  return mode;
+}
+const storedTheme = readTheme();
+if (storedTheme) installTheme(storedTheme);

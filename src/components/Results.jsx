@@ -1,6 +1,6 @@
 import React from 'react';
 import { duration } from '../model.js';
-import { PRACTICE_TITLE, countCorrect, formatDate } from '../practice-summary.js';
+import { attemptTitle, countCorrect, formatDate } from '../practice-summary.js';
 import { Creature } from './Creature.jsx';
 import { Button } from './UI.jsx';
 import {
@@ -19,7 +19,7 @@ export function Results({ attempt, home }) {
           className="result-creature"
         />
         <div>
-          <p className="eyebrow">{PRACTICE_TITLE}</p>
+          <p className="eyebrow">{attemptTitle(attempt)}</p>
           <h1>האימון הושלם!</h1>
           <p>{formatDate(attempt.finishedAt)}</p>
           <div className="result-metrics">

@@ -4,7 +4,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 
-let server, ui, AuthGate, Home, Results, dialogs;
+let server, ui, AuthGate, Home, Results, dialogs, AvatarMenu;
 before(async () => {
   server = await createServer({
     server: { middlewareMode: true, ws: false, watch: null },
@@ -15,6 +15,7 @@ before(async () => {
   ({ AuthGate } = await server.ssrLoadModule('/src/Auth.jsx'));
   ({ Home } = await server.ssrLoadModule('/src/components/Home.jsx'));
   ({ Results } = await server.ssrLoadModule('/src/components/Results.jsx'));
+  ({ AvatarMenu } = await server.ssrLoadModule('/src/components/AvatarMenu.jsx'));
   dialogs = await server.ssrLoadModule('/src/components/Dialogs.jsx');
 });
 after(async () => {
@@ -71,4 +72,13 @@ test('history and review render saved generated snapshots without a booklet bank
     assert.ok(review.includes(text));
   assert.match(review, /התשובה שלך/);
   assert.match(review, /התשובה הנכונה/);
+});
+
+
+test('avatar menu exposes the selected voxel world alongside existing worlds', () => {
+  const html = render(AvatarMenu, {user:{displayName:'Test'},mode:'voxel',changeMode(){}});
+  assert.equal((html.match(/type="radio"/g) ?? []).length,4);
+  assert.match(html, /aria-label="עולם הקוביות"[^>]*checked=""[^>]*value="voxel"/);
+  assert.match(html, /20 יצורים/);
+  assert.match(html, /voxel-knight.png/);
 });

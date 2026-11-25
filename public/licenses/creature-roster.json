@@ -157,7 +157,7 @@
     "english": "Manticore",
     "page": 306,
     "mode": "srd",
-    "asset": "manticore"
+    "asset": "manticore-large"
   },
   {
     "id": "lion",
@@ -310,6 +310,111 @@
     "english": "Angel",
     "mode": "mythology",
     "asset": "angel"
+  },
+  {
+    "id": "myth-basilisk",
+    "name": "בזיליסק",
+    "english": "Basilisk",
+    "mode": "mythology",
+    "asset": "basilisk-large"
+  },
+  {
+    "id": "myth-manticore",
+    "name": "מנטיקור",
+    "english": "Manticore",
+    "mode": "mythology",
+    "asset": "manticore-large"
+  },
+  {
+    "id": "myth-wyvern",
+    "name": "ויוורן",
+    "english": "Wyvern",
+    "mode": "mythology",
+    "asset": "wyvern-large"
+  },
+  {
+    "id": "myth-kraken",
+    "name": "קראקן",
+    "english": "Kraken",
+    "mode": "mythology",
+    "asset": "kraken"
+  },
+  {
+    "id": "myth-cerberus",
+    "name": "קרברוס",
+    "english": "Cerberus",
+    "mode": "mythology",
+    "asset": "cerberus"
+  },
+  {
+    "id": "myth-phoenix",
+    "name": "עוף החול",
+    "english": "Phoenix",
+    "mode": "mythology",
+    "asset": "phoenix"
+  },
+  {
+    "id": "myth-hydra",
+    "name": "הידרה",
+    "english": "Hydra",
+    "mode": "mythology",
+    "asset": "hydra"
+  },
+  {
+    "id": "myth-genie",
+    "name": "ג׳יני",
+    "english": "Genie",
+    "mode": "mythology",
+    "asset": "genie"
+  },
+  {
+    "id": "myth-gargoyle",
+    "name": "גרגויל",
+    "english": "Gargoyle",
+    "mode": "mythology",
+    "asset": "gargoyle"
+  },
+  {
+    "id": "myth-cyclops",
+    "name": "קיקלופ",
+    "english": "Cyclops",
+    "mode": "mythology",
+    "asset": "cyclops"
+  },
+  {
+    "id": "myth-minotaur",
+    "name": "מינוטאור",
+    "english": "Minotaur",
+    "mode": "mythology",
+    "asset": "minotaur"
+  },
+  {
+    "id": "myth-treant",
+    "name": "איש עץ",
+    "english": "Treant",
+    "mode": "mythology",
+    "asset": "treant"
+  },
+  {
+    "id": "myth-giant",
+    "name": "ענק",
+    "english": "Giant",
+    "mode": "mythology",
+    "asset": "giant"
+  },
+  {
+    "id": "myth-merfolk",
+    "name": "בן ים",
+    "english": "Merfolk",
+    "mode": "mythology",
+    "asset": "merfolk"
+  },
+  {
+    "id": "myth-winged-serpent",
+    "name": "נחש מכונף",
+    "english": "Winged serpent",
+    "mode": "mythology",
+    "asset": "winged-serpent"
   },
   {
     "id": "animal-lion",
@@ -485,5 +590,145 @@
     "english": "Bat",
     "mode": "animals",
     "asset": "bat-large"
+  },
+  {
+    "id": "voxel-knight",
+    "name": "אביר",
+    "english": "Knight",
+    "mode": "voxel",
+    "asset": "voxel-knight"
+  },
+  {
+    "id": "voxel-skeleton",
+    "name": "שלד",
+    "english": "Skeleton",
+    "mode": "voxel",
+    "asset": "voxel-skeleton"
+  },
+  {
+    "id": "voxel-goblin",
+    "name": "גובלין",
+    "english": "Goblin",
+    "mode": "voxel",
+    "asset": "voxel-goblin"
+  },
+  {
+    "id": "voxel-orc",
+    "name": "אורק",
+    "english": "Orc",
+    "mode": "voxel",
+    "asset": "voxel-orc"
+  },
+  {
+    "id": "voxel-mage",
+    "name": "קוסם",
+    "english": "Mage",
+    "mode": "voxel",
+    "asset": "voxel-mage"
+  },
+  {
+    "id": "voxel-ghost",
+    "name": "רוח רפאים",
+    "english": "Ghost",
+    "mode": "voxel",
+    "asset": "voxel-ghost"
+  },
+  {
+    "id": "voxel-eye",
+    "name": "עין מעופפת",
+    "english": "Flying eye",
+    "mode": "voxel",
+    "asset": "voxel-eye"
+  },
+  {
+    "id": "voxel-spider",
+    "name": "עכביש",
+    "english": "Spider",
+    "mode": "voxel",
+    "asset": "voxel-spider"
+  },
+  {
+    "id": "voxel-scorpion",
+    "name": "עקרב",
+    "english": "Scorpion",
+    "mode": "voxel",
+    "asset": "voxel-scorpion"
+  },
+  {
+    "id": "voxel-mimic",
+    "name": "תיבת הפתעות",
+    "english": "Mimic",
+    "mode": "voxel",
+    "asset": "voxel-mimic"
+  },
+  {
+    "id": "voxel-slime-green",
+    "name": "רפש ירוק",
+    "english": "Green slime",
+    "mode": "voxel",
+    "asset": "voxel-slime-green"
+  },
+  {
+    "id": "voxel-mushroom-red",
+    "name": "פטרייה חיה",
+    "english": "Living mushroom",
+    "mode": "voxel",
+    "asset": "voxel-mushroom-red"
+  },
+  {
+    "id": "voxel-trex",
+    "name": "טירנוזאור",
+    "english": "Tyrannosaurus",
+    "mode": "voxel",
+    "asset": "voxel-trex"
+  },
+  {
+    "id": "voxel-golem",
+    "name": "גולם אבן",
+    "english": "Stone golem",
+    "mode": "voxel",
+    "asset": "voxel-golem"
+  },
+  {
+    "id": "voxel-bat",
+    "name": "עטלף",
+    "english": "Bat",
+    "mode": "voxel",
+    "asset": "voxel-bat"
+  },
+  {
+    "id": "voxel-oak-treant",
+    "name": "שומר האלון",
+    "english": "Oak treant",
+    "mode": "voxel",
+    "asset": "voxel-oak-treant"
+  },
+  {
+    "id": "voxel-grove-stag",
+    "name": "אייל החורשה",
+    "english": "Grove stag",
+    "mode": "voxel",
+    "asset": "voxel-grove-stag"
+  },
+  {
+    "id": "voxel-stag-beetle",
+    "name": "חיפושית קרניים",
+    "english": "Stag beetle",
+    "mode": "voxel",
+    "asset": "voxel-stag-beetle"
+  },
+  {
+    "id": "voxel-ivy-sentinel",
+    "name": "זקיף הקיסוס",
+    "english": "Ivy sentinel",
+    "mode": "voxel",
+    "asset": "voxel-ivy-sentinel"
+  },
+  {
+    "id": "voxel-grove-watcher",
+    "name": "צופה החורשה",
+    "english": "Grove watcher",
+    "mode": "voxel",
+    "asset": "voxel-grove-watcher"
   }
 ]

@@ -1,5 +1,5 @@
 import React from 'react';
-import { creatureCard, creatureModes } from '../creatures.js';
+import { creatureCard, creatureModes, localTheme } from '../creatures.js';
 import { Creature } from './Creature.jsx';
 import { AppMark, ExternalLink, Modal } from './UI.jsx';
 
@@ -23,8 +23,8 @@ export function TermsDialog({ close }) {
         <section>
           <h3>יצורי SRD וייחוס</h3>
           <p>
-            בעולם ״יצורי SRD״, שמות היצורים מבוססים על SRD 5.2.1. העולמות ״יצורים מיתולוגיים״ ו״בעלי
-            חיים״ מציגים גם שמות כלליים מהפולקלור ומהטבע. התרגומים לעברית, דרגות החברות והנדירות
+            בעולם ״יצורי SRD״, שמות היצורים מבוססים על SRD 5.2.1. העולמות ״יצורים מיתולוגיים״, ״בעלי
+            חיים״ ו״עולם הקוביות״ מציגים גם שמות כלליים מהפולקלור ומהטבע. התרגומים לעברית, דרגות החברות והנדירות
             במשחק הם התאמות עבור האפליקציה; האיורים הם ייצוגים סמליים נפרדים ואינם איורי SRD רשמיים.
           </p>
           <p dir="ltr">
@@ -65,11 +65,21 @@ export function TermsDialog({ close }) {
             <ExternalLink href="https://clintbellanger.itch.io/tiny-creatures">
               ־Tiny Creatures של Clint Bellanger
             </ExternalLink>
-            , גם הן ב־CC0. איורים נוספים מאת{' '}
+            , גם הן ב־CC0. נוספו איורים מחבילת{' '}
+            <ExternalLink href="https://hexany-ives.itch.io/hexanys-monster-menagerie">
+              Hexany’s Monster Menagerie
+            </ExternalLink>{' '}
+            של Hexany Ives, גם היא ב־CC0. איורי עולם הקוביות הם מתוך חבילות{' '}
+            <ExternalLink href="https://colefoster.itch.io/voxel-dungeon-pack">Voxel Dungeon</ExternalLink>{' '}
+            ו<ExternalLink href="https://colefoster.itch.io/voxel-forest-ruins-pack">Voxel Forest Ruins</ExternalLink>{' '}
+            של Cole Foster, ב־CC0. אלו עיצובים עצמאיים; אין קשר ל־Mojang או ל־Microsoft ואין שימוש באיורי Minecraft. איורים נוספים מאת{' '}
             <ExternalLink href="https://gordyh.itch.io/public-domain-art-pack-inktober-2024">
               Gordy Higgins
             </ExternalLink>{' '}
-            הוקדשו במפורש לנחלת הכלל על ידי היוצר. חבילות PulsarCP מסומנות על ידי היוצר כגרפיקה
+            הוקדשו במפורש לנחלת הכלל על ידי היוצר. נוספו איורי CC0 מאתר{' '}
+            <ExternalLink href="https://openclipart.org/share">Openclipart</ExternalLink>
+            , עם קישורים ליוצרים במפרט המקורות. איור סוס האש מסומן על ידי היוצר כאמנות בסיוע
+            בינה מלאכותית. חבילות PulsarCP מסומנות על ידי היוצר כגרפיקה
             בסיוע בינה מלאכותית. בוצעו חיתוך מסגרות ושינויי גודל.{' '}
             <ExternalLink href="./licenses/ATTRIBUTION.txt">פרטי המקורות והרישיונות</ExternalLink>.
           </p>
@@ -126,7 +136,7 @@ export function HelpDialog({ close }) {
           <h3>בוחרים אימון</h3>
           <p>
             במסך הבית בוחרים את מספר השאלות ב״אימון מתחדש״ ולוחצים על ״לאימון״. האימון משלב שאלות
-            חשבון עם מספרים משתנים וסיפורים מקוריים עם שאלות הבנת הנקרא.
+            חשבון עם מספרים משתנים וסיפורים מקוריים עם שאלות הבנת הנקרא. אפשר גם לבחור אחד מחמשת המבחנים הקבועים שמתחתיו. אחרי סיום מבחן, הכרטיס שלו יסומן כ״הושלם״ ותמונת הרקע תשתנה.
           </p>
         </li>
         <li>
@@ -146,8 +156,13 @@ export function HelpDialog({ close }) {
           </p>
         </li>
       </ol>
+      <section className="help-mode-note">
+        <h3>איך מייבאים ערכת נושא?</h3>
+        <p>פותחים את תפריט האווטאר בסרגל העליון, בוחרים ״העלאת ערכת נושא״ ובוחרים קובץ ZIP של ערכה (עד 3MB). אין צורך לחלץ אותו. הקובץ והתמונות נבדקים, ולאחר השמירה העולם החדש נבחר אוטומטית.</p>
+        <p>הערכה נשמרת רק בדפדפן ובמכשיר הזה ואינה נשלחת לשרת. העלאה חדשה מחליפה את הערכה שהועלתה קודם; ההתקדמות במבחנים נשמרת. לאחר קבלת גרסה מעודכנת של ערכה, מייבאים מחדש את ה־ZIP. אם מוצגת שגיאה, הערכה הקודמת נשארת זמינה.</p>
+      </section>
       <p className="help-mode-note">
-        אפשר לבחור עולם דרך תפריט האווטאר בסרגל העליון: יצורי SRD, יצורים מיתולוגיים או בעלי חיים.
+        אפשר לבחור עולם דרך תפריט האווטאר בסרגל העליון: יצורי SRD, יצורים מיתולוגיים, בעלי חיים או עולם הקוביות.
         לכל עולם אוסף משלו, והבחירה נשמרת בחשבון בדפדפן הזה.
       </p>
       <aside className="help-tip">
@@ -162,12 +177,13 @@ export function HelpDialog({ close }) {
 }
 
 export function Backpack({ collection, close, mode = 'srd' }) {
+  const plural = mode === localTheme?.mode ? localTheme.manifest.plural ?? 'יצורים' : 'יצורים';
   const catches = Object.entries(collection).filter(([id]) => creatureCard(id).mode === mode);
   return (
     <Modal
-      title="תיק היצורים"
-      eyebrow={`אוסף היצורים שלי · ${creatureModes[mode].name}`}
-      subtitle={`${catches.length} סוגי יצורים באוסף`}
+      title={`תיק ה${plural}`}
+      eyebrow={`אוסף ה${plural} שלי · ${creatureModes[mode].name}`}
+      subtitle={`${catches.length} סוגי ${plural} באוסף`}
       onClose={close}
       className="backpack"
       headerClassName="backpack-header"
@@ -194,20 +210,20 @@ function CollectionCard({ id, count }) {
     <li className={`creature-card card-${card.color} rarity-${card.rarity}`}>
       <div className="card-header">
         <strong>{card.name}</strong>
-        <AppMark />
+        <AppMark theme={card.mode === localTheme?.mode ? localTheme : null} />
       </div>
       <div className="card-art">
         {rarityLabels[card.rarity] && (
           <span className="rarity-badge">✦ {rarityLabels[card.rarity]}</span>
         )}
-        <Creature id={card.id} animated={false} />
+        <Creature id={card.id} count={count} animated={false} />
       </div>
       <div className="card-caption">
-        <span dir="ltr">{card.english}</span>
+        <span dir="ltr">{card.number ? `#${String(card.number).padStart(3, '0')}` : card.english}</span>
         <span>{count} תפיסות</span>
       </div>
       <p>
-        {card.experienced ? (
+        {card.canEvolve ? (card.evolved ? <>✦ התפתח מ־<bdi>{card.baseName}</bdi></> : 'עוד תפיסה אחת להתפתחות!') : card.image?.startsWith('data:') ? 'ללא התפתחות' : card.experienced ? (
           <>
             ✦ חבר ותיק: <bdi>{card.name}</bdi>
           </>
