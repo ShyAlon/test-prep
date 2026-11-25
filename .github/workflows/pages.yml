@@ -57,20 +57,26 @@ jobs:
           echo "::endgroup::"
       - name: Upload Pages artifact
         id: upload
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
+          name: github-pages
           path: dist
       - name: Wait for Pages artifact to become available
         env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
         run: |
+          if [[ ! "$ARTIFACT_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::Pages upload did not return a valid artifact ID."
+            exit 1
+          fi
           for attempt in {1..12}; do
             echo "Checking artifact availability at $(date -u +%FT%TZ) (attempt $attempt/12)."
             if gh api "repos/$GH_REPO/actions/runs/$RUN_ID/artifacts" > "$RUNNER_TEMP/pages-artifacts.json"; then
               jq '{total_count, artifacts: [.artifacts[] | {id, name, size_in_bytes, expired, created_at}]}' "$RUNNER_TEMP/pages-artifacts.json"
-              if jq -e '.artifacts | any(.name == "github-pages" and .expired == false)' "$RUNNER_TEMP/pages-artifacts.json" > /dev/null; then
+              if jq -e --arg id "$ARTIFACT_ID" '.artifacts | any((.id | tostring) == $id and .name == "github-pages" and .expired == false)' "$RUNNER_TEMP/pages-artifacts.json" > /dev/null; then
                 echo "Pages artifact is available; proceeding to deployment."
                 exit 0
               fi
@@ -82,8 +88,10 @@ jobs:
           echo "::error::Uploaded Pages artifact did not become available within 60 seconds."
           exit 1
       - name: Deploy site to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         id: deployment
+        with:
+          artifact_name: github-pages
       - name: Collect failure diagnostics
         if: failure()
         env:
