@@ -1,0 +1,93 @@
+{
+  "verifiedOn": "2026-11-24",
+  "sources": [
+    {
+      "creator": "Kenney",
+      "pack": "Tiny Dungeon 1.0",
+      "url": "https://kenney-assets.itch.io/tiny-dungeon",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "evidence": "Creator page explicitly states CC0 1.0 Universal; bundled License.txt confirms Creative Commons Zero, CC0.",
+      "files": [
+        "tile_0096.png",
+        "tile_0108.png",
+        "tile_0110.png",
+        "tile_0120.png",
+        "tile_0121.png",
+        "tile_0122.png"
+      ]
+    },
+    {
+      "creator": "LuizMelo",
+      "pack": "Monsters Creatures Fantasy",
+      "url": "https://luizmelo.itch.io/monsters-creatures-fantasy",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "evidence": "Creator's License Details section: License: CC0 (Creative Commons Zero). Credits are not required, but greatly appreciated!",
+      "files": [
+        "Goblin/Idle.png",
+        "Skeleton/Idle.png"
+      ]
+    },
+    {
+      "creator": "PulsarCP",
+      "pack": "Free Pixel Art Animals & Birds — 34 Animated Characters",
+      "url": "https://pulsarcp.itch.io/free-pixel-art-animals-birds",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "evidence": "Creator page and each archive README state CC0; includes 24, 48, 64 and 96 pixel frame packs.",
+      "aiDisclosure": "Creator page: AI Assisted, Graphics."
+    },
+    {
+      "creator": "PulsarCP",
+      "pack": "Free Fantasy Creatures Bundle",
+      "url": "https://pulsarcp.itch.io/fantasy-creatures",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "evidence": "Creator page and bundled LICENSE.txt state CC0 1.0 Universal. Used dragon, golem and fox idle frames only.",
+      "aiDisclosure": "Creator page: AI Assisted, Graphics."
+    },
+    {
+      "creator": "Clint Bellanger",
+      "pack": "Tiny Creatures",
+      "url": "https://clintbellanger.itch.io/tiny-creatures",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "evidence": "Creator page and bundled License.txt state CC0 1.0 Universal (Public Domain).",
+      "files": [
+        "tile_0051.png",
+        "tile_0052.png",
+        "tile_0053.png",
+        "tile_0055.png",
+        "tile_0104.png",
+        "tile_0105.png",
+        "tile_0107.png",
+        "tile_0038.png"
+      ]
+    },
+    {
+      "creator": "Gordy Higgins",
+      "pack": "Public Domain Fantasy Art Pack 2",
+      "url": "https://gordyh.itch.io/public-domain-art-pack-inktober-2024",
+      "license": "LicenseRef-Public-Domain",
+      "evidence": "Creator page explicitly says: Some free art for anyone to use how they would like. Public domain! No attribution needed.",
+      "files": [
+        "Goblin.png",
+        "Troll.png",
+        "Minotaur_Skeleton.png",
+        "Skeleton_King.png",
+        "Gelatinous_Cube.png"
+      ]
+    },
+    {
+      "creator": "Gordy Higgins",
+      "pack": "Public Domain Fantasy Art Pack",
+      "url": "https://gordyh.itch.io/public-domain-fantasy-art-pack",
+      "license": "LicenseRef-Public-Domain",
+      "evidence": "Creator page explicitly dedicates the work to the public domain, with no attribution needed.",
+      "files": [
+        "TheLich.png"
+      ]
+    }
+  ]
+}

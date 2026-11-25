@@ -1,0 +1,81 @@
+Creature Training Camp — content and artwork notices
+Updated: 2026-11-24
+
+SRD 5.2.1 — CC BY 4.0
+
+This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
+
+Material used: creature names only. Source pages in the supplied SRD 5.2.1:
+Animated Armor 259; Gelatinous Cube 286; Ghost 287; Goblin Warrior 290;
+Imp 300; Skeleton 325; Bat 345; Giant Spider 353.
+Adaptations: Hebrew name translations. No SRD rules or stat blocks are reproduced.
+Collection rarity and friendship ranks are original app mechanics, not SRD rules.
+The art below is independently licensed, symbolic artwork, not official SRD art.
+The slime sprite represents the Gelatinous Cube; the devil sprite represents the Imp.
+
+Tiny Dungeon 1.0 — Kenney — CC0 1.0 Universal
+Creator's itch.io page: https://kenney-assets.itch.io/tiny-dungeon
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Archive: kenney_tinyDungeon.zip
+Creator's bundled notice: kenney-tiny-dungeon-CC0.txt (in this directory)
+Tiles used: 0096 (Animated Armor), 0108 (Gelatinous Cube), 0110 (Imp),
+0120 (Bat), 0121 (Ghost), 0122 (Giant Spider).
+Modifications: renamed local files; nearest-neighbor resizing and background
+compositing for app icons. The Bat tile is the app icon and interface mark.
+
+Monsters Creatures Fantasy — LuizMelo — CC0 1.0 Universal
+Creator's itch.io page: https://luizmelo.itch.io/monsters-creatures-fantasy
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Archive: Monsters_Creatures_Fantasy.zip
+Source files used: Goblin/Idle.png and Skeleton/Idle.png (four frames each).
+Modifications: consistent frame cropping, static first-frame extraction,
+and CSS idle animation. No other monsters from that pack are used.
+The creator's page explicitly states "License: CC0 (Creative Commons Zero)."
+The downloaded archive has no separate license file; the creator's source-page
+license declaration is recorded in artwork-sources.json.
+
+CC0 artwork may be used, changed and redistributed under its dedication;
+CC BY 4.0 material may be reused under that license, including attribution and
+indicating changes. App terms impose no additional restrictions on these rights.
+Public-domain dedications do not supply unrelated trademark or endorsement rights.
+These notices do not grant a license to the app's own code or learning content.
+Earlier third-party artwork is not part of this version.
+
+
+Expanded roster and visual modes (2026-11-24)
+
+The roster now has three visual worlds: SRD creatures, mythological creatures,
+and natural animals. Mode selection changes companions and collection views,
+not questions or previously earned rewards. Folklore/animal labels in the latter
+two worlds are not presented as licensed SRD rules.
+
+Additional artwork sources (all obtained from the creator's itch.io download):
+- PulsarCP, Free Pixel Art Animals & Birds, CC0 1.0:
+  https://pulsarcp.itch.io/free-pixel-art-animals-birds
+  Used selected idle frames from the four animal/bird archives (24–96 px cells).
+- PulsarCP, Free Fantasy Creatures Bundle, CC0 1.0:
+  https://pulsarcp.itch.io/fantasy-creatures
+  Used Emberwing Dragon (ember/frost), Rune Golem (crystal) and Spirit Fox (spirit)
+  idle frames. Original cells range up to 264x184 pixels. Creator discloses
+  AI-assisted graphics in both PulsarCP packs.
+- Clint Bellanger, Tiny Creatures, CC0 1.0:
+  https://clintbellanger.itch.io/tiny-creatures
+  Used tiles 0051, 0052, 0053, 0055, 0104, 0105, 0107 and 0038. These remain
+  low-resolution pixel art (16x16), not high-resolution replacements.
+- Gordy Higgins, Public Domain Fantasy Art Pack 2:
+  https://gordyh.itch.io/public-domain-art-pack-inktober-2024
+  The author explicitly dedicates these illustrations to the public domain;
+  no formal CC0 license is claimed for this source. Used Goblin.png, Troll.png,
+  Minotaur_Skeleton.png, Skeleton_King.png and Gelatinous_Cube.png.
+- Gordy Higgins, Public Domain Fantasy Art Pack:
+  https://gordyh.itch.io/public-domain-fantasy-art-pack
+  Same explicit public-domain declaration. Used TheLich.png.
+
+Modifications: selected idle frames cropped to consistent square canvases;
+illustrations cropped and downsampled to at most 512px. Some original illustrated
+backgrounds are retained. Sprite animations use their original idle frames;
+static illustrations use gentle CSS motion, not invented frame animations.
+Source files and original/output dimensions are listed in creature-art.json.
+The file creature-roster.json lists all SRD names and source pages used, plus the
+separate folklore/animal labels. The exact SRD attribution above still applies.
+The existing independent CC0 notices remain applicable to retained earlier art.

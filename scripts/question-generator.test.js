@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { numericalTemplates, generateNumerical, generatePractice } from '../src/question-generator.js';
 import { createAttempt, generatedOnlyGame } from '../src/model.js';
-const bank = {};
 
 function rng(seed) {
   return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 2 ** 32; };
@@ -65,22 +64,22 @@ test('practice is deterministic, varied, and includes complete reading reference
   assert.notDeepEqual(generatePractice(rng(42), 20), generatePractice(rng(43), 20));
 });
 
-test('generated questions survive serialization and removed modes are rejected', () => {
-  const attempt = createAttempt(bank, 'practice', 20, 123456);
+test('generated questions survive serialization and invalid lengths are rejected', () => {
+  const attempt = createAttempt(20, 123456);
   assert.deepEqual(JSON.parse(JSON.stringify(attempt)), attempt);
-  for (const round of attempt.rounds) assert.ok(round.question && round.pokemon);
-  assert.throws(() => createAttempt(bank, '1', 20, 123456), /generated/);
-  assert.throws(() => createAttempt(bank, 'mixed', 20, 123456), /generated/);
+  for (const round of attempt.rounds) assert.ok(round.question && round.creature);
+  assert.throws(() => createAttempt(0, 123456), /Practice length/);
+  assert.throws(() => createAttempt(101, 123456), /Practice length/);
 });
 
 test('existing generated progress survives while removed content cannot resume or appear in history', () => {
-  const generated = createAttempt(bank, 'practice', 20, 123456);
+  const generated = createAttempt(20, 123456);
   const old = { id: 12, testId: '1', rounds: [{id: '1-1-1'}] };
   const game = { active: old, history: [old, generated], collection: {25: 2}, sound: false };
   const migrated = generatedOnlyGame(game);
   assert.equal(migrated.active, null);
   assert.deepEqual(migrated.history, [generated]);
-  assert.deepEqual(migrated.collection, {25: 2});
+  assert.equal(Object.values(migrated.collection).reduce((sum, count) => sum + count, 0), 2);
   assert.equal(migrated.sound, false);
   assert.deepEqual(generatedOnlyGame({...game, active: generated}).active, generated);
   assert.equal(game.active, old);

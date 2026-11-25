@@ -54,3 +54,13 @@ test('sign-in errors are actionable without echoing provider details or exposing
   assert.match(authErrorMessage({ code: 'auth/popup-blocked' }), /חלונות קופצים/);
   assert.doesNotMatch(authErrorMessage({ message: 'private provider diagnostic' }), /private/);
 });
+
+
+test('visual world selection and world collections persist per account', () => {
+  const local=storage();
+  saveGame({history:[],creatureMode:'animals',collection:{'animal-lion':2,'myth-dragon':3,bat:1}},'alice',local);
+  const saved=readGame('alice',local);
+  assert.equal(saved.creatureMode,'animals');
+  assert.deepEqual(saved.collection,{'animal-lion':2,'myth-dragon':3,bat:1});
+  assert.equal(readGame('bob',local).creatureMode,undefined);
+});

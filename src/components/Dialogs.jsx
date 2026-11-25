@@ -1,0 +1,220 @@
+import React from 'react';
+import { creatureCard, creatureModes } from '../creatures.js';
+import { Creature } from './Creature.jsx';
+import { AppMark, ExternalLink, Modal } from './UI.jsx';
+
+const rarityLabels = { epic: 'אפי', legendary: 'אגדי', mythical: 'מיתי' };
+
+export function TermsDialog({ close }) {
+  return (
+    <Modal title="תנאי שימוש והפצה" eyebrow="שימוש אחראי וכיבוד זכויות יוצרים" onClose={close}>
+      <div className="terms-content">
+        <p className="terms-notice">
+          תנאים אלה מסבירים את מקורות התוכן והרישיונות החלים עליו. אין בהם הבטחה משפטית גורפת; יש
+          לפעול לפי הרישיון של כל רכיב.
+        </p>
+        <section>
+          <h3>מטרת האפליקציה</h3>
+          <p>
+            האפליקציה נועדה לתרגול אישי. היא אינה מבחן רשמי ואינה קשורה לגוף בוחן, להוצאה לאור ואינה
+            מאושרת או ממומנת על ידם. אין התחייבות לדיוק השאלות, הפתרונות או התוצאות.
+          </p>
+        </section>
+        <section>
+          <h3>יצורי SRD וייחוס</h3>
+          <p>
+            בעולם ״יצורי SRD״, שמות היצורים מבוססים על SRD 5.2.1. העולמות ״יצורים מיתולוגיים״ ו״בעלי
+            חיים״ מציגים גם שמות כלליים מהפולקלור ומהטבע. התרגומים לעברית, דרגות החברות והנדירות
+            במשחק הם התאמות עבור האפליקציה; האיורים הם ייצוגים סמליים נפרדים ואינם איורי SRD רשמיים.
+          </p>
+          <p dir="ltr">
+            This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by
+            Wizards of the Coast LLC, available at{' '}
+            <ExternalLink href="https://www.dndbeyond.com/srd">
+              https://www.dndbeyond.com/srd
+            </ExternalLink>
+            . The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International
+            License, available at{' '}
+            <ExternalLink href="https://creativecommons.org/licenses/by/4.0/legalcode">
+              https://creativecommons.org/licenses/by/4.0/legalcode
+            </ExternalLink>
+            .
+          </p>
+        </section>
+        <section>
+          <h3>איורים בנחלת הכלל</h3>
+          <p>
+            האיורים וסמל העטלף נלקחו מחבילת{' '}
+            <ExternalLink href="https://kenney-assets.itch.io/tiny-dungeon">
+              Tiny Dungeon של Kenney
+            </ExternalLink>{' '}
+            ומחבילת{' '}
+            <ExternalLink href="https://luizmelo.itch.io/monsters-creatures-fantasy">
+              Monsters Creatures Fantasy של LuizMelo
+            </ExternalLink>
+            , שפורסמו תחת{' '}
+            <ExternalLink href="https://creativecommons.org/publicdomain/zero/1.0/">
+              CC0 1.0
+            </ExternalLink>
+            . נוספו להם איורים מחבילות{' '}
+            <ExternalLink href="https://pulsarcp.itch.io/free-pixel-art-animals-birds">
+              החיות
+            </ExternalLink>{' '}
+            ו<ExternalLink href="https://pulsarcp.itch.io/fantasy-creatures">הפנטזיה</ExternalLink>{' '}
+            של PulsarCP ומ
+            <ExternalLink href="https://clintbellanger.itch.io/tiny-creatures">
+              ־Tiny Creatures של Clint Bellanger
+            </ExternalLink>
+            , גם הן ב־CC0. איורים נוספים מאת{' '}
+            <ExternalLink href="https://gordyh.itch.io/public-domain-art-pack-inktober-2024">
+              Gordy Higgins
+            </ExternalLink>{' '}
+            הוקדשו במפורש לנחלת הכלל על ידי היוצר. חבילות PulsarCP מסומנות על ידי היוצר כגרפיקה
+            בסיוע בינה מלאכותית. בוצעו חיתוך מסגרות ושינויי גודל.{' '}
+            <ExternalLink href="./licenses/ATTRIBUTION.txt">פרטי המקורות והרישיונות</ExternalLink>.
+          </p>
+        </section>
+        <section>
+          <h3>שאלות וחומרי לימוד</h3>
+          <p>
+            האימונים משתמשים בשאלות חשבון שנוצרות מתבניות ובסיפורים ושאלות הבנת הנקרא שנכתבו עבור
+            האפליקציה. תכני החוברת אינם כלולים בגרסה זו. התכנים אינם שאלות מבחן רשמיות, ועשויות
+            להיות בהם טעויות. יצירת תוכן חדש אינה כשלעצמה הבטחה להיעדר זכויות צד שלישי.
+          </p>
+        </section>
+        <section>
+          <h3>העתקה והפצה</h3>
+          <p>
+            חומר ה־SRD ניתן לשימוש ולהפצה בהתאם ל־CC BY 4.0, לרבות ייחוס וציון שינויים. איורי CC0
+            זמינים לשימוש, לשינוי ולהפצה בהתאם להקדשת CC0. אין בתנאים אלה הגבלה נוספת על הזכויות
+            המוענקות ברישיונות אלה. אין להציג מצג של חסות רשמית. זמינות קוד המקור לציבור אינה
+            כשלעצמה רישיון לקוד או לנכסים הנלווים. רישיונות של ספריות צד שלישי ממשיכים לחול עליהן.
+          </p>
+        </section>
+        <section>
+          <h3>לפני פרסום או שימוש מסחרי</h3>
+          <p>
+            יש לבדוק בנפרד את הרשאות השימוש בקוד, במאגר השאלות ובכל נכס חזותי. כאשר ההרשאה אינה
+            ברורה, יש להשיג אישור או להחליף את התוכן בתוכן מקורי או מורשה. התקנת האפליקציה במסך הבית
+            אינה משנה את מעמד הזכויות.
+          </p>
+        </section>
+        <section>
+          <h3>דיווח על בעיה בזכויות</h3>
+          <p>
+            ניתן לפנות למתחזקי הפרויקט באמצעות{' '}
+            <ExternalLink href="https://github.com/ShyAlon/test-prep/issues">
+              דיווח במאגר הפרויקט
+            </ExternalLink>
+            , עם זיהוי התוכן והבעיה. הדיווח ציבורי — אין לצרף פרטים אישיים או מסמכים חסויים.
+          </p>
+        </section>
+        <p className="terms-date">
+          עודכן: 24 בנובמבר 2026. הנוסח הוא מידע כללי ואינו תחליף לבדיקת זכויות ולייעוץ משפטי מותאם.
+          אין בו כדי לגרוע מזכויות שאינן ניתנות להתניה לפי דין.
+        </p>
+      </div>
+    </Modal>
+  );
+}
+
+export function HelpDialog({ close }) {
+  return (
+    <Modal title="איך מתאמנים?" eyebrow="כל מאמן מתחיל בצעד קטן" onClose={close}>
+      <ol className="help-steps">
+        <li>
+          <h3>בוחרים אימון</h3>
+          <p>
+            במסך הבית בוחרים את מספר השאלות ב״אימון מתחדש״ ולוחצים על ״לאימון״. האימון משלב שאלות
+            חשבון עם מספרים משתנים וסיפורים מקוריים עם שאלות הבנת הנקרא.
+          </p>
+        </li>
+        <li>
+          <h3>עונים ומתקדמים</h3>
+          <p>
+            קוראים את השאלה ואת קטע הקריאה, אם יש, ובוחרים תשובה. לוחצים על ״בדיקת תשובה״ בסרגל
+            התחתון כדי לראות את התוצאה. אחר כך לוחצים על ״לשאלה הבאה״. בשאלה האחרונה עוברים לתוצאות
+            האימון.
+          </p>
+        </li>
+        <li>
+          <h3>חוזרים ובודקים</h3>
+          <p>
+            ״לשאלה הקודמת״ מחזיר לשאלות שכבר ראיתם. תשובות שנבדקו נשמרות ואי אפשר לשנות אותן.
+            כשמופיע כפתור הסבר, אפשר לפתוח אותו כדי להבין את הפתרון. בסיום, בוחרים אימון מתוך
+            ״האימונים שלי״ במסך הבית כדי לעיין בתשובות ובהסברים.
+          </p>
+        </li>
+      </ol>
+      <p className="help-mode-note">
+        אפשר לבחור עולם דרך תפריט האווטאר בסרגל העליון: יצורי SRD, יצורים מיתולוגיים או בעלי חיים.
+        לכל עולם אוסף משלו, והבחירה נשמרת בחשבון בדפדפן הזה.
+      </p>
+      <aside className="help-tip">
+        <strong>אפשר להתאמן בקצב שלכם</strong>
+        <p>
+          לחצו על היצור שליד השאלה כדי לקבל רמז, או על ״הגדלה״ בסרגל העליון כדי להגדיל את הטקסט.
+          ״שמירה והפסקה״ מחזירה למסך הבית; כדי להמשיך בוחרים ״ממשיכים את…״ באותו חשבון ובאותו דפדפן.
+        </p>
+      </aside>
+    </Modal>
+  );
+}
+
+export function Backpack({ collection, close, mode = 'srd' }) {
+  const catches = Object.entries(collection).filter(([id]) => creatureCard(id).mode === mode);
+  return (
+    <Modal
+      title="תיק היצורים"
+      eyebrow={`אוסף היצורים שלי · ${creatureModes[mode].name}`}
+      subtitle={`${catches.length} סוגי יצורים באוסף`}
+      onClose={close}
+      className="backpack"
+      headerClassName="backpack-header"
+      closeLabel="סגירה"
+    >
+      {catches.length === 0 ? (
+        <p className="backpack-empty">
+          התיק עדיין ריק. ענו נכון כדי לתפוס את היצור שמופיע ליד השאלה!
+        </p>
+      ) : (
+        <ul className="creature-cards">
+          {catches.map(([id, count]) => (
+            <CollectionCard key={id} id={id} count={count} />
+          ))}
+        </ul>
+      )}
+    </Modal>
+  );
+}
+
+function CollectionCard({ id, count }) {
+  const card = creatureCard(id, count);
+  return (
+    <li className={`creature-card card-${card.color} rarity-${card.rarity}`}>
+      <div className="card-header">
+        <strong>{card.name}</strong>
+        <AppMark />
+      </div>
+      <div className="card-art">
+        {rarityLabels[card.rarity] && (
+          <span className="rarity-badge">✦ {rarityLabels[card.rarity]}</span>
+        )}
+        <Creature id={card.id} animated={false} />
+      </div>
+      <div className="card-caption">
+        <span dir="ltr">{card.english}</span>
+        <span>{count} תפיסות</span>
+      </div>
+      <p>
+        {card.experienced ? (
+          <>
+            ✦ חבר ותיק: <bdi>{card.name}</bdi>
+          </>
+        ) : (
+          'עוד מפגש אחד לדרגת חבר ותיק!'
+        )}
+      </p>
+    </li>
+  );
+}

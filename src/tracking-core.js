@@ -6,9 +6,9 @@ export const RETENTION_DAYS = 85;
 const DAY = 86400000;
 const TYPES = new Set(['session_start', 'session_end', 'view', 'dwell', 'test_start', 'test_resume', 'answer_select',
   'answer_submit', 'hint', 'previous', 'next', 'attempt_complete', 'results_open', 'backpack_open', 'backpack_close',
-  'magnifier_toggle', 'sound_toggle', 'explanation_open', 'explanation_close', 'passage_open', 'passage_close', 'legacy_import', 'logout']);
+  'magnifier_toggle', 'sound_toggle', 'explanation_open', 'explanation_close', 'passage_open', 'passage_close', 'legacy_import', 'logout', 'mode_change']);
 const FIELDS = new Set(['view', 'testId', 'attemptId', 'questionId', 'questionIndex', 'answered', 'choice', 'correct',
-  'count', 'enabled', 'dwellSeconds']);
+  'count', 'enabled', 'dwellSeconds', 'mode']);
 function fields(value) {
   const result = {};
   for (const [key, item] of Object.entries(value ?? {})) {

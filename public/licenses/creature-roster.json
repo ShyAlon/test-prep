@@ -1,0 +1,489 @@
+[
+  {
+    "id": "bat",
+    "name": "עטלף",
+    "english": "Bat",
+    "page": 345,
+    "mode": "srd",
+    "asset": "bat-large"
+  },
+  {
+    "id": "giant-spider",
+    "name": "עכביש ענק",
+    "english": "Giant Spider",
+    "page": 353,
+    "mode": "srd",
+    "asset": "giant-spider"
+  },
+  {
+    "id": "goblin",
+    "name": "לוחם גובלין",
+    "english": "Goblin Warrior",
+    "page": 290,
+    "mode": "srd",
+    "asset": "goblin-large"
+  },
+  {
+    "id": "skeleton",
+    "name": "שלד",
+    "english": "Skeleton",
+    "page": 325,
+    "mode": "srd",
+    "asset": "skeleton-large"
+  },
+  {
+    "id": "animated-armor",
+    "name": "שריון מונפש",
+    "english": "Animated Armor",
+    "page": 259,
+    "mode": "srd",
+    "asset": "animated-armor"
+  },
+  {
+    "id": "ghost",
+    "name": "רוח רפאים",
+    "english": "Ghost",
+    "page": 287,
+    "mode": "srd",
+    "asset": "ghost"
+  },
+  {
+    "id": "imp",
+    "name": "אימפ",
+    "english": "Imp",
+    "page": 300,
+    "mode": "srd",
+    "asset": "imp"
+  },
+  {
+    "id": "gelatinous-cube",
+    "name": "קובייה ג׳לטינית",
+    "english": "Gelatinous Cube",
+    "page": 286,
+    "mode": "srd",
+    "asset": "gelatinous-cube-large"
+  },
+  {
+    "id": "troll",
+    "name": "טרול",
+    "english": "Troll",
+    "page": 333,
+    "mode": "srd",
+    "asset": "troll"
+  },
+  {
+    "id": "lich",
+    "name": "ליץ׳",
+    "english": "Lich",
+    "page": 304,
+    "mode": "srd",
+    "asset": "lich"
+  },
+  {
+    "id": "minotaur-skeleton",
+    "name": "שלד מינוטאור",
+    "english": "Minotaur Skeleton",
+    "page": 326,
+    "mode": "srd",
+    "asset": "minotaur-skeleton"
+  },
+  {
+    "id": "stone-golem",
+    "name": "גולם אבן",
+    "english": "Stone Golem",
+    "page": 330,
+    "mode": "srd",
+    "asset": "stone-golem"
+  },
+  {
+    "id": "young-red-dragon",
+    "name": "דרקון אדום צעיר",
+    "english": "Young Red Dragon",
+    "page": 318,
+    "mode": "srd",
+    "asset": "red-dragon"
+  },
+  {
+    "id": "young-white-dragon",
+    "name": "דרקון לבן צעיר",
+    "english": "Young White Dragon",
+    "page": 340,
+    "mode": "srd",
+    "asset": "frost-dragon"
+  },
+  {
+    "id": "unicorn",
+    "name": "חד־קרן",
+    "english": "Unicorn",
+    "page": 334,
+    "mode": "srd",
+    "asset": "unicorn"
+  },
+  {
+    "id": "pegasus",
+    "name": "פגסוס",
+    "english": "Pegasus",
+    "page": 313,
+    "mode": "srd",
+    "asset": "pegasus"
+  },
+  {
+    "id": "griffon",
+    "name": "גריפון",
+    "english": "Griffon",
+    "page": 295,
+    "mode": "srd",
+    "asset": "griffon"
+  },
+  {
+    "id": "nightmare",
+    "name": "סוס בלהות",
+    "english": "Nightmare",
+    "page": 312,
+    "mode": "srd",
+    "asset": "nightmare"
+  },
+  {
+    "id": "cockatrice",
+    "name": "קוקטריס",
+    "english": "Cockatrice",
+    "page": 275,
+    "mode": "srd",
+    "asset": "cockatrice"
+  },
+  {
+    "id": "manticore",
+    "name": "מנטיקור",
+    "english": "Manticore",
+    "page": 306,
+    "mode": "srd",
+    "asset": "manticore"
+  },
+  {
+    "id": "lion",
+    "name": "אריה",
+    "english": "Lion",
+    "page": 356,
+    "mode": "srd",
+    "asset": "lion"
+  },
+  {
+    "id": "brown-bear",
+    "name": "דוב חום",
+    "english": "Brown Bear",
+    "page": 346,
+    "mode": "srd",
+    "asset": "bear"
+  },
+  {
+    "id": "wolf",
+    "name": "זאב",
+    "english": "Wolf",
+    "page": 364,
+    "mode": "srd",
+    "asset": "wolf"
+  },
+  {
+    "id": "elephant",
+    "name": "פיל",
+    "english": "Elephant",
+    "page": 348,
+    "mode": "srd",
+    "asset": "elephant"
+  },
+  {
+    "id": "owl",
+    "name": "ינשוף",
+    "english": "Owl",
+    "page": 358,
+    "mode": "srd",
+    "asset": "owl"
+  },
+  {
+    "id": "giant-eagle",
+    "name": "עיט ענק",
+    "english": "Giant Eagle",
+    "page": 350,
+    "mode": "srd",
+    "asset": "eagle"
+  },
+  {
+    "id": "riding-horse",
+    "name": "סוס רכיבה",
+    "english": "Riding Horse",
+    "page": 360,
+    "mode": "srd",
+    "asset": "horse"
+  },
+  {
+    "id": "boar",
+    "name": "חזיר בר",
+    "english": "Boar",
+    "page": 346,
+    "mode": "srd",
+    "asset": "boar"
+  },
+  {
+    "id": "crocodile",
+    "name": "תנין",
+    "english": "Crocodile",
+    "page": 347,
+    "mode": "srd",
+    "asset": "crocodile"
+  },
+  {
+    "id": "deer",
+    "name": "אייל",
+    "english": "Deer",
+    "page": 347,
+    "mode": "srd",
+    "asset": "deer"
+  },
+  {
+    "id": "cat",
+    "name": "חתול",
+    "english": "Cat",
+    "page": 346,
+    "mode": "srd",
+    "asset": "cat"
+  },
+  {
+    "id": "frog",
+    "name": "צפרדע",
+    "english": "Frog",
+    "page": 348,
+    "mode": "srd",
+    "asset": "frog"
+  },
+  {
+    "id": "myth-dragon",
+    "name": "דרקון",
+    "english": "Dragon",
+    "mode": "mythology",
+    "asset": "red-dragon"
+  },
+  {
+    "id": "myth-unicorn",
+    "name": "חד־קרן",
+    "english": "Unicorn",
+    "mode": "mythology",
+    "asset": "unicorn"
+  },
+  {
+    "id": "myth-pegasus",
+    "name": "פגסוס",
+    "english": "Pegasus",
+    "mode": "mythology",
+    "asset": "pegasus"
+  },
+  {
+    "id": "myth-griffon",
+    "name": "גריפון",
+    "english": "Griffon",
+    "mode": "mythology",
+    "asset": "griffon"
+  },
+  {
+    "id": "myth-spirit-fox",
+    "name": "שועל תשעה זנבות",
+    "english": "Nine-tailed fox",
+    "mode": "mythology",
+    "asset": "spirit-fox"
+  },
+  {
+    "id": "myth-golem",
+    "name": "גולם",
+    "english": "Golem",
+    "mode": "mythology",
+    "asset": "stone-golem"
+  },
+  {
+    "id": "myth-nightmare",
+    "name": "סוס בלהות",
+    "english": "Nightmare",
+    "mode": "mythology",
+    "asset": "nightmare"
+  },
+  {
+    "id": "myth-angel",
+    "name": "מלאך",
+    "english": "Angel",
+    "mode": "mythology",
+    "asset": "angel"
+  },
+  {
+    "id": "animal-lion",
+    "name": "אריה",
+    "english": "lion",
+    "mode": "animals",
+    "asset": "lion"
+  },
+  {
+    "id": "animal-bear",
+    "name": "דוב",
+    "english": "bear",
+    "mode": "animals",
+    "asset": "bear"
+  },
+  {
+    "id": "animal-horse",
+    "name": "סוס",
+    "english": "horse",
+    "mode": "animals",
+    "asset": "horse"
+  },
+  {
+    "id": "animal-wolf",
+    "name": "זאב",
+    "english": "wolf",
+    "mode": "animals",
+    "asset": "wolf"
+  },
+  {
+    "id": "animal-elephant",
+    "name": "פיל",
+    "english": "elephant",
+    "mode": "animals",
+    "asset": "elephant"
+  },
+  {
+    "id": "animal-owl",
+    "name": "ינשוף",
+    "english": "owl",
+    "mode": "animals",
+    "asset": "owl"
+  },
+  {
+    "id": "animal-eagle",
+    "name": "עיט",
+    "english": "eagle",
+    "mode": "animals",
+    "asset": "eagle"
+  },
+  {
+    "id": "animal-boar",
+    "name": "חזיר בר",
+    "english": "boar",
+    "mode": "animals",
+    "asset": "boar"
+  },
+  {
+    "id": "animal-deer",
+    "name": "אייל",
+    "english": "deer",
+    "mode": "animals",
+    "asset": "deer"
+  },
+  {
+    "id": "animal-crocodile",
+    "name": "תנין",
+    "english": "crocodile",
+    "mode": "animals",
+    "asset": "crocodile"
+  },
+  {
+    "id": "animal-giraffe",
+    "name": "ג׳ירפה",
+    "english": "giraffe",
+    "mode": "animals",
+    "asset": "giraffe"
+  },
+  {
+    "id": "animal-rhinoceros",
+    "name": "קרנף",
+    "english": "rhinoceros",
+    "mode": "animals",
+    "asset": "rhinoceros"
+  },
+  {
+    "id": "animal-panda",
+    "name": "פנדה",
+    "english": "panda",
+    "mode": "animals",
+    "asset": "panda"
+  },
+  {
+    "id": "animal-penguin",
+    "name": "פינגווין",
+    "english": "penguin",
+    "mode": "animals",
+    "asset": "penguin"
+  },
+  {
+    "id": "animal-frog",
+    "name": "צפרדע",
+    "english": "frog",
+    "mode": "animals",
+    "asset": "frog"
+  },
+  {
+    "id": "animal-cat",
+    "name": "חתול",
+    "english": "cat",
+    "mode": "animals",
+    "asset": "cat"
+  },
+  {
+    "id": "animal-fox",
+    "name": "שועל",
+    "english": "fox",
+    "mode": "animals",
+    "asset": "fox"
+  },
+  {
+    "id": "animal-rabbit",
+    "name": "ארנבון",
+    "english": "rabbit",
+    "mode": "animals",
+    "asset": "rabbit"
+  },
+  {
+    "id": "animal-duck",
+    "name": "ברווז",
+    "english": "duck",
+    "mode": "animals",
+    "asset": "duck"
+  },
+  {
+    "id": "animal-chicken",
+    "name": "תרנגולת",
+    "english": "chicken",
+    "mode": "animals",
+    "asset": "chicken"
+  },
+  {
+    "id": "animal-swan",
+    "name": "ברבור",
+    "english": "swan",
+    "mode": "animals",
+    "asset": "swan"
+  },
+  {
+    "id": "animal-peacock",
+    "name": "טווס",
+    "english": "peacock",
+    "mode": "animals",
+    "asset": "peacock"
+  },
+  {
+    "id": "animal-macaw",
+    "name": "תוכי ארה",
+    "english": "macaw",
+    "mode": "animals",
+    "asset": "macaw"
+  },
+  {
+    "id": "animal-hummingbird",
+    "name": "קוליברי",
+    "english": "hummingbird",
+    "mode": "animals",
+    "asset": "hummingbird"
+  },
+  {
+    "id": "animal-bat-large",
+    "name": "עטלף",
+    "english": "Bat",
+    "mode": "animals",
+    "asset": "bat-large"
+  }
+]

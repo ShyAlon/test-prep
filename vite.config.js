@@ -1,14 +1,16 @@
 import { defineConfig } from 'vite';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 function offlineApp() {
   return {
     name: 'offline-app',
     apply: 'build',
     generateBundle(_options, bundle) {
-      const publicFiles = ['manifest.webmanifest', 'icons/favicon-v2-32.png',
-        'icons/apple-touch-icon-v2.png', 'icons/pikachu-glasses-v2-192.png', 'icons/pikachu-glasses-v2-512.png'];
+      const publicRoot = new URL('./public/', import.meta.url);
+      const walk = (folder = '') => readdirSync(new URL(folder, publicRoot), { withFileTypes: true })
+        .flatMap(entry => entry.isDirectory() ? walk(`${folder}${entry.name}/`) : [`${folder}${entry.name}`]);
+      const publicFiles = walk().sort();
       const files = [...Object.keys(bundle), ...publicFiles];
       const hash = createHash('sha256');
       for (const item of Object.values(bundle)) hash.update(item.type === 'chunk' ? item.code : item.source);

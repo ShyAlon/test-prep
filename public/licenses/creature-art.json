@@ -1,0 +1,634 @@
+{
+  "lion": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 65,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/lion_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/lion_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/lion_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/lion_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "bear": {
+    "frames": 4,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 45,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/bear_idle_0.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/bear_idle_1.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/bear_idle_2.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/bear_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "wolf": {
+    "frames": 4,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 52,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/wolf_idle_0.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/wolf_idle_1.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/wolf_idle_2.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/wolf_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "elephant": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 66,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/elephant_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/elephant_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/elephant_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/elephant_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "owl": {
+    "frames": 4,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 48,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/owl_idle_0.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/owl_idle_1.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/owl_idle_2.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/owl_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "eagle": {
+    "frames": 4,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 82,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/eagle_idle_0.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/eagle_idle_1.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/eagle_idle_2.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/eagle_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "boar": {
+    "frames": 4,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 48,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/boar_idle_0.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/boar_idle_1.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/boar_idle_2.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/boar_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "deer": {
+    "frames": 4,
+    "nativeSize": [
+      48,
+      48
+    ],
+    "displaySize": 47,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/stag_idle_0.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/stag_idle_1.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/stag_idle_2.png",
+      "gifted-assets-animals/19639788/pixel_animals_v2/frames/stag_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "crocodile": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 66,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/croc_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/croc_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/croc_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/croc_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "giraffe": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 66,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/giraffe_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/giraffe_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/giraffe_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/giraffe_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "rhinoceros": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 65,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/rhino_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/rhino_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/rhino_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/rhino_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "panda": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 58,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/panda_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/panda_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/panda_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/panda_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "penguin": {
+    "frames": 4,
+    "nativeSize": [
+      64,
+      64
+    ],
+    "displaySize": 62,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/penguin_idle_0.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/penguin_idle_1.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/penguin_idle_2.png",
+      "gifted-assets-animals/19639790/pixel_animals_v3/frames/penguin_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "frog": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 24,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/frog_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/frog_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "cat": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 26,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/cat_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/cat_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "fox": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 28,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/fox_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/fox_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "rabbit": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 26,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/bunny_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/bunny_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "duck": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 28,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/duck_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/duck_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "chicken": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 25,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/chicken_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/chicken_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "swan": {
+    "frames": 4,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 89,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/swan_idle_0.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/swan_idle_1.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/swan_idle_2.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/swan_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "peacock": {
+    "frames": 4,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 93,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/peacock_idle_0.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/peacock_idle_1.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/peacock_idle_2.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/peacock_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "macaw": {
+    "frames": 4,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 81,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/macaw_idle_0.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/macaw_idle_1.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/macaw_idle_2.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/macaw_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "hummingbird": {
+    "frames": 4,
+    "nativeSize": [
+      96,
+      96
+    ],
+    "displaySize": 81,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/hummingbird_idle_0.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/hummingbird_idle_1.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/hummingbird_idle_2.png",
+      "gifted-assets-animals/19639791/pixel_birds_v4/frames/hummingbird_idle_3.png"
+    ],
+    "pixelated": true
+  },
+  "bat-large": {
+    "frames": 2,
+    "nativeSize": [
+      24,
+      24
+    ],
+    "displaySize": 28,
+    "source": "pulsar-animals",
+    "files": [
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/bat_idle_0.png",
+      "gifted-assets-animals/19639789/pixel_animals_pack/frames/bat_idle_1.png"
+    ],
+    "pixelated": true
+  },
+  "red-dragon": {
+    "frames": 8,
+    "nativeSize": [
+      264,
+      184
+    ],
+    "displaySize": 197,
+    "source": "pulsar-fantasy",
+    "files": [
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_0.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_1.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_2.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_3.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_4.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_5.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_6.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/ember/frames/idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "frost-dragon": {
+    "frames": 8,
+    "nativeSize": [
+      264,
+      184
+    ],
+    "displaySize": 197,
+    "source": "pulsar-fantasy",
+    "files": [
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_0.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_1.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_2.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_3.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_4.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_5.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_6.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Emberwing_Dragon/frost/frames/idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "stone-golem": {
+    "frames": 8,
+    "nativeSize": [
+      208,
+      184
+    ],
+    "displaySize": 160,
+    "source": "pulsar-fantasy",
+    "files": [
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_0.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_1.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_2.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_3.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_4.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_5.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_6.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Rune_Golem/crystal/frames/idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "spirit-fox": {
+    "frames": 8,
+    "nativeSize": [
+      224,
+      144
+    ],
+    "displaySize": 143,
+    "source": "pulsar-fantasy",
+    "files": [
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_0.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_1.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_2.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_3.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_4.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_5.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_6.png",
+      "gifted-assets-fantasy/19855828/Fantasy_Creatures_Bundle/Spirit_Fox/spirit/frames/idle_7.png"
+    ],
+    "pixelated": true
+  },
+  "horse": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0051.png"
+    ],
+    "pixelated": true
+  },
+  "unicorn": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0052.png"
+    ],
+    "pixelated": true
+  },
+  "pegasus": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0053.png"
+    ],
+    "pixelated": true
+  },
+  "nightmare": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0055.png"
+    ],
+    "pixelated": true
+  },
+  "griffon": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0105.png"
+    ],
+    "pixelated": true
+  },
+  "angel": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0038.png"
+    ],
+    "pixelated": true
+  },
+  "cockatrice": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0104.png"
+    ],
+    "pixelated": true
+  },
+  "manticore": {
+    "frames": 0,
+    "nativeSize": [
+      16,
+      16
+    ],
+    "displaySize": 16,
+    "source": "clint-tiny",
+    "files": [
+      "gifted-assets-tiny-creatures/9972014/tiny-creatures/Tiles/tile_0107.png"
+    ],
+    "pixelated": true
+  },
+  "goblin-large": {
+    "frames": 0,
+    "nativeSize": [
+      2500,
+      3050
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain",
+    "files": [
+      "gifted-assets-gordy2/11904244/Goblin.png"
+    ],
+    "pixelated": false
+  },
+  "troll": {
+    "frames": 0,
+    "nativeSize": [
+      3186,
+      4607
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain",
+    "files": [
+      "gifted-assets-gordy2/11904244/Troll.png"
+    ],
+    "pixelated": false
+  },
+  "minotaur-skeleton": {
+    "frames": 0,
+    "nativeSize": [
+      2465,
+      2876
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain",
+    "files": [
+      "gifted-assets-gordy2/11904244/Minotaur_Skeleton.png"
+    ],
+    "pixelated": false
+  },
+  "skeleton-large": {
+    "frames": 0,
+    "nativeSize": [
+      2247,
+      3223
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain",
+    "files": [
+      "gifted-assets-gordy2/11904244/Skeleton_King.png"
+    ],
+    "pixelated": false
+  },
+  "gelatinous-cube-large": {
+    "frames": 0,
+    "nativeSize": [
+      2363,
+      3101
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain",
+    "files": [
+      "gifted-assets-gordy2/11904244/Gelatinous_Cube.png"
+    ],
+    "pixelated": false
+  },
+  "lich": {
+    "frames": 0,
+    "nativeSize": [
+      1458,
+      1185
+    ],
+    "displaySize": 512,
+    "source": "gordy-public-domain-1",
+    "files": [
+      "gifted-gordy1/TheLich.png"
+    ],
+    "pixelated": false
+  }
+}

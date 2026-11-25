@@ -1,5 +1,5 @@
 {
-  "name": "פוקימון | מחנה האימונים",
+  "name": "מחנה היצורים | מחנה האימונים",
   "short_name": "מחנה האימונים",
   "id": "./",
   "lang": "he",
@@ -10,7 +10,7 @@
   "background_color": "#173350",
   "theme_color": "#173350",
   "icons": [
-    { "src": "icons/pikachu-glasses-v2-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/pikachu-glasses-v2-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "icons/camp-bat-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/camp-bat-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
