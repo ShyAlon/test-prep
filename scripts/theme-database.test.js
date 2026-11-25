@@ -1,17 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { IDBFactory, IDBObjectStore } from 'fake-indexeddb';
-import { readFileSync } from 'node:fs';
-import { parseThemeZip, THEME_KEY } from '../src/theme-storage.js';
+import { themeFixture } from './fixtures/theme.js';
+import { THEME_KEY } from '../src/theme-storage.js';
 import { saveThemeLocally, loadLocalTheme } from '../src/theme-database.js';
 
-const theme = parseThemeZip(new Uint8Array(readFileSync(new URL('../artifacts/pokemon-theme.zip', import.meta.url))));
+const theme = themeFixture({ large: true });
 function storage() {
   const entries = new Map([['saved-progress', 'keep me'], [THEME_KEY, JSON.stringify(theme)]]);
   return { getItem: key => entries.get(key) ?? null, removeItem: key => entries.delete(key) };
 }
 
-test('full Pokémon pack saves and reloads in IndexedDB without writing to localStorage', async () => {
+test('large theme pack saves and reloads in IndexedDB without writing to localStorage', async () => {
   const database = new IDBFactory();
   const legacy = storage();
   legacy.setItem = () => { throw new DOMException('full', 'QuotaExceededError'); };

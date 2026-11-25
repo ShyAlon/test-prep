@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { zipSync, strToU8 } from 'fflate';
-import { readFileSync } from 'node:fs';
+import { themeFixture } from './fixtures/theme.js';
 import { parseThemeZip, persistTheme, readTheme, THEME_KEY, MAX_THEME_BYTES } from '../src/theme-storage.js';
 import { fixedTests, createAttempt, generatedOnlyGame } from '../src/model.js';
 import { installTheme, creatureCard, chooseEncounter, companionFor } from '../src/creatures.js';
@@ -50,13 +50,13 @@ test('theme persistence is separate from profile data and failed writes preserve
   assert.equal(readTheme(storage),null);
 });
 
-test('Pokémon pack restores the roster, local animations, rarity tiers and two-catch evolutions', () => {
-  const theme=parseThemeZip(new Uint8Array(readFileSync(new URL('../artifacts/pokemon-theme.zip',import.meta.url))));
-  assert.equal(theme.manifest.creatures.length,116);
+test('theme pack restores the roster, local animations, rarity tiers and two-catch evolutions', () => {
+  const theme=themeFixture();
+  assert.equal(theme.manifest.creatures.length,3);
   const mode=installTheme(theme);
-  const base=creatureCard(`${mode}:25`,1), evolved=creatureCard(`${mode}:25`,2);
-  assert.equal(base.name,'Pikachu');assert.equal(evolved.name,'Raichu');assert.ok(evolved.evolved);
-  assert.match(base.image,/^data:image\/webp/); assert.match(base.animation,/^data:image\/webp/);
+  const base=creatureCard(`${mode}:friend`,1), evolved=creatureCard(`${mode}:friend`,2);
+  assert.equal(base.name,'Friend');assert.equal(evolved.name,'Evolved friend');assert.ok(evolved.evolved);
+  assert.match(base.image,/^data:image\/png/); assert.match(base.animation,/^data:image\/gif/);
   for (const [roll, rarities] of [[0,['legendary','mythical']],[0.1,['epic']],[0.9,['standard']]]) {
     let calls=0;const id=chooseEncounter(()=>calls++ ? 0 : roll,null,mode);
     assert.ok(rarities.includes(creatureCard(id).rarity));
@@ -86,7 +86,7 @@ test('fixed test tiles show completion only for finished saved tests', async () 
     assert.equal((html.match(/✓ הושלם/g)??[]).length,1);
     assert.equal((html.match(/בתהליך/g)??[]).length,1);
     assert.equal((html.match(/טרם הושלם/g)??[]).length,3);
-    const theme = parseThemeZip(new Uint8Array(readFileSync(new URL('../artifacts/pokemon-theme.zip',import.meta.url))));
+    const theme = themeFixture();
     const creatures = await server.ssrLoadModule('/src/creatures.js');
     const mode = creatures.installTheme(theme);
     const themed = renderToStaticMarkup(React.createElement(Home,{mode,game:{history:[finished],active},start(){}}));

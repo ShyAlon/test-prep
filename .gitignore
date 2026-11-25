@@ -11,3 +11,5 @@ __pycache__/
 firebase-debug.log*
 .firebase/
 firestore-debug.log*
+
+/artifacts/

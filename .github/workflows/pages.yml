@@ -15,121 +15,63 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
-      - name: Check out source
-        uses: actions/checkout@v6
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
-      - name: Report build context
-        env:
-          BUILD_SHA: ${{ github.sha }}
-          BUILD_REF: ${{ github.ref }}
-          BUILD_RUN: ${{ github.run_id }}
-          BUILD_ATTEMPT: ${{ github.run_attempt }}
-        run: |
-          echo "Commit: $BUILD_SHA"
-          echo "Ref: $BUILD_REF"
-          echo "Run: $BUILD_RUN (attempt $BUILD_ATTEMPT)"
-          node --version
-          npm --version
-          git log -1 --format='%h %s'
-      - name: Install dependencies
-        run: npm ci --timing
-      - name: Run tests
-        run: npm test
-      - name: Build production site
-        run: npm run build
-      - name: Verify and inspect build output
-        run: |
-          test -s dist/index.html
-          test -d dist/assets
-          echo "::group::Build files and sizes"
-          find dist -type f -printf '%p (%s bytes)\n' | sort
-          du -sh dist
-          echo "::endgroup::"
+          cache: npm
+      - uses: actions/configure-pages@v6
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
       - name: Upload Pages artifact
         id: upload
+        timeout-minutes: 5
         uses: actions/upload-pages-artifact@v5
         with:
-          name: github-pages
           path: dist
-      - name: Wait for Pages artifact to become available
-        env:
-          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          if [[ ! "$ARTIFACT_ID" =~ ^[0-9]+$ ]]; then
-            echo "::error::Pages upload did not return a valid artifact ID."
-            exit 1
-          fi
-          for attempt in {1..12}; do
-            echo "Checking artifact availability at $(date -u +%FT%TZ) (attempt $attempt/12)."
-            if gh api "repos/$GH_REPO/actions/runs/$RUN_ID/artifacts" > "$RUNNER_TEMP/pages-artifacts.json"; then
-              jq '{total_count, artifacts: [.artifacts[] | {id, name, size_in_bytes, expired, created_at}]}' "$RUNNER_TEMP/pages-artifacts.json"
-              if jq -e --arg id "$ARTIFACT_ID" '.artifacts | any((.id | tostring) == $id and .name == "github-pages" and .expired == false)' "$RUNNER_TEMP/pages-artifacts.json" > /dev/null; then
-                echo "Pages artifact is available; proceeding to deployment."
-                exit 0
-              fi
-            else
-              echo "::warning::Artifact metadata request failed; retrying."
-            fi
-            sleep 5
-          done
-          echo "::error::Uploaded Pages artifact did not become available within 60 seconds."
-          exit 1
-      - name: Deploy site to GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
+        timeout-minutes: 11
+        uses: actions/github-script@v8
         env:
           ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/deploy-pages.mjs
-      - name: Collect failure diagnostics
-        if: failure()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          echo "::group::Working directory and build output"
-          pwd
-          if [ -d dist ]; then
-            find dist -type f -printf '%p (%s bytes)\n' | sort
-          else
-            echo "No dist directory was produced."
-          fi
-          echo "::endgroup::"
-          echo "::group::Artifacts currently visible to the GitHub API"
-          gh api "repos/$GH_REPO/actions/runs/$RUN_ID/artifacts" \
-            --jq '{total_count, artifacts: [.artifacts[] | {id, name, size_in_bytes, expired, created_at}]}' \
-            || echo "::warning::Could not retrieve artifact diagnostics."
-          echo "::endgroup::"
-      - name: Write deployment summary
-        if: always()
-        env:
-          DEPLOY_STATUS: ${{ job.status }}
-          BUILD_SHA: ${{ github.sha }}
-          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
-          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
-          DEPLOY_OUTCOME: ${{ steps.deployment.outcome }}
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: |
-          {
-            echo "## GitHub Pages deployment"
-            echo ""
-            echo "- Status: $DEPLOY_STATUS"
-            echo "- Commit: $BUILD_SHA"
-            echo "- Artifact upload: ${UPLOAD_OUTCOME:-not run}"
-            echo "- Artifact ID: ${ARTIFACT_ID:-unavailable}"
-            echo "- Deployment: ${DEPLOY_OUTCOME:-not run}"
-            echo "- Site: ${PAGE_URL:-unavailable}"
-          } >> "$GITHUB_STEP_SUMMARY"
+        with:
+          script: |
+            const artifactId = Number(process.env.ARTIFACT_ID);
+            if (!Number.isSafeInteger(artifactId) || artifactId <= 0) throw new Error('Upload returned no valid artifact ID');
+            const repo = context.repo;
+            const { data: artifact } = await github.rest.actions.getArtifact({ ...repo, artifact_id: artifactId });
+            if (artifact.name !== 'github-pages' || artifact.expired || artifact.workflow_run?.id !== context.runId) {
+              throw new Error('Uploaded artifact is expired or does not belong to this run');
+            }
+            const oidcToken = await core.getIDToken();
+            core.setSecret(oidcToken);
+            const { data: deployment } = await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
+              ...repo, artifact_id: artifactId, pages_build_version: context.sha, oidc_token: oidcToken,
+            });
+            const deploymentId = deployment.id || deployment.status_url?.split('/').pop();
+            if (!deploymentId) throw new Error('GitHub returned no deployment ID');
+            const failed = ['deployment_failed', 'deployment_content_failed', 'deployment_cancelled', 'deployment_lost'];
+            const deadline = Date.now() + 10 * 60 * 1000;
+            while (Date.now() < deadline) {
+              const { data } = await github.request('GET /repos/{owner}/{repo}/pages/deployments/{deployment_id}', {
+                ...repo, deployment_id: deploymentId,
+              });
+              core.info(`Pages: ${data.status}`);
+              if (data.status === 'succeed') {
+                core.setOutput('page_url', deployment.page_url);
+                return;
+              }
+              if (failed.includes(data.status)) throw new Error(`Pages: ${data.status}`);
+              await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+            await github.request('POST /repos/{owner}/{repo}/pages/deployments/{deployment_id}/cancel', {
+              ...repo, deployment_id: deploymentId,
+            });
+            throw new Error('Pages deployment timed out');
