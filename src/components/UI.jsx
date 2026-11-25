@@ -49,11 +49,26 @@ export function Modal({
 }) {
   const dialog = useRef(null);
   const titleId = useId();
+  const pressedBackdrop = useRef(false);
+  function isBackdrop(event) {
+    if (event.target !== event.currentTarget) return false;
+    const rect = event.currentTarget.getBoundingClientRect();
+    return event.clientX < rect.left || event.clientX > rect.right ||
+      event.clientY < rect.top || event.clientY > rect.bottom;
+  }
   useEffect(() => {
     if (!dialog.current.open) dialog.current.showModal();
   }, []);
   return (
-    <dialog ref={dialog} className={className} onClose={onClose} aria-labelledby={titleId}>
+    <dialog
+      ref={dialog} className={className} onClose={onClose} aria-labelledby={titleId}
+      onPointerDown={event => { pressedBackdrop.current = isBackdrop(event); }}
+      onPointerCancel={() => { pressedBackdrop.current = false; }}
+      onClick={event => {
+        if (pressedBackdrop.current && isBackdrop(event)) dialog.current.close();
+        pressedBackdrop.current = false;
+      }}
+    >
       <header className={headerClassName}>
         <div>
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}

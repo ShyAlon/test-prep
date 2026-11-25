@@ -334,3 +334,7 @@ footer { text-align: center; color: #466071; padding: 12px 16px 22px; font-size:
 .theme-ball { --ball-size: 30px; width: var(--ball-size); aspect-ratio: 1; flex: 0 0 auto; display: inline-grid; place-items: center; border: calc(var(--ball-size) * .095) solid #24364b; border-radius: 50%; background: linear-gradient(#fb625a 0 44%, #24364b 44% 56%, #fff 56%); box-shadow: 0 3px 0 #24364b32; transform: rotate(-14deg); }
 .theme-ball i { width: 36%; aspect-ratio: 1; border: calc(var(--ball-size) * .06) solid #24364b; border-radius: 50%; background: #fff; }
 .theme-ball.hero-mark { --ball-size: clamp(65px, 12vw, 140px); }
+
+.theme-format { margin-block: 16px; }
+.theme-format summary { cursor: pointer; font-weight: 700; }
+.theme-format pre { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid #c5ded4; border-radius: 12px; background: #eaf3ef; color: #24364b; text-align: left; font-size: .8rem; line-height: 1.6; }

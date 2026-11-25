@@ -128,6 +128,23 @@ export function TermsDialog({ close }) {
   );
 }
 
+const exampleTheme = {
+  version: 1,
+  id: 'my-world',
+  name: 'העולם שלי',
+  description: 'חברים חדשים לאימון',
+  avatar: 'friend',
+  companion: 'friend',
+  testImages: {
+    incomplete: 'images/test-closed.png',
+    completed: 'images/test-open.png',
+  },
+  creatures: [{
+    id: 'friend', name: 'חבר', english: 'Friend',
+    color: 'grass', rarity: 'standard', image: 'images/friend.png',
+  }],
+};
+
 export function HelpDialog({ close }) {
   return (
     <Modal title="איך מתאמנים?" eyebrow="כל מאמן מתחיל בצעד קטן" onClose={close}>
@@ -160,6 +177,22 @@ export function HelpDialog({ close }) {
         <h3>איך מייבאים ערכת נושא?</h3>
         <p>פותחים את תפריט האווטאר בסרגל העליון, בוחרים ״העלאת ערכת נושא״ ובוחרים קובץ ZIP של ערכה (עד 3MB). אין צורך לחלץ אותו. הקובץ והתמונות נבדקים, ולאחר השמירה העולם החדש נבחר אוטומטית.</p>
         <p>הערכה נשמרת רק בדפדפן ובמכשיר הזה ואינה נשלחת לשרת. העלאה חדשה מחליפה את הערכה שהועלתה קודם; ההתקדמות במבחנים נשמרת. לאחר קבלת גרסה מעודכנת של ערכה, מייבאים מחדש את ה־ZIP. אם מוצגת שגיאה, הערכה הקודמת נשארת זמינה.</p>
+        <details className="theme-format">
+          <summary>מבנה קובץ ה־ZIP ויצירת ערכה משלכם</summary>
+          <p>יוצרים את הקבצים הבאים ומכווצים את theme.json ואת תיקיית images יחד. הקובץ theme.json חייב להיות בשורש ה־ZIP, ללא תיקייה עוטפת.</p>
+          <pre dir="ltr"><code>{`my-theme.zip
+├── theme.json
+└── images/
+    ├── friend.png
+    ├── test-closed.png
+    └── test-open.png`}</code></pre>
+          <p>דוגמה מלאה לתוכן theme.json (שומרים בקידוד UTF-8):</p>
+          <pre dir="ltr"><code>{JSON.stringify(exampleTheme, null, 2)}</code></pre>
+          <p>מחליפים את השמות ואת התמונות ומקפידים שהנתיבים בקובץ יתאימו בדיוק לשמות בתוך ה־ZIP. כל מזהה id חייב להיות ייחודי ולהכיל רק אותיות אנגליות קטנות, ספרות ומקפים. avatar ו־companion מצביעים על מזהים מתוך creatures.</p>
+          <p>testImages הוא שדה רשות: incomplete היא תמונת מבחן שטרם הושלם ו־completed היא התמונה לאחר סיומו. אם משמיטים אותו, יוצגו תמונות היצורים של העולם.</p>
+          <p>color יכול להיות grass, fire, water, air, electric, psychic, earth או fairy. rarity יכול להיות standard, epic, legendary או mythical. אפשר להוסיף יצורים למערך creatures; התמונה בשדה image היא חובה, ו־animation הוא נתיב רשות לתמונה מונפשת.</p>
+          <p>משתמשים בתמונות PNG, WebP, GIF או JPEG, בגודל עד 2048×2048. גודל ה־ZIP וגם סך הקבצים לאחר חילוץ מוגבלים ל־3MB, עם עד 200 יצורים ו־450 קבצים ותיקיות. כל התמונות חייבות להיות בתוך ה־ZIP; קישורי אינטרנט, SVG וקוד אינם נתמכים.</p>
+        </details>
       </section>
       <p className="help-mode-note">
         אפשר לבחור עולם דרך תפריט האווטאר בסרגל העליון: יצורי SRD, יצורים מיתולוגיים, בעלי חיים או עולם הקוביות.
