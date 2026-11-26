@@ -5,3 +5,9 @@ const dateFormat = new Intl.DateTimeFormat('he-IL', { dateStyle: 'medium', timeS
 export const formatDate = (timestamp) => dateFormat.format(timestamp);
 
 export const attemptTitle = attempt => fixedTests.find(test => test.id === attempt?.testId)?.title ?? PRACTICE_TITLE;
+
+export function questionType(question) {
+  if (question?.passageText || question?.passage) return 'הבנת הנקרא';
+  if (question?.origin === 'generated') return 'חשבון';
+  return 'תרגול כללי';
+}

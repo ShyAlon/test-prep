@@ -82,3 +82,43 @@ test('avatar menu exposes the selected voxel world alongside existing worlds', (
   assert.match(html, /20 יצורים/);
   assert.match(html, /voxel-knight.png/);
 });
+
+
+test('summary labels each saved math and reading question without expanding the review', async () => {
+  const { createAttempt } = await import('../src/model.js');
+  const { questionType } = await import('../src/practice-summary.js');
+  const attempt = createAttempt(10, 123);
+  attempt.finishedAt = 1000;
+  attempt.answers = attempt.rounds.map(() => ({ choice: 0, correct: false, ms: 100 }));
+  const saved = JSON.parse(JSON.stringify(attempt));
+  const html = render(Results, { attempt: saved });
+  const summaries = [...html.matchAll(/<summary>(.*?)<\/summary>/g)].map(match => match[1]).filter(text => text.includes('review-heading'));
+  assert.equal(summaries.length, saved.rounds.length);
+  saved.rounds.forEach((round, index) => {
+    assert.ok(summaries[index].includes(questionType(round.question)));
+  });
+  assert.ok(html.includes('חשבון'));
+  assert.ok(html.includes('הבנת הנקרא'));
+  assert.equal(questionType({ passageText: 'Previously saved passage' }), 'הבנת הנקרא');
+  assert.equal(questionType({}), 'תרגול כללי');
+});
+
+
+test('test timers can be hidden while elapsed values and other stats remain intact', async () => {
+  const { Quiz } = await server.ssrLoadModule('/src/components/Quiz.jsx');
+  const props = {
+    attempt: { index: 0, rounds: [{ id: 'q1' }], answers: [], totalMs: 65000, questionMs: 17000 },
+    question: { prompt: '2 + 2', choices: ['4', '5'], correct: 0 }, companionId: 'bat', toggleTimers() {},
+  };
+  const visible = render(Quiz, props);
+  assert.match(visible, /01:05/);
+  assert.match(visible, /00:17/);
+  assert.match(visible, /הסתרת זמנים/);
+  const hidden = render(Quiz, { ...props, showTimers: false });
+  assert.doesNotMatch(hidden, /01:05|00:17|זמן כולל|זמן לשאלה/);
+  assert.match(hidden, /הצגת זמנים/);
+  assert.match(hidden, /תשובות נכונות/);
+  assert.match(hidden, /רמזים/);
+  assert.equal(props.attempt.totalMs, 65000);
+  assert.equal(props.attempt.questionMs, 17000);
+});

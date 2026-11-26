@@ -1,3 +1,4 @@
+import { assignCombat, combatStats } from './combat-rules.js';
 import { readTheme } from './theme-storage.js';
 import artwork from './creature-art.json' with { type: 'json' };
 // Creature names from SRD 5.2.1 (CC BY 4.0); Hebrew labels are our translations.
@@ -247,6 +248,11 @@ export const creatureModes = {
     companion: 'voxel-golem',
   },
 };
+// Balance elements within every built-in world, independently of artwork colors.
+for (const mode of Object.keys(creatureModes)) {
+  const roster = assignCombat(creatures.filter(creature => creature.mode === mode));
+  for (const creature of roster) Object.assign(creatures.find(item => item.id === creature.id), creature);
+}
 const creaturesById = new Map(creatures.map((creature) => [creature.id, creature]));
 const rosters = new Map(
   Object.keys(creatureModes).map((mode) => [
@@ -266,10 +272,11 @@ export function creatureId(value) {
 
 export function creatureCard(id, count = 0) {
   const creature = creaturesById.get(creatureId(id));
-  if (!creature) return { id, name: 'ערכת נושא חסרה', english: 'Theme unavailable', mode: id.split(':')[0], color: 'air', rarity: 'standard', image: './icons/camp-bat-192.png', frames: 0, pixelated: false };
+  if (!creature) return { ...combatStats({id}), id, name: 'ערכת נושא חסרה', english: 'Theme unavailable', mode: id.split(':')[0], color: 'air', rarity: 'standard', image: './icons/camp-bat-192.png', frames: 0, pixelated: false };
   if (creature.image) {
     const evolved = count >= 2 && Boolean(creature.evolution);
     return { ...creature, ...(evolved ? creature.evolution : {}),
+      ...(evolved ? { attack:creature.evolution.attack??Math.round(creature.attack*1.1), defense:creature.evolution.defense??Math.round(creature.defense*1.1), health:creature.evolution.health??Math.round(creature.health*1.1), element:creature.evolution.element??creature.element } : {}),
       id: creature.id, evolved, canEvolve: Boolean(creature.evolution), baseName: creature.name,
       experienced: count >= 2, pixelated: false, frames: 0,
     };
@@ -297,7 +304,8 @@ export function chooseEncounter(random, previousId, mode = 'srd') {
   const choices = candidates.length
     ? candidates
     : pool.filter((creature) => creature.id !== previousId);
-  return choices[Math.floor(random() * choices.length)].id;
+  const available = choices.length ? choices : pool;
+  return available[Math.floor(random() * available.length)].id;
 }
 // Keep earned companions fixed; an unanswered round can follow the chosen theme.
 export function companionFor(round, mode = 'srd', attemptId = '', answer) {
@@ -356,7 +364,7 @@ export function installTheme(theme) {
   }
   const mode = `local-${manifest.id}`;
   const prefix = `${mode}:`;
-  const roster = manifest.creatures.map(item => ({ ...item, id: prefix + item.id, mode,
+  const roster = assignCombat(manifest.creatures).map(item => ({ ...item, id: prefix + item.id, mode,
     image: assets[item.image], animation: assets[item.animation] ?? null,
     evolution: item.evolution ? { ...item.evolution, image: assets[item.evolution.image], animation: assets[item.evolution.animation] ?? null } : null,
   }));

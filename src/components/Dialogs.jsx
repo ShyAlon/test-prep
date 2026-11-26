@@ -1,3 +1,4 @@
+import { CombatStats } from './CombatStats.jsx';
 import React from 'react';
 import { creatureCard, creatureModes, localTheme } from '../creatures.js';
 import { Creature } from './Creature.jsx';
@@ -142,6 +143,7 @@ const exampleTheme = {
   creatures: [{
     id: 'friend', name: 'חבר', english: 'Friend',
     color: 'grass', rarity: 'standard', image: 'images/friend.png',
+    element: 'grass', attack: 25, defense: 15, health: 100,
   }],
 };
 
@@ -190,10 +192,12 @@ export function HelpDialog({ close }) {
           <pre dir="ltr"><code>{JSON.stringify(exampleTheme, null, 2)}</code></pre>
           <p>מחליפים את השמות ואת התמונות ומקפידים שהנתיבים בקובץ יתאימו בדיוק לשמות בתוך ה־ZIP. כל מזהה id חייב להיות ייחודי ולהכיל רק אותיות אנגליות קטנות, ספרות ומקפים. avatar ו־companion מצביעים על מזהים מתוך creatures.</p>
           <p>testImages הוא שדה רשות: incomplete היא תמונת מבחן שטרם הושלם ו־completed היא התמונה לאחר סיומו. אם משמיטים אותו, יוצגו תמונות היצורים של העולם.</p>
+          <p>שדות הקרב element, attack, defense ו־health הם רשות: לערכות ישנות הם יוקצו אוטומטית. element משתמש באותם שמות יסודות כמו color. התקפה והגנה הן מספרים שלמים 1–100, ובריאות 10–500. אפשר להגדיר אותם גם בתוך evolution.</p>
           <p>color יכול להיות grass, fire, water, air, electric, psychic, earth או fairy. rarity יכול להיות standard, epic, legendary או mythical. אפשר להוסיף יצורים למערך creatures; התמונה בשדה image היא חובה, ו־animation הוא נתיב רשות לתמונה מונפשת.</p>
           <p>משתמשים בתמונות PNG, WebP, GIF או JPEG, בגודל עד 2048×2048. גודל ה־ZIP וגם סך הקבצים לאחר חילוץ מוגבלים ל־3MB, עם עד 200 יצורים ו־450 קבצים ותיקיות. כל התמונות חייבות להיות בתוך ה־ZIP; קישורי אינטרנט, SVG וקוד אינם נתמכים.</p>
         </details>
       </section>
+      <section className="help-mode-note"><h3>אוספים חברים ויוצאים לקרב</h3><p>רק תשובה נכונה מצרפת יצור לצוות האימון. לכל יצור יסוד, התקפה, הגנה ובריאות. ככל שעונים נכון מהר יותר, היצור מתחזק — עד 50% תוספת, בלי להפחית מכוח הבסיס כשעונים לאט. לשאלת קריאה יש חלון זמן ארוך יותר.</p><p>בסוף האימון, הצוות פוגש מספר שווה של יריבים. אפשר לתקוף, להתגונן ולהתרפא מעט, לבחור משחק אוטומטי או לסיים במהירות. אפשר גם לדלג על הקרב לאחר אישור. הקרב אינו משנה את הציון או מוחק חברים מהאוסף.</p><p>יתרונות היסודות: אש ← טבע ← אדמה ← חשמל ← מים ← אוויר ← מחשבה ← קסם ← אש. כל יסוד חזק נגד הבא אחריו וחלש מול הקודם. אפשר להשתיק צלילים בסרגל העליון.</p></section>
       <p className="help-mode-note">
         אפשר לבחור עולם דרך תפריט האווטאר בסרגל העליון: יצורי SRD, יצורים מיתולוגיים, בעלי חיים או עולם הקוביות.
         לכל עולם אוסף משלו, והבחירה נשמרת בחשבון בדפדפן הזה.
@@ -209,7 +213,7 @@ export function HelpDialog({ close }) {
   );
 }
 
-export function Backpack({ collection, close, mode = 'srd' }) {
+export function Backpack({ collection, collectionStats = {}, close, mode = 'srd' }) {
   const plural = mode === localTheme?.mode ? localTheme.manifest.plural ?? 'יצורים' : 'יצורים';
   const catches = Object.entries(collection).filter(([id]) => creatureCard(id).mode === mode);
   return (
@@ -229,7 +233,7 @@ export function Backpack({ collection, close, mode = 'srd' }) {
       ) : (
         <ul className="creature-cards">
           {catches.map(([id, count]) => (
-            <CollectionCard key={id} id={id} count={count} />
+            <CollectionCard key={id} id={id} count={count} recruit={collectionStats[id]} />
           ))}
         </ul>
       )}
@@ -237,7 +241,7 @@ export function Backpack({ collection, close, mode = 'srd' }) {
   );
 }
 
-function CollectionCard({ id, count }) {
+function CollectionCard({ id, count, recruit }) {
   const card = creatureCard(id, count);
   return (
     <li className={`creature-card card-${card.color} rarity-${card.rarity}`}>
@@ -251,6 +255,8 @@ function CollectionCard({ id, count }) {
         )}
         <Creature id={card.id} count={count} animated={false} />
       </div>
+      <CombatStats creature={recruit ?? card} compact />
+      {recruit?.speedBonus > 0 && <small className="collection-speed-bonus">⚡ בונוס המפגש החזק ביותר: +{recruit.speedBonus}%</small>}
       <div className="card-caption">
         <span dir="ltr">{card.number ? `#${String(card.number).padStart(3, '0')}` : card.english}</span>
         <span>{count} תפיסות</span>

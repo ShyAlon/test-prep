@@ -1,3 +1,4 @@
+import { CombatStats } from './CombatStats.jsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { creatureCard, localTheme } from '../creatures.js';
 import { duration } from '../model.js';
@@ -8,7 +9,7 @@ import { QuestionText, ReadingPassage, TrainerExplanation } from './QuestionCont
 
 const letters = ['א', 'ב', 'ג', 'ד'];
 
-export function Quiz({ attempt, question, choice, setChoice, requestHint, pause, companionId }) {
+export function Quiz({ attempt, question, choice, setChoice, requestHint, pause, companionId, showTimers = true, toggleTimers }) {
   const themed = creatureCard(companionId).mode === localTheme?.mode;
   const noun = themed ? localTheme.manifest.singular ?? 'יצור' : 'יצור';
   const round = attempt.rounds[attempt.index];
@@ -38,7 +39,8 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
   }, [round.id]);
   return (
     <>
-      <section className="stats panel" aria-label="מדדי אימון">
+      <section className={`stats panel${showTimers ? '' : ' timers-hidden'}`} aria-label="מדדי אימון">
+        {showTimers && <>
         <div>
           <span>זמן כולל</span>
           <b dir="ltr">{duration(attempt.totalMs)}</b>
@@ -47,6 +49,7 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
           <span>זמן לשאלה</span>
           <b dir="ltr">{duration(answer?.ms ?? attempt.questionMs)}</b>
         </div>
+        </>}
         <div>
           <span>תשובות נכונות</span>
           <b dir="ltr">
@@ -57,6 +60,9 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
           <span>רמזים</span>
           <b data-hint-count>{attempt.hintCount ?? 0}</b>
         </div>
+        <Button variant="text" className="timer-visibility-toggle" onClick={toggleTimers}>
+          {showTimers ? 'הסתרת זמנים' : 'הצגת זמנים'}
+        </Button>
       </section>
       <section className="question panel">
         <div className="question-meta">
@@ -139,6 +145,8 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
                   ? `${noun} נתפס! תשובה נכונה!`
                   : `${creatureCard(companionId).name} איתך! ממשיכים להתאמן.`}
               </strong>
+              {answer.recruit && <CombatStats creature={answer.recruit} compact />}
+              {answer.recruit?.speedBonus > 0 && <p>⚡ בונוס מהירות: +{answer.recruit.speedBonus}% לכוח החבר!</p>}
               {reward && (
                 <p>
                   תפסתם את <bdi>{reward.name}</bdi>!

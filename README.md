@@ -107,3 +107,49 @@ The manifest has `version: 1`, a lowercase alphanumeric/hyphen `id`, `name`, `de
 Theme manifests may include `testImages: { "incomplete": "images/closed.webp", "completed": "images/open.webp" }`. Both images must be embedded raster assets and pass the same validation as creature images. Fixed test cards select the image from saved completion state, with a shadow, keyboard focus and hover motion (disabled for reduced motion). Without these fields, a world's avatar/companion artwork is used. The updated Pokémon ZIP includes closed/open Poké Ball backgrounds; reimport it to update an already-installed pack.
 
 Pages deployment is self-contained in `.github/workflows/pages.yml`: install, test, build, upload, and deploy. The inline deployment uses the upload's exact artifact ID and the job's OIDC token, avoiding the failed name-based artifact lookup. Uploads time out after five minutes. No separate deployment script is needed.
+
+## Local usage spreadsheet
+
+Run `firebase login` with an account that can read this project's Firestore data and Firebase Authentication users, then:
+
+```sh
+npm run usage:export
+```
+
+This creates an Excel workbook in the ignored `artifacts/usage/` directory. It starts with **Summary** (one row per user, identified by email, with sessions, active days, completed tests, answers, accuracy, hints, active minutes and last activity), followed by **Users** (sessions, active days, tests, answered/seen questions, correct/wrong answers, accuracy, hints, focused time, explanation/passage/help usage and account timestamps), **Question types**, **Questions** (one row per user + attempt + question), and **Notes** (definitions, sources and limits). It only reads Firebase; it does not change accounts, rules, progress or telemetry. Names and emails are included, but passwords, password hashes and credentials are neither requested nor written to the report.
+
+```sh
+# Optional reporting window; end is exclusive, ISO timestamps use UTC here
+npm run usage:export -- --from 2026-11-01T00:00:00Z --to 2026-12-01T00:00:00Z
+# Select a Firebase CLI login or another project
+npm run usage:export -- --account you@example.com --project gifted-test-prep-2026
+# UID-only report when the account cannot list Firebase Auth users
+npm run usage:export -- --no-users
+# Dependency-free spreadsheet-readable CSV files instead of XLSX
+npm run usage:export -- --format csv --out artifacts/usage/csv
+# Exercise the whole exporter locally with synthetic data and no Firebase access
+npm run usage:export -- --demo --out artifacts/usage/demo.xlsx
+```
+
+XLSX generation uses the bundled Codex spreadsheet runtime, discovered under `~/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules`. Set `ARTIFACT_NODE_MODULES` to the bundled `node_modules` path if yours differs. CSV output needs only this project's installed dependencies. The script locates the installed Firebase CLI on `PATH` and uses its account selection/token refresh; it does not ask for a service-account key. If necessary, set `FIREBASE_CLI_PATH` to the installed Firebase CLI's `lib/bin/firebase.js` entry. The authentication adapter uses the installed CLI's internal auth module (tested with firebase-tools 15.37.0); a future CLI layout change may require updating that adapter. Authentication/permission failures stop the export rather than writing an incomplete report. `--no-users` deliberately omits Auth metadata and users without recorded activity.
+
+**Interpretation:** explicit login events were never recorded, so the workbook labels session counts as a **login proxy**. Reloads/new tabs and restored sign-in sessions also increment sessions. Auth's last sign-in timestamp is included separately. Historical renewable questions without type metadata stay **Unknown**; fixed-test questions can be classified from their bank. New telemetry includes `questionType`, so math/reading counts become available as users run the updated app. Counts describe retained uploaded telemetry (normally up to 85 days), not lifetime usage. Unanswered questions are separate from wrong answers. Duplicate telemetry and repeated submissions for the same question attempt are not counted twice. Timestamps are UTC; active days use Asia/Jerusalem.
+
+For offline troubleshooting, `--input path/to/usage.json` accepts `{ "users": [{ "uid", "email", "name", "created", "lastLogin", "disabled" }], "batches": [{ "id", "uid", "sessionId", "events": [...] }] }`; timestamps in this input are epoch milliseconds. This does not require a Firebase login. `--preview` additionally writes local workbook QA images. Generated workbooks and CSVs remain outside Git and the deployed site.
+
+## Creature battles
+
+Every built-in world and imported pack supplies attack, defense, health and an elemental type. Older packs without combat fields receive deterministic stats and a balanced eight-element distribution automatically. New packs can explicitly set `element` (fire/grass/earth/electric/water/air/psychic/fairy), `attack` and `defense` (integers 1–100), and `health` (integer 10–500). The same fields are optional on `evolution`; omitted evolution stats increase by 10%. Combat elements are independent of card artwork colors. The updated local Pokémon ZIP explicitly retains each species' original theme element/color.
+
+Only correct answers recruit a creature, once per question. Each successful capture snapshots its battle stats in the saved answer. The speed multiplier is `1 + 0.5 × max(0, 1 − answerMs / windowMs)`: a 30-second window for math, 60 seconds for reading. It is capped at +50%, never penalizes slow answers, and missing/invalid legacy timing grants no bonus. Reading time and timing while the quiz is active follow the existing question timer; hiding the timer does not stop measurement. The collection keeps each species' strongest captured stats, while each test's team contains exactly its own correct-answer recruits.
+
+Finishing a test creates an equal-sized deterministic enemy team and opens a battle in its results. Attacks alternate; guard heals 8% of maximum health (without exceeding it) and reduces the next incoming hit. The elemental ring is fire → grass → earth → electric → water → air → psychic → fairy → fire: damage is ×1.5 against the next element, ×0.75 against the previous, otherwise ×1. A minimal damage floor guarantees that attacking battles end. Enemies use base stats with a slight attack/health reduction; speed bonuses benefit only the player's recruits.
+
+Manual attacks, autoplay, faster playback and an instant resolve are available. **Skip battle** opens a styled confirmation dialog that pauses autoplay; cancelling returns to the fight and confirming permanently marks that battle skipped. Battles, including skipped/won/lost states, are saved with the test result and resume after navigation/reload. Battles do not award extra captures, change the test score or remove collected creatures. Zero correct answers show an encouraging empty-team message. Sounds follow the app's sound toggle and respect browser audio restrictions; reduced-motion preferences disable battle animations.
+
+To add explicit combat fields to a local theme ZIP, run `node scripts/upgrade-theme-combat.mjs path/to/theme.zip` (updates that ZIP in place). The helper validates the resulting archive before writing. Existing installed packs work without reimport; reimport the updated Pokémon ZIP to use its explicit assignments. Generated ZIPs stay in ignored `artifacts/`.
+
+
+## Updating the installed app
+
+Production PWAs check for a new service worker at launch, when returning to the app/going online, and every minute while visible. A downloaded update normally waits until all old windows close. The top bar now shows **נדרש עדכון** when an update is ready; tapping it saves the current test, activates the waiting worker and reloads that window. Battles are already saved after each turn. If saving fails, the app shows an error and does not request activation. Other open windows are offered an update rather than force-reloaded. Local development does not register a service worker. Devices running a version from before this button was introduced need to close and reopen the app once to receive the new update controls.

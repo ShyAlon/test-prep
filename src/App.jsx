@@ -1,3 +1,7 @@
+import { UpdateButton } from './components/UpdateButton.jsx';
+import { createBattle } from './battle.js';
+import { recruitCreature, strongestRecruit } from './combat-rules.js';
+import { creatureCard } from './creatures.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { createAttempt, moveQuestion, playFeedback, generatedOnlyGame } from './model.js';
@@ -63,6 +67,8 @@ export function App({ user, auth }) {
           testId: active.testId,
           attemptId: String(active.id),
           questionId: active.rounds[active.index].id,
+          questionType: active.rounds[active.index].question.passageText ? 'reading' :
+            active.rounds[active.index].question.origin === 'generated' ? 'math' : 'unknown',
           questionIndex: active.index,
           answered: Boolean(active.answers[active.index]),
         }
@@ -210,10 +216,17 @@ export function App({ user, auth }) {
       creature: encountered,
     };
     const collection = current.current.collection ?? {};
-    if (correct) recorded.catchCount = (collection[encountered] ?? 0) + 1;
+    if (correct) {
+      recorded.catchCount = (collection[encountered] ?? 0) + 1;
+      recorded.recruit = recruitCreature(creatureCard(encountered,recorded.catchCount),recorded.ms,question,recorded.catchCount);
+    }
     update({
       active: { ...attempt, answers: [...attempt.answers, recorded], pendingQuestion: null },
-      ...(correct ? { collection: { ...collection, [encountered]: recorded.catchCount } } : {}),
+      ...(correct ? { collection: { ...collection, [encountered]: recorded.catchCount },
+        collectionStats: { ...current.current.collectionStats,
+          [encountered]:strongestRecruit(current.current.collectionStats?.[encountered],recorded.recruit),
+        },
+      } : {}),
     });
     if (current.current.sound) playFeedback(correct);
   }
@@ -236,6 +249,7 @@ export function App({ user, auth }) {
       window.scrollTo(0, 0);
     } else {
       const completed = { ...attempt, finishedAt: Date.now() };
+      completed.battle = createBattle(completed);
       behavior.track('attempt_complete', { count: countCorrect(completed) });
       update({ active: null, history: [completed, ...current.current.history] });
       setResultId(completed.id);
@@ -251,6 +265,7 @@ export function App({ user, auth }) {
         <div className="topbar-inner">
           <Brand onClick={pause} theme={creatureMode === localTheme?.mode ? localTheme : null} />
           <div className="utilities">
+            <UpdateButton beforeUpdate={()=>{checkpoint.current?.();saveGame(current.current,user.uid);}} />
             <AvatarMenu
               user={user}
               mode={creatureMode}
@@ -355,6 +370,8 @@ export function App({ user, auth }) {
         {view === 'quiz' && question ? (
           <Quiz
             attempt={active}
+            showTimers={game.showTimers !== false}
+            toggleTimers={() => update({ showTimers: current.current.showTimers === false })}
             question={question}
             companionId={companionFor(
               active.rounds[active.index],
@@ -371,7 +388,9 @@ export function App({ user, auth }) {
             pause={pause}
           />
         ) : view === 'results' && result ? (
-          <Results attempt={result} home={pause} />
+          <Results key={result.id} attempt={result} home={pause} sound={game.sound} onBattleChange={battle => {
+            update({history:current.current.history.map(attempt => attempt.id === result.id ? {...attempt,battle} : attempt)});
+          }} />
         ) : (
           <Home
             mode={creatureMode}
@@ -410,6 +429,7 @@ export function App({ user, auth }) {
       {backpackOpen && (
         <Backpack
           collection={game.collection ?? {}}
+          collectionStats={game.collectionStats ?? {}}
           mode={creatureMode}
           close={() => {
             behavior.track('backpack_close');

@@ -1,3 +1,4 @@
+import { UpdateButton } from './components/UpdateButton.jsx';
 import React, { useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
@@ -112,6 +113,7 @@ export function AuthGate({ auth }) {
       <header className="topbar">
         <div className="topbar-inner auth-brand">
           <Brand />
+          <UpdateButton />
         </div>
       </header>
       <main className="container">

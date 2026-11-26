@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createBattle } from '../battle.js';
+import { Battle } from './Battle.jsx';
 import { duration } from '../model.js';
-import { attemptTitle, countCorrect, formatDate } from '../practice-summary.js';
+import { attemptTitle, countCorrect, formatDate, questionType } from '../practice-summary.js';
 import { Creature } from './Creature.jsx';
 import { Button } from './UI.jsx';
 import {
@@ -10,7 +12,10 @@ import {
   AnswerText,
 } from './QuestionContent.jsx';
 
-export function Results({ attempt, home }) {
+export function Results({ attempt, home, sound=true, onBattleChange }) {
+  const [localBattle,setLocalBattle]=useState(()=>attempt.battle??createBattle(attempt));
+  const battle=attempt.battle??localBattle;
+  function changeBattle(next){setLocalBattle(next);onBattleChange?.(next);}
   return (
     <>
       <section className="result-hero panel">
@@ -38,6 +43,7 @@ export function Results({ attempt, home }) {
           </Button>
         </div>
       </section>
+      <Battle battle={battle} onChange={changeBattle} sound={sound} />
       <section className="section">
         <p className="eyebrow">יומן המאמן</p>
         <h2>עוברים על התשובות</h2>
@@ -51,7 +57,10 @@ export function Results({ attempt, home }) {
                   <span className={answer.correct ? 'check' : 'miss'} aria-hidden="true">
                     {answer.correct ? '✓' : '↻'}
                   </span>
-                  <strong>שאלה {index + 1}</strong>
+                  <span className="review-heading">
+                    <strong>שאלה {index + 1}</strong>
+                    <span className="question-type">{questionType(question)}</span>
+                  </span>
                   <span dir="ltr">{duration(answer.ms)}</span>
                   <span className="visually-hidden">{answer.correct ? 'נכון' : 'ניסיון נוסף'}</span>
                 </summary>

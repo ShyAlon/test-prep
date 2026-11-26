@@ -1,3 +1,4 @@
+import { elements } from './combat-rules.js';
 import { unzipSync } from 'fflate';
 
 export const THEME_KEY = 'gifted.local-theme.v1';
@@ -11,13 +12,20 @@ function validateManifest(m, assets) {
   if (!m || m.version !== 1 || !/^[a-z0-9-]{1,40}$/.test(m.id) || !text(m.name) || !text(m.description) || !Array.isArray(m.creatures) || !m.creatures.length || m.creatures.length > 200) fail();
   const ids = new Set();
   const image = path => { if (!safePath(path) || !Object.hasOwn(assets, path)) fail(); };
+  function validateCombat(c) {
+    if(c.element !== undefined && !Object.hasOwn(elements,c.element)) fail();
+    for(const field of ['attack','defense']) if(c[field] !== undefined && (!Number.isInteger(c[field]) || c[field]<1 || c[field]>100)) fail();
+    if(c.health !== undefined && (!Number.isInteger(c.health) || c.health<10 || c.health>500)) fail();
+  }
   for (const c of m.creatures) {
+    validateCombat(c);
     if (!/^[a-z0-9-]{1,50}$/.test(c.id) || ids.has(c.id) || !text(c.name) || !text(c.english) || !colors.includes(c.color) || !rarities.includes(c.rarity)) fail();
     ids.add(c.id); image(c.image);
     if (c.encounter !== undefined && typeof c.encounter !== 'boolean') fail();
     if (c.number !== undefined && (!Number.isInteger(c.number) || c.number < 1 || c.number > 9999)) fail();
     if (c.animation) image(c.animation);
     if (c.evolution) {
+      validateCombat(c.evolution);
       if (!text(c.evolution.name) || !text(c.evolution.english)) fail();
       image(c.evolution.image);
       if (c.evolution.animation) image(c.evolution.animation);
