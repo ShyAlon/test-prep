@@ -1,4 +1,4 @@
-import { elements } from './combat-rules.js';
+import { elements, assignCombat, combatLimits } from './combat-rules.js';
 import { unzipSync } from 'fflate';
 
 export const THEME_KEY = 'gifted.local-theme.v1';
@@ -14,8 +14,7 @@ function validateManifest(m, assets) {
   const image = path => { if (!safePath(path) || !Object.hasOwn(assets, path)) fail(); };
   function validateCombat(c) {
     if(c.element !== undefined && !Object.hasOwn(elements,c.element)) fail();
-    for(const field of ['attack','defense']) if(c[field] !== undefined && (!Number.isInteger(c[field]) || c[field]<1 || c[field]>100)) fail();
-    if(c.health !== undefined && (!Number.isInteger(c.health) || c.health<10 || c.health>500)) fail();
+    for(const [field,[min,max]] of Object.entries(combatLimits)) if(c[field] !== undefined && (!Number.isInteger(c[field]) || c[field]<min || c[field]>max)) fail();
   }
   for (const c of m.creatures) {
     validateCombat(c);
@@ -75,7 +74,8 @@ export function parseThemeZip(bytes) {
     for (let i = 0; i < data.length; i += 8192) binary += String.fromCharCode(...data.subarray(i, i + 8192));
     assets[path] = `data:${type};base64,${btoa(binary)}`;
   }
-  return validateManifest(manifest, assets);
+  const theme=validateManifest(manifest, assets);
+  return {...theme,manifest:{...theme.manifest,creatures:assignCombat(theme.manifest.creatures,Math.random)}};
 }
 // Only sizes/counts go to the console, never stored values, account keys or image data.
 // UTF-16 sizes are estimates; browser quota accounting can differ.
@@ -124,7 +124,8 @@ export function readTheme(storage = globalThis.localStorage) {
     if (!raw || raw.length > MAX_THEME_BYTES * 1.4) return null;
     const theme = JSON.parse(raw);
     if (!theme.assets || Object.values(theme.assets).some(value => typeof value !== 'string' || !/^data:image\/(png|gif|webp|jpeg);base64,[A-Za-z0-9+/=]+$/.test(value))) return null;
-    return validateManifest(theme.manifest, theme.assets);
+    const valid=validateManifest(theme.manifest, theme.assets);
+    return {...valid,manifest:{...valid.manifest,creatures:assignCombat(valid.manifest.creatures)}};
   } catch { return null; }
 }
 

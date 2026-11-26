@@ -74,7 +74,7 @@ test('old theme packs gain battle stats and explicit pack stats/evolutions remai
  const theme=themeFixture();theme.manifest.creatures[0]={...theme.manifest.creatures[0],element:'water',attack:33,defense:18,health:110};
  const mode=installTheme(theme),card=creatureCard(`${mode}:friend`);
  assert.equal(card.attack,33);assert.equal(card.element,'water');
- assert.ok(creatureCard(`${mode}:friend`,2).health>card.health);
+ assert.equal(creatureCard(`${mode}:friend`,2).health,theme.manifest.creatures[0].evolution.health,'explicit evolution values are preserved');
  assert.ok(creatureCard(`${mode}:epic`).health>0);
  const b=createBattle(attempt(10,mode));assert.equal(b.allies.length,b.enemies.length);
 });

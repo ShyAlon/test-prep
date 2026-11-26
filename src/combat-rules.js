@@ -15,18 +15,40 @@ export function seedFor(value) {
   for (const char of String(value)) seed = Math.imul(seed ^ char.charCodeAt(0), 16777619) >>> 0;
   return seed;
 }
-export function combatStats(creature, index = 0) {
-  const seed = seedFor(creature.id);
-  const rarity = {standard:1,epic:1.06,legendary:1.1,mythical:1.12}[creature.rarity] ?? 1;
-  return {
-    element: elements[creature.element] ? creature.element : elementIds[index % elementIds.length],
-    attack: creature.attack ?? Math.round((22 + seed % 9) * rarity),
-    defense: creature.defense ?? Math.round((10 + (seed >>> 8) % 8) * rarity),
-    health: creature.health ?? Math.round((85 + (seed >>> 16) % 26) * rarity),
-  };
+export const combatLimits = {attack:[1,100],defense:[1,100],health:[10,500]};
+// Narrow generation ranges keep old packs balanced; explicit pack values may use the full limits.
+export const generatedStatRanges = {attack:[22,30],defense:[10,17],health:[85,110]};
+function randomFor(id) {
+  let seed=seedFor(id);
+  return ()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2**32;};
 }
-export function assignCombat(roster) {
-  return roster.map((creature, index) => ({ ...creature, ...combatStats(creature, index) }));
+const randomInteger=(random,min,max)=>min+Math.floor(random()*(max-min+1));
+export function combatStats(creature, index = 0, random = randomFor(creature.id)) {
+  const rarity = {standard:1,epic:1.06,legendary:1.1,mythical:1.12}[creature.rarity] ?? 1;
+  const stats={element:elements[creature.element]?creature.element:elementIds[index%elementIds.length]};
+  for(const [field,[min,max]] of Object.entries(generatedStatRanges)) {
+    stats[field]=creature[field]??randomInteger(random,Math.round(min*rarity),Math.round(max*rarity));
+  }
+  return stats;
+}
+export function assignCombat(roster, random) {
+  // Imports get a random rotation of a balanced elemental distribution. Saved values win.
+  const offset=random?randomInteger(random,0,elementIds.length-1):0;
+  return roster.map((creature,index)=>{
+    const stats=combatStats(creature,index+offset,random);
+    const result={...creature,...stats};
+    if(creature.evolution){
+      const roll=random??randomFor(`${creature.id}:evolution`);
+      const evolution={...creature.evolution,element:creature.evolution.element??stats.element};
+      for(const [field,[min,max]] of Object.entries(combatLimits)) {
+        evolution[field]=creature.evolution[field]??randomInteger(roll,
+          Math.min(max,Math.max(min,Math.ceil(stats[field]*1.05))),
+          Math.min(max,Math.max(min,Math.ceil(stats[field]*1.15))));
+      }
+      result.evolution=evolution;
+    }
+    return result;
+  });
 }
 export function elementMultiplier(attack, defense) {
   if (elements[attack]?.strongAgainst === defense) return 1.5;
