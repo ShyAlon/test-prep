@@ -22,16 +22,31 @@ const CACHE = PREFIX + '${version}';
 const FILES = ${JSON.stringify(files)}.map(file => new URL(file, self.registration.scope).href);
 const HOME = new URL('index.html', self.registration.scope).href;
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)));
+  console.info('[PWA update] Installing cache', { cache: CACHE, files: FILES.length });
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => {
+    console.info('[PWA update] Cache installation complete', { cache: CACHE });
+  }).catch(error => {
+    console.error('[PWA update] Cache installation failed', { cache: CACHE, files: FILES.length }, error);
+    throw error;
+  }));
 });
 // Activate on an explicit update request, otherwise wait for existing windows to close.
 self.addEventListener('message', event => {
-  if(event.data?.type === 'SKIP_WAITING') event.waitUntil(self.skipWaiting());
+  if(event.data?.type === 'SKIP_WAITING') {
+    console.info('[PWA update] Activation request received', { cache: CACHE });
+    event.waitUntil(self.skipWaiting().catch(error => {
+      console.error('[PWA update] skipWaiting failed', error); throw error;
+    }));
+  }
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(
     keys.filter(key => key.startsWith(PREFIX) && key !== CACHE).map(key => caches.delete(key))
-  )).then(() => self.clients.claim()));
+  )).then(() => self.clients.claim()).then(() => {
+    console.info('[PWA update] Worker active', { cache: CACHE });
+  }).catch(error => {
+    console.error('[PWA update] Activation failed', { cache: CACHE }, error); throw error;
+  }));
 });
 self.addEventListener('fetch', event => {
   const request = event.request;

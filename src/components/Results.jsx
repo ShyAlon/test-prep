@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { createBattle } from '../battle.js';
+import { ShareButton } from './ShareButton.jsx';
+import React, { useState, useMemo } from 'react';
+import { createBattle, withChampionSelection } from '../battle.js';
 import { Battle } from './Battle.jsx';
 import { duration } from '../model.js';
-import { attemptTitle, countCorrect, formatDate, questionType } from '../practice-summary.js';
+import { attemptTitle, countCorrect, formatDate, questionType, questionTypeIcon } from '../practice-summary.js';
 import { Creature } from './Creature.jsx';
 import { Button } from './UI.jsx';
 import {
@@ -12,9 +13,10 @@ import {
   AnswerText,
 } from './QuestionContent.jsx';
 
-export function Results({ attempt, home, sound=true, onBattleChange }) {
-  const [localBattle,setLocalBattle]=useState(()=>attempt.battle??createBattle(attempt));
-  const battle=attempt.battle??localBattle;
+export function Results({ attempt, home, sound=true, onBattleChange, collection, collectionStats, mode }) {
+  const initial=useMemo(()=>withChampionSelection(attempt.battle??createBattle(attempt,mode),collection,collectionStats,attempt.battle?.mode??mode),[attempt.battle,attempt.id,collection,collectionStats,mode]);
+  const [localBattle,setLocalBattle]=useState(initial);
+  const battle=attempt.battle?initial:localBattle;
   function changeBattle(next){setLocalBattle(next);onBattleChange?.(next);}
   return (
     <>
@@ -38,6 +40,7 @@ export function Results({ attempt, home, sound=true, onBattleChange }) {
               <b dir="ltr">{duration(attempt.totalMs)}</b> זמן כולל
             </span>
           </div>
+          <ShareButton attempt={attempt} />
           <Button variant="primary" onClick={home}>
             חזרה למחנה <span aria-hidden="true">←</span>
           </Button>
@@ -59,7 +62,7 @@ export function Results({ attempt, home, sound=true, onBattleChange }) {
                   </span>
                   <span className="review-heading">
                     <strong>שאלה {index + 1}</strong>
-                    <span className="question-type">{questionType(question)}</span>
+                    <span className="question-type"><span aria-hidden="true">{questionTypeIcon(question)}</span> {questionType(question)}</span>
                   </span>
                   <span dir="ltr">{duration(answer.ms)}</span>
                   <span className="visually-hidden">{answer.correct ? 'נכון' : 'ניסיון נוסף'}</span>

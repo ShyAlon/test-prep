@@ -11,3 +11,8 @@ export function questionType(question) {
   if (question?.origin === 'generated') return 'חשבון';
   return 'תרגול כללי';
 }
+
+export function questionTypeIcon(question) {
+  const type=questionType(question);
+  return type==='חשבון'?'🧮':type==='הבנת הנקרא'?'📖':'🧩';
+}

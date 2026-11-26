@@ -5,8 +5,9 @@ function setup({waiting=true,controlled=true}={}) {
  const registration=new EventTarget();registration.waiting=waiting?worker:null;registration.update=async()=>{};
  const container=new EventTarget();container.controller=controlled?{}:null;container.register=async()=>registration;
  let reloads=0,timeout;
- const manager=createAppUpdater({reload:()=>reloads++,setTimer:callback=>{timeout=callback;return 1;},clearTimer(){}});
- return {manager,container,registration,worker,reloads:()=>reloads,timeout:()=>timeout()};
+ const logs=[];const logger=Object.fromEntries(['debug','info','warn','error'].map(level=>[level,(...args)=>logs.push({level,args})]));
+ const manager=createAppUpdater({reload:()=>reloads++,setTimer:callback=>{timeout=callback;return 1;},clearTimer(){},logger});
+ return {logs,manager,container,registration,worker,reloads:()=>reloads,timeout:()=>timeout()};
 }
 test('waiting update is offered without reloading; click checkpoints and reloads after activation',async()=>{
  const f=setup();await f.manager.start(f.container,'/app/sw.js');
@@ -41,4 +42,20 @@ test('when another tab activates the worker, this tab offers a user-controlled r
  f.registration.waiting=null;f.container.dispatchEvent(new Event('controllerchange'));
  assert.equal(f.reloads(),0);assert.equal(f.manager.getSnapshot().available,true);
  let saved=false;await f.manager.apply(()=>{saved=true;});assert.ok(saved);assert.equal(f.reloads(),1);
+});
+
+
+test('update diagnostics distinguish a failed first attempt, successful retry and timeout with original errors',async()=>{
+ const f=setup();await f.manager.start(f.container,'/sw.js');
+ const error=new DOMException('Storage quota exceeded','QuotaExceededError');
+ await f.manager.apply(()=>{throw error;});
+ const failure=f.logs.find(row=>row.level==='error');
+ assert.equal(failure.args[0],'[PWA update] Failed');assert.equal(failure.args[1].stage,'save before activation');
+ assert.equal(failure.args[1].attempt,1);assert.equal(failure.args[1].errorName,'QuotaExceededError');assert.equal(failure.args[2],error);
+ await f.manager.apply();f.container.dispatchEvent(new Event('controllerchange'));await Promise.resolve();
+ assert.ok(f.logs.some(row=>row.args[0]==='[PWA update] Reloading updated app'&&row.args[1].attempt===2));
+ const stuck=setup();await stuck.manager.start(stuck.container,'/sw.js');await stuck.manager.apply();stuck.timeout();
+ assert.ok(stuck.logs.some(row=>row.level==='error'&&row.args[1].stage==='activation timeout'));
+ stuck.registration.update=async()=>{throw new Error('offline');};await stuck.manager.check();
+ assert.ok(stuck.logs.some(row=>row.level==='warn'&&row.args[0]==='[PWA update] Update check failed'));
 });

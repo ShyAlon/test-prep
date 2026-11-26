@@ -1,6 +1,6 @@
 import { CombatStats } from './CombatStats.jsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { creatureCard, localTheme } from '../creatures.js';
+import { creatureCard, creatureModes, localTheme } from '../creatures.js';
 import { duration } from '../model.js';
 import { attemptTitle, countCorrect } from '../practice-summary.js';
 import { Creature } from './Creature.jsx';
@@ -9,8 +9,9 @@ import { QuestionText, ReadingPassage, TrainerExplanation } from './QuestionCont
 
 const letters = ['א', 'ב', 'ג', 'ד'];
 
-export function Quiz({ attempt, question, choice, setChoice, requestHint, pause, companionId, showTimers = true, toggleTimers }) {
-  const themed = creatureCard(companionId).mode === localTheme?.mode;
+export function Quiz({ attempt, question, choice, setChoice, requestHint, pause, companionId, showTimers = true, toggleTimers, mode }) {
+  const companion = creatureCard(companionId);
+  const themed = companion.mode === localTheme?.mode;
   const noun = themed ? localTheme.manifest.singular ?? 'יצור' : 'יצור';
   const round = attempt.rounds[attempt.index];
   const answer = attempt.answers[attempt.index];
@@ -93,6 +94,8 @@ export function Quiz({ attempt, question, choice, setChoice, requestHint, pause,
             aria-label={`בקשו רמז מה${noun}`}
           >
             <Creature key={companionId} id={companionId} />
+            <span className="quiz-creature-name">{companion.name}</span>
+            {mode && companion.mode !== mode && <small>נאסף בעולם {creatureModes[companion.mode]?.name ?? 'קודם'}</small>}
             <span>רמז ✦</span>
           </Button>
         </div>

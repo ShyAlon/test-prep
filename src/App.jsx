@@ -1,5 +1,6 @@
 import { UpdateButton } from './components/UpdateButton.jsx';
-import { createBattle } from './battle.js';
+import { ShareButton } from './components/ShareButton.jsx';
+import { createBattle, withChampionSelection, settleChampionLosses } from './battle.js';
 import { recruitCreature, strongestRecruit } from './combat-rules.js';
 import { creatureCard } from './creatures.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -249,7 +250,7 @@ export function App({ user, auth }) {
       window.scrollTo(0, 0);
     } else {
       const completed = { ...attempt, finishedAt: Date.now() };
-      completed.battle = createBattle(completed);
+      completed.battle = withChampionSelection(createBattle(completed,creatureMode),current.current.collection,current.current.collectionStats,creatureMode);
       behavior.track('attempt_complete', { count: countCorrect(completed) });
       update({ active: null, history: [completed, ...current.current.history] });
       setResultId(completed.id);
@@ -338,6 +339,7 @@ export function App({ user, auth }) {
             >
               <span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל
             </Button>
+            <ShareButton variant="utility" label="↗ שיתוף" onOpen={() => checkpoint.current?.()} />
             <Button variant="utility" type="button" disabled={signingOut} onClick={logout}>
               <span aria-hidden="true">↪</span> {signingOut ? 'יוצאים…' : 'יציאה'}
             </Button>
@@ -370,6 +372,7 @@ export function App({ user, auth }) {
         {view === 'quiz' && question ? (
           <Quiz
             attempt={active}
+            mode={creatureMode}
             showTimers={game.showTimers !== false}
             toggleTimers={() => update({ showTimers: current.current.showTimers === false })}
             question={question}
@@ -388,8 +391,11 @@ export function App({ user, auth }) {
             pause={pause}
           />
         ) : view === 'results' && result ? (
-          <Results key={result.id} attempt={result} home={pause} sound={game.sound} onBattleChange={battle => {
-            update({history:current.current.history.map(attempt => attempt.id === result.id ? {...attempt,battle} : attempt)});
+          <Results key={result.id} attempt={result} home={pause} collection={game.collection} collectionStats={game.collectionStats} mode={creatureMode} sound={game.sound} onBattleChange={battle => {
+            const currentGame = current.current;
+            const savedBattle = currentGame.history.find(attempt => attempt.id === result.id)?.battle;
+            const settled = settleChampionLosses({ ...battle, removedChampionKeys: savedBattle?.removedChampionKeys ?? battle.removedChampionKeys }, currentGame.collection, currentGame.collectionStats);
+            update({ collection:settled.collection, collectionStats:settled.collectionStats, history:currentGame.history.map(attempt => attempt.id === result.id ? {...attempt,battle:settled.battle} : attempt) });
           }} />
         ) : (
           <Home

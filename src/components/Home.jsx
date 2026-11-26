@@ -78,7 +78,7 @@ export function Home({
               defaultValue="20"
               onChange={(event) => setPracticeLimit(Number(event.target.value))}
             >
-              {[10, 20, 30, 50, 100].map((value) => (
+              {[5, 10, 20, 30, 50, 100].map((value) => (
                 <option key={value}>{value}</option>
               ))}
             </select>
