@@ -23,6 +23,20 @@ after(async () => {
 });
 const render = (Component, props) => renderToStaticMarkup(React.createElement(Component, props));
 
+test('top bar keeps the backpack direct and groups other actions under topic submenus', async () => {
+  const { App } = await server.ssrLoadModule('/src/App.jsx');
+  const html = render(App, { user: { uid: 'menu-test', displayName: 'Trainer' }, auth: {} });
+  const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+  assert.match(header, /class="utilities"><button[^>]*class="utility backpack-button"/);
+  assert.match(header, /class="topbar-menu"><summary aria-label="תפריט"/);
+  for (const topic of ['עולמות וערכות', 'תצוגה וצליל', 'עזרה ושיתוף', 'חשבון ועדכונים']) {
+    assert.ok(header.includes(topic), `${topic} remains available`);
+  }
+  for (const action of ['זכוכית מגדלת', 'צליל', 'הדרכה', 'שיתוף', 'יציאה']) {
+    assert.ok(header.includes(action), `${action} remains available`);
+  }
+});
+
 test('shared buttons cannot accidentally submit forms, while the sign-in action still submits', () => {
   assert.match(render(ui.Button, { children: 'Action' }), /type="button"/);
   assert.match(render(ui.Button, { type: 'submit', children: 'Sign in' }), /type="submit"/);

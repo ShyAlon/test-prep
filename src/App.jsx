@@ -12,6 +12,7 @@ import { Magnifier } from './Magnifier.jsx';
 import { useBehaviorTracking } from './useBehaviorTracking.js';
 import { Brand, Button } from './components/UI.jsx';
 import { AvatarMenu } from './components/AvatarMenu.jsx';
+import { TopBarMenu, MenuSection } from './components/TopBarMenu.jsx';
 import { HelpDialog, TermsDialog, Backpack } from './components/Dialogs.jsx';
 import { Home } from './components/Home.jsx';
 import { Quiz } from './components/Quiz.jsx';
@@ -53,7 +54,7 @@ export function App({ user, auth }) {
   const helpOpen = dialog === 'help';
   const termsOpen = dialog === 'terms';
   const [magnifierOpen, setMagnifierOpen] = useState(false);
-  const magnifierToggle = useRef(null);
+  const menuToggle = useRef(null);
   const [storageError, setStorageError] = useState(false);
   const checkpoint = useRef(null);
   const active = game.active;
@@ -265,55 +266,6 @@ export function App({ user, auth }) {
         <div className="topbar-inner">
           <Brand onClick={pause} theme={creatureMode === localTheme?.mode ? localTheme : null} />
           <div className="utilities">
-            <UpdateButton beforeUpdate={()=>{checkpoint.current?.();saveGame(current.current,user.uid);}} />
-            <AvatarMenu
-              user={user}
-              mode={creatureMode}
-              changeMode={(mode) => {
-                checkpoint.current?.();
-                if (!mode.startsWith('local-')) behavior.track('mode_change', { mode });
-                update({ creatureMode: mode });
-              }}
-            />
-            <Button
-              variant="utility"
-              type="button"
-              aria-haspopup="dialog"
-              aria-expanded={helpOpen}
-              onClick={() => {
-                checkpoint.current?.();
-                setDialog('help');
-              }}
-            >
-              <span aria-hidden="true">?</span> הדרכה
-            </Button>
-            <Button
-              ref={magnifierToggle}
-              variant="utility"
-              className="magnifier-toggle"
-              type="button"
-              aria-pressed={magnifierOpen}
-              aria-label="זכוכית מגדלת"
-              onClick={() => {
-                behavior.track('magnifier_toggle', { enabled: !magnifierOpen });
-                setMagnifierOpen((open) => !open);
-              }}
-            >
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden="true"
-              >
-                <circle cx="10" cy="10" r="6.5" />
-                <path d="m15 15 6 6" />
-                <path d="M7 8a3 3 0 0 1 3-2" opacity=".6" />
-              </svg>
-              <span>הגדלה</span>
-            </Button>
             <Button
               variant="utility"
               className="backpack-button"
@@ -327,21 +279,79 @@ export function App({ user, auth }) {
             >
               <span aria-hidden="true">🎒</span> תיק
             </Button>
-            <Button
-              variant="utility"
-              type="button"
-              aria-pressed={game.sound}
-              onClick={() => {
-                behavior.track('sound_toggle', { enabled: !game.sound });
-                update({ sound: !game.sound });
-              }}
-            >
-              <span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל
-            </Button>
-            <ShareButton variant="utility" label="↗ שיתוף" onOpen={() => checkpoint.current?.()} />
-            <Button variant="utility" type="button" disabled={signingOut} onClick={logout}>
-              <span aria-hidden="true">↪</span> {signingOut ? 'יוצאים…' : 'יציאה'}
-            </Button>
+            <TopBarMenu triggerRef={menuToggle}>
+              <AvatarMenu
+                label="עולמות וערכות"
+                user={user}
+                mode={creatureMode}
+                changeMode={(mode) => {
+                  checkpoint.current?.();
+                  if (!mode.startsWith('local-')) behavior.track('mode_change', { mode });
+                  update({ creatureMode: mode });
+                }}
+              />
+              <MenuSection title="תצוגה וצליל">
+                <Button
+                  variant="plain"
+                  className="magnifier-toggle"
+                  type="button"
+                  aria-pressed={magnifierOpen}
+                  aria-label="זכוכית מגדלת"
+                  onClick={() => {
+                    behavior.track('magnifier_toggle', { enabled: !magnifierOpen });
+                    setMagnifierOpen((open) => !open);
+                  }}
+                >
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <circle cx="10" cy="10" r="6.5" />
+                    <path d="m15 15 6 6" />
+                    <path d="M7 8a3 3 0 0 1 3-2" opacity=".6" />
+                  </svg>
+                  <span>הגדלה</span>
+                </Button>
+                <Button
+                  variant="plain"
+                  type="button"
+                  aria-pressed={game.sound}
+                  onClick={() => {
+                    behavior.track('sound_toggle', { enabled: !game.sound });
+                    update({ sound: !game.sound });
+                  }}
+                >
+                  <span aria-hidden="true">{game.sound ? '♫' : '♪'}</span> צליל
+                </Button>
+              </MenuSection>
+              <MenuSection title="עזרה ושיתוף">
+                <Button
+                  variant="plain"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={helpOpen}
+                  onClick={() => {
+                    checkpoint.current?.();
+                    setDialog('help');
+                  }}
+                >
+                  <span aria-hidden="true">?</span> הדרכה
+                </Button>
+                <ShareButton variant="plain" label="↗ שיתוף" onOpen={() => checkpoint.current?.()} />
+              </MenuSection>
+              <MenuSection title="חשבון ועדכונים">
+                <p className="menu-account">{user.displayName || user.email || 'מאמן'}</p>
+                <UpdateButton beforeUpdate={()=>{checkpoint.current?.();saveGame(current.current,user.uid);}} />
+                <Button variant="plain" type="button" disabled={signingOut} onClick={logout}>
+                  <span aria-hidden="true">↪</span> {signingOut ? 'יוצאים…' : 'יציאה'}
+                </Button>
+              </MenuSection>
+            </TopBarMenu>
           </div>
         </div>
       </header>
@@ -427,7 +437,7 @@ export function App({ user, auth }) {
           onClose={() => {
             behavior.track('magnifier_toggle', { enabled: false });
             setMagnifierOpen(false);
-            magnifierToggle.current?.focus();
+            menuToggle.current?.focus();
           }}
         />
       )}

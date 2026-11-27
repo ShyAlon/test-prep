@@ -1,8 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { zipSync, strToU8 } from 'fflate';
-import { downloadThemeZip, themeDownloadLink, ThemeDownloadError } from '../src/theme-download.js';
+import { downloadThemeZip as downloadThemeZipWithConfig, themeDownloadLink, ThemeDownloadError, validateThemeLink } from '../src/theme-download.js';
 import { MAX_THEME_BYTES, parseThemeZip } from '../src/theme-storage.js';
+const downloadThemeZip = (url, options) => downloadThemeZipWithConfig(url, { driveApiKey: 'test-browser-key', ...options });
+
+test('inline validation explains common mistakes and offers explicit HTTPS corrections', () => {
+  for (const [input, correction] of [
+    ['example.com/theme.zip', 'https://example.com/theme.zip'],
+    ['drive.google.com/file/d/example/view?resourcekey=keep', 'https://drive.google.com/file/d/example/view?resourcekey=keep'],
+    ['http://www.dropbox.com/s/token/theme.zip?rlkey=keep', 'https://www.dropbox.com/s/token/theme.zip?rlkey=keep'],
+  ]) {
+    const result = validateThemeLink(input);
+    assert.equal(result.valid, false);
+    assert.ok(result.message);
+    assert.ok(result.hint);
+    assert.equal(result.correction, correction);
+    assert.equal(validateThemeLink(correction).valid, true);
+  }
+  for (const input of ['', 'not a URL', 'https://incomplete', 'https://example.com/a b.zip', 'file:///theme.zip', 'https://user:password@example.com/theme.zip']) {
+    const result = validateThemeLink(input);
+    assert.equal(result.valid, false);
+    assert.ok(result.hint);
+    assert.equal(result.correction, '');
+  }
+  assert.match(validateThemeLink('https://drive.google.com/drive/folders/example').hint, /Google Drive/);
+  assert.match(validateThemeLink('https://www.dropbox.com/scl/fo/folder').hint, /Dropbox/);
+  const valid = validateThemeLink('https://example.com/download?signature=keep');
+  assert.equal(valid.valid, true, 'direct download endpoints do not need a .zip extension');
+  assert.equal(valid.message, undefined);
+});
 
 test('Drive file and open links preserve resource keys while targeting the same download', () => {
   const file = themeDownloadLink('https://drive.google.com/file/d/example-123/view?usp=sharing&resourcekey=secret-key');

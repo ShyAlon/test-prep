@@ -1,37 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from './UI.jsx';
+import { Dropdown } from './Dropdown.jsx';
 import { ThemeImportDialog } from './ThemeImportDialog.jsx';
 import { creatureCard, creatureModes, creaturesForMode } from '../creatures.js';
 
-export function AvatarMenu({ user, mode, changeMode }) {
+export function AvatarMenu({ user, mode, changeMode, label }) {
   const menu = useRef(null);
   const [importOpen, setImportOpen] = useState(false);
-  useEffect(() => {
-    const closeOutside = (event) => {
-      if (!menu.current?.contains(event.target) && menu.current) menu.current.open = false;
-    };
-    document.addEventListener('pointerdown', closeOutside);
-    return () => document.removeEventListener('pointerdown', closeOutside);
-  }, []);
   return (
     <>
-    <details
-      ref={menu}
-      className="avatar-menu"
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') {
-          menu.current.open = false;
-          menu.current.querySelector('summary').focus();
-        }
-      }}
-    >
-      <summary aria-label="תפריט אווטאר ובחירת עולם">
+    <Dropdown ref={menu} className="avatar-menu" label={label ?? 'תפריט אווטאר ובחירת עולם'} summary={<>
         <img alt="" src={creatureCard(creatureModes[mode].avatar).image} />
-        <span className="account-name" title={user.email ?? user.displayName ?? ''}>
-          {user.displayName || user.email || 'מאמן'}
+        <span className={label ? undefined : 'account-name'} title={label ? undefined : user.email ?? user.displayName ?? ''}>
+          {label ?? (user.displayName || user.email || 'מאמן')}
         </span>
         <span aria-hidden="true">⌄</span>
-      </summary>
+      </>}>
       <fieldset className="avatar-options">
         <legend>באיזה עולם מתאמנים?</legend>
         {Object.entries(creatureModes).map(([id, item]) => (
@@ -63,7 +47,7 @@ export function AvatarMenu({ user, mode, changeMode }) {
         }}>טעינת ערכת נושא · ZIP או קישור</Button>
         <p>האוסף נשמר בנפרד לכל עולם. תשובות ותוצאות נשארות כמו שהן.</p>
       </fieldset>
-    </details>
+    </Dropdown>
     {importOpen && <ThemeImportDialog onClose={() => setImportOpen(false)} changeMode={changeMode} />}
     </>
   );
