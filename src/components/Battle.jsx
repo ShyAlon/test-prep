@@ -18,11 +18,7 @@ function Fighter({unit,side,hit,attacking}) {
 }
 export function Battle({battle,onChange,sound=true}) {
   const [auto,setAuto]=useState(false),[fast,setFast]=useState(false),[confirmSkip,setConfirmSkip]=useState(false);
-  const skipButton=useRef(null),previousTurn=useRef(battle.turn),skipWasOpen=useRef(false);
-  useEffect(()=>{
-    if(skipWasOpen.current&&!confirmSkip)skipButton.current?.focus();
-    skipWasOpen.current=confirmSkip;
-  },[confirmSkip]);
+  const previousTurn=useRef(battle.turn);
   const choosing=battle.version===2&&battle.needsChampion;
   const active=battle.phase==='active',done=['won','lost','skipped'].includes(battle.phase);
   const enemy=battle.enemies[Math.min(battle.enemyIndex,battle.enemies.length-1)];
@@ -45,7 +41,7 @@ export function Battle({battle,onChange,sound=true}) {
   if(battle.phase==='empty')return <section className="battle-empty panel"><h2>הצוות מחכה לאימון הבא</h2><p>כל תשובה נכונה מצרפת יצור לצוות. באימון הבא אפשר לאסוף חברים ולצאת לקרב!</p></section>;
   return <section className={`battle panel battle-${battle.phase}`} aria-label="זירת הקרב">
     <header className="battle-header"><div><p className="eyebrow">ההרפתקה שלכם{battle.mode&&creatureModes[battle.mode]?` · ${creatureModes[battle.mode].name}`:''}</p><h2>{done?'הקרב הסתיים':'זירת היסודות'}</h2><p>{battle.slots??battle.allies.length} מקומות לצוות מול {battle.enemies.length} יריבים · רק תשובות נכונות מצרפות חברים</p></div>
-      {!done&&<Button ref={skipButton} variant="text" onClick={()=>setConfirmSkip(true)}>דילוג על הקרב</Button>}
+      {!done&&<Button variant="text" onClick={()=>setConfirmSkip(true)}>דילוג על הקרב</Button>}
     </header>
     {done ? <div className="battle-finale" role="status">
       <span className="battle-trophy" aria-hidden="true">{battle.phase==='won'?'🏆':battle.phase==='skipped'?'🌟':'🌱'}</span>
@@ -80,7 +76,7 @@ export function Battle({battle,onChange,sound=true}) {
     </>}
     <details className="battle-team"><summary>האלופים שנבחרו · {battle.allies.length} חברים</summary><ul>{battle.allies.map(unit=><li key={unit.key}><Creature id={unit.creatureId} count={unit.catchCount} animated={false}/><strong>{unit.name}</strong><CombatStats creature={unit} compact /><small>{unit.speedBonus>0?`בונוס מהירות: +${unit.speedBonus}%`:'כוח בסיס מלא'}</small></li>)}</ul></details>
     <details className="element-guide"><summary>איך היסודות עובדים?</summary><p>יתרון יסוד מעניק ×1.5 נזק; חיסרון מעניק ×0.75 נזק. הגנה מפחיתה את המכה הבאה ומרפאת מעט.</p><ul>{Object.entries(elements).map(([id,item])=><li key={id}><span>{item.icon} {item.name}</span><span aria-hidden="true"> ← </span> חזק נגד {elements[item.strongAgainst].icon} {elements[item.strongAgainst].name}</li>)}</ul></details>
-    {confirmSkip&&<Modal title="לדלג על הקרב?" eyebrow="אפשר לבחור בקצב שלכם" onClose={closeSkip} className="help-dialog battle-skip-dialog" closeLabel="חזרה לקרב">
+    {confirmSkip&&<Modal title="לדלג על הקרב?" eyebrow="אפשר לבחור בקצב שלכם" onClose={closeSkip} className="battle-skip-dialog" closeLabel="חזרה לקרב">
       <div className="battle-skip-content"><span aria-hidden="true">🛡️</span><p>בטוחים שתרצו לדלג? הקרב הזה ייסגר והאלופים ששרדו יחזרו לתיק. אלופים שכבר הובסו לא יחזרו.</p><div><Button onClick={closeSkip}>ממשיכים לקרב</Button><Button variant="text" onClick={()=>{setAuto(false);setConfirmSkip(false);onChange({...battle,phase:'skipped'});}}>כן, לדלג על הקרב</Button></div></div>
     </Modal>}
   </section>;

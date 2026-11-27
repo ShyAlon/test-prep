@@ -7,7 +7,6 @@ const gif = Uint8Array.from(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAA
 export function themeFixture({ large = false } = {}) {
   const manifest = {
     version: 1, id: 'fixture', name: 'Fixture', description: 'Test theme', avatar: 'friend', companion: 'epic',
-    testImages: { incomplete: 'closed.png', completed: 'open.gif' },
     testImages: { incomplete: 'test-closed.png', completed: 'test-open.png' },
     creatures: [
       { id:'friend', name:'Friend', english:'Friend', color:'grass', rarity:'standard', image:'closed.png', animation:'open.gif',

@@ -325,5 +325,26 @@
         "creatures/frames/grove_watcher/down_idle_7.png"
       ]
     }
-  ]
+  ],
+  "generatedArtwork": {
+    "id": "openai-imagegen-mythology",
+    "tool": "OpenAI built-in image_gen",
+    "createdOn": "2026-11-26",
+    "description": "Full-color storybook illustrations generated for this project to replace the monochrome Hexany sprites. These are generated assets, not third-party CC0 downloads.",
+    "prompts": "public/licenses/mythology-art-prompts.json",
+    "assets": [
+      "kraken",
+      "cerberus",
+      "phoenix",
+      "hydra",
+      "genie",
+      "gargoyle",
+      "cyclops",
+      "minotaur",
+      "treant",
+      "giant",
+      "merfolk",
+      "winged-serpent"
+    ]
+  }
 }

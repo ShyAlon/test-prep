@@ -2,7 +2,7 @@ import { assignCombat, combatStats } from './combat-rules.js';
 import { readTheme } from './theme-storage.js';
 import artwork from './creature-art.json' with { type: 'json' };
 // Creature names from SRD 5.2.1 (CC BY 4.0); Hebrew labels are our translations.
-// Artwork has independent CC0/public-domain notices in public/licenses/ATTRIBUTION.txt.
+// Artwork provenance (including generated illustrations) is in public/licenses/ATTRIBUTION.txt.
 const originalCreatures = [
   { id: 'bat', name: 'עטלף', english: 'Bat', page: 345, color: 'air', rarity: 'standard' },
   {

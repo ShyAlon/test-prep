@@ -77,47 +77,7 @@ export function parseThemeZip(bytes) {
   const theme=validateManifest(manifest, assets);
   return {...theme,manifest:{...theme.manifest,creatures:assignCombat(theme.manifest.creatures,Math.random)}};
 }
-// Only sizes/counts go to the console, never stored values, account keys or image data.
-// UTF-16 sizes are estimates; browser quota accounting can differ.
-export function themeStorageDiagnostics(serialized, storage) {
-  const result = {
-    payloadCharacters: serialized.length,
-    payloadUtf16Bytes: serialized.length * 2,
-    existingThemeUtf16Bytes: 0,
-    otherStorageUtf16Bytes: 0,
-    storageEntries: 0,
-  };
-  try {
-    for (let index = 0; index < storage.length; index++) {
-      const key = storage.key(index);
-      if (key === null) continue;
-      const value = storage.getItem(key) ?? '';
-      const bytes = (key.length + value.length) * 2;
-      result.storageEntries++;
-      if (key === THEME_KEY) result.existingThemeUtf16Bytes += bytes;
-      else result.otherStorageUtf16Bytes += bytes;
-    }
-    result.estimatedAfterSaveUtf16Bytes = result.otherStorageUtf16Bytes + (THEME_KEY.length + serialized.length) * 2;
-  } catch (error) {
-    result.inspectionError = error.name;
-  }
-  return result;
-}
-export function persistTheme(theme, storage = globalThis.localStorage) {
-  validateManifest(theme.manifest, theme.assets);
-  const serialized = JSON.stringify(theme);
-  const diagnostics = themeStorageDiagnostics(serialized, storage);
-  console.info('[Theme upload] Saving to localStorage', diagnostics);
-  try {
-    storage.setItem(THEME_KEY, serialized);
-    console.info('[Theme upload] localStorage save succeeded');
-  } catch (error) {
-    console.error('[Theme upload] localStorage save failed', {
-      ...diagnostics, errorName: error.name, errorMessage: error.message,
-    }, error);
-    throw error;
-  }
-}
+// Read-only compatibility for themes saved before IndexedDB became the sole writer.
 export function readTheme(storage = globalThis.localStorage) {
   try {
     const raw = storage?.getItem(THEME_KEY);

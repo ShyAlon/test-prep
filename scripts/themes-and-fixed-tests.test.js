@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { zipSync, strToU8 } from 'fflate';
 import { themeFixture } from './fixtures/theme.js';
-import { parseThemeZip, persistTheme, readTheme, THEME_KEY, MAX_THEME_BYTES } from '../src/theme-storage.js';
+import { parseThemeZip, readTheme, THEME_KEY, MAX_THEME_BYTES } from '../src/theme-storage.js';
 import { fixedTests, createAttempt, generatedOnlyGame } from '../src/model.js';
 import { installTheme, creatureCard, chooseEncounter, companionFor } from '../src/creatures.js';
 
@@ -40,12 +40,9 @@ test('ZIP validation rejects remote assets, traversal, executable files, invalid
   const duplicate=manifest();duplicate.creatures.push(duplicate.creatures[0]);assert.throws(()=>parseThemeZip(zip(duplicate)));
 });
 
-test('theme persistence is separate from profile data and failed writes preserve the existing theme', () => {
-  const storage=memory();const theme=parseThemeZip(zip());persistTheme(theme,storage);
+test('legacy themes remain readable and remote image references are rejected', () => {
+  const storage=memory();const theme=parseThemeZip(zip());storage.setItem(THEME_KEY,JSON.stringify(theme));
   assert.deepEqual(JSON.parse(JSON.stringify(readTheme(storage))), JSON.parse(JSON.stringify(theme)));
-  const before=storage.getItem(THEME_KEY);
-  assert.throws(()=>persistTheme(theme,{setItem(){throw new DOMException('full','QuotaExceededError');}}));
-  assert.equal(storage.getItem(THEME_KEY),before);
   storage.setItem(THEME_KEY,JSON.stringify({...theme,assets:{'one.png':'https://example.com/one.png'}}));
   assert.equal(readTheme(storage),null);
 });
@@ -63,7 +60,7 @@ test('theme pack restores the roster, local animations, rarity tiers and two-cat
   }
   const attempt=createAttempt(10,123,mode);
   assert.equal(companionFor(attempt.rounds[0],mode,String(attempt.id)),attempt.rounds[0].creature);
-  const storage=memory();persistTheme(theme,storage);assert.ok(readTheme(storage));
+  const storage=memory();storage.setItem(THEME_KEY,JSON.stringify(theme));assert.ok(readTheme(storage));
 });
 
 test('missing local packs preserve earned IDs for a later reimport', () => {

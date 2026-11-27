@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { creatures, creatureCard, chooseEncounter, migrateCreatureGame, creatureModes, creaturesForMode, companionFor } from '../src/creatures.js';
 
 const read = name => readFileSync(new URL(`../${name}`, import.meta.url));
-test('every creature has local public-domain art, documented provenance, and matching animation frames', () => {
+test('every creature has local art, documented provenance, and matching animation frames', () => {
   const sources = JSON.parse(read('public/licenses/artwork-sources.json'));
   const attribution = read('public/licenses/ATTRIBUTION.txt').toString();
   assert.equal(creaturesForMode('srd').length,32);
@@ -12,6 +12,16 @@ test('every creature has local public-domain art, documented provenance, and mat
   assert.equal(creaturesForMode('animals').length,25);
   const roster=JSON.parse(read('public/licenses/creature-roster.json'));
   const artwork=JSON.parse(read('src/creature-art.json'));
+  assert.deepEqual(artwork, JSON.parse(read('public/licenses/creature-art.json')), 'published artwork metadata matches the game');
+  for (const asset of sources.generatedArtwork.assets) {
+    const card = creatureCard(`myth-${asset}`);
+    assert.equal(artwork[asset].source, sources.generatedArtwork.id);
+    assert.equal(card.pixelated, false);
+    assert.equal(card.monochrome, false);
+    const png = read(`public/${card.image}`);
+    assert.ok(png.readUInt32BE(16) >= 512 && png.readUInt32BE(20) >= 512);
+    assert.ok([4, 6].includes(png[25]), `${asset} preserves transparency`);
+  }
   assert.ok(Object.values(artwork).filter(item=>Math.min(...item.nativeSize)>=48).length>=20);
   assert.equal(new Set(creatures.map(creature => creature.id)).size, creatures.length);
   for (const source of sources.sources) {

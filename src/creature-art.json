@@ -639,170 +639,170 @@
   "kraken": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_001.png"
+      "creatures/kraken.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "cerberus": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_007.png"
+      "creatures/cerberus.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "phoenix": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_008.png"
+      "creatures/phoenix.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "hydra": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_012.png"
+      "creatures/hydra.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "genie": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_014.png"
+      "creatures/genie.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "gargoyle": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_015.png"
+      "creatures/gargoyle.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "cyclops": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_016.png"
+      "creatures/cyclops.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "minotaur": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_024.png"
+      "creatures/minotaur.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "treant": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_039.png"
+      "creatures/treant.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "giant": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_052.png"
+      "creatures/giant.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "merfolk": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_063.png"
+      "creatures/merfolk.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "winged-serpent": {
     "frames": 0,
     "nativeSize": [
-      32,
-      32
+      1254,
+      1254
     ],
-    "displaySize": 32,
-    "source": "hexany-menagerie",
+    "displaySize": 512,
+    "source": "openai-imagegen-mythology",
     "files": [
-      "Tiles/Transparent/creature_003.png"
+      "creatures/winged-serpent.png"
     ],
-    "pixelated": true,
-    "monochrome": true
+    "pixelated": false,
+    "monochrome": false
   },
   "basilisk-large": {
     "frames": 0,

@@ -82,7 +82,7 @@ The existing independent CC0 notices remain applicable to retained earlier art.
 
 Hexany Ives — Hexany's Monster Menagerie 0.3.0
 https://hexany-ives.itch.io/hexanys-monster-menagerie
-CC0 1.0 Universal. Native 32×32 sprites, downloaded free. Displayed with a dark CSS tint for contrast.
+CC0 1.0 Universal. Original 32×32 sprites, downloaded free. Replaced in the current game by the generated illustrations documented below; this notice preserves historical provenance.
 See hexany-menagerie-CC0.txt and artwork-sources.json.
 
 Gordy Higgins — Public Domain Fantasy Art Pack 4
@@ -107,3 +107,8 @@ https://colefoster.itch.io/voxel-forest-ruins-pack
 Free CC0 1.0 Universal downloads. Selected original idle/flying frames cropped and assembled into local strips.
 The voxel world uses these independent assets; it is not affiliated with Mojang or Microsoft and contains no Minecraft game artwork.
 See cole-voxel-dungeon-CC0.txt and cole-voxel-forest-CC0.txt.
+
+Generated mythology illustrations — 2026-11-26
+Kraken, Cerberus, Phoenix, Hydra, Genie, Gargoyle, Cyclops, Minotaur, Treant, Giant, Merfolk and Winged Serpent.
+Created for this project using OpenAI built-in image_gen; full-color transparent PNG illustrations downsampled to 512px for the game. These are generated assets, not third-party CC0 downloads.
+Prompt set: public/licenses/mythology-art-prompts.json in the source repository.

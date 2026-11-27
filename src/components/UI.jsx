@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 const buttonClasses = { primary: 'primary', text: 'text-button', utility: 'utility', plain: '' };
 
@@ -42,8 +43,8 @@ export function Modal({
   eyebrow,
   subtitle,
   onClose,
-  className = 'help-dialog',
-  headerClassName = 'help-header',
+  className = '',
+  headerClassName = '',
   closeLabel = 'סגירה ✕',
   children,
 }) {
@@ -57,11 +58,29 @@ export function Modal({
       event.clientY < rect.top || event.clientY > rect.bottom;
   }
   useEffect(() => {
-    if (!dialog.current.open) dialog.current.showModal();
+    const element = dialog.current;
+    const opener = document.activeElement;
+    if (!element.open) element.showModal();
+    return () => {
+      if (element.open) element.close();
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
+    };
   }, []);
-  return (
+  const content = (
     <dialog
-      ref={dialog} className={className} onClose={onClose} aria-labelledby={titleId}
+      ref={dialog} className={`modal ${className}`.trim()}
+      onClose={event => { if (!event.currentTarget.open) onClose(); }} aria-labelledby={titleId}
+      onKeyDown={event => {
+        if (event.key !== 'Tab') return;
+        const controls = [...event.currentTarget.querySelectorAll('button, [href], input, select, textarea, [tabindex]')]
+          .filter(element => !element.matches(':disabled, [tabindex="-1"]') && element.getClientRects().length);
+        const first = controls[0], last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first?.focus();
+        }
+      }}
       onPointerDown={event => { pressedBackdrop.current = isBackdrop(event); }}
       onPointerCancel={() => { pressedBackdrop.current = false; }}
       onClick={event => {
@@ -69,7 +88,7 @@ export function Modal({
         pressedBackdrop.current = false;
       }}
     >
-      <header className={headerClassName}>
+      <header className={`modal-header ${headerClassName}`.trim()}>
         <div>
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}
           <h2 id={titleId}>{title}</h2>
@@ -82,4 +101,5 @@ export function Modal({
       {children}
     </dialog>
   );
+  return typeof document === 'undefined' ? content : createPortal(content, document.body);
 }
